@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Budget Impact Simulator — ArthRakshak AI</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="container">
+    <div class="header-inner">
+      <div>
+        <div class="logo-badge">ArthRakshak AI</div>
+      </div>
+      <div class="header-text">
+        <h1>Budget Impact Simulator</h1>
+        <p>Test different budget allocations and analyze outcomes using AI predictions.</p>
+      </div>
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        MODEL ACTIVE
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="container">
+  <main>
+
+    <!-- LEFT: FORM -->
+    <div class="card" style="animation-delay:0.05s">
+      <div class="card-header">
+        <div class="card-icon green">⚙</div>
+        <div class="card-title">Simulation Inputs</div>
+        <div class="card-tag">Section 01</div>
+      </div>
+      <div class="card-body">
+        <div class="form-group">
+          <label>Department</label>
+          <select id="dept">
+            <option value="roads">Road Maintenance</option>
+            <option value="health">Public Health</option>
+            <option value="education">Education</option>
+            <option value="defense">Defense & Security</option>
+            <option value="agriculture">Agriculture</option>
+            <option value="urban">Urban Development</option>
+            <option value="energy">Energy & Power</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Budget Allocation (₹ Crore)</label>
+          <input type="number" id="allocation" placeholder="e.g. 5000" min="0" value="" />
+          <div class="input-hint">Enter total allocated budget in crores</div>
+        </div>
+
+        <div class="form-group">
+          <label>Expected Spending (₹ Crore)</label>
+          <input type="number" id="spending" placeholder="e.g. 4200" min="0" value="" />
+          <div class="input-hint">Projected expenditure for the period</div>
+        </div>
+
+        <div class="form-group">
+          <label>Time Period — <span id="period-val">12</span> months</label>
+          <div class="range-wrap">
+            <input type="range" id="period" min="1" max="36" value="12" />
+            <div class="range-labels"><span>1 mo</span><span>18 mo</span><span>36 mo</span></div>
+          </div>
+        </div>
+
+        <button class="btn-run" id="runBtn" onclick="runSimulation()">
+          <span class="btn-shimmer"></span>
+          ▶ Run Simulation
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="right-col">
+
+      <!-- SECTION 2: RESULTS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon blue">📊</div>
+          <div class="card-title">Simulation Results</div>
+          <div class="card-tag">Section 02</div>
+        </div>
+        <div class="card-body" id="results-body">
+          <div class="empty-state">
+            <div class="empty-icon">⏳</div>
+            <p>Configure inputs and run a simulation<br/>to see projected financial outcomes.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: CHART -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon green">📈</div>
+          <div class="card-title">Prediction Chart</div>
+          <div class="card-tag">Section 03</div>
+        </div>
+        <div class="card-body">
+          <div class="chart-wrap">
+            <canvas id="simChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4: AI RECOMMENDATION -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon warn">🤖</div>
+          <div class="card-title">AI Recommendation</div>
+          <div class="card-tag">Section 04</div>
+        </div>
+        <div class="card-body">
+          <div class="ai-rec-box" id="aiBox">
+            <div class="ai-avatar">🧠</div>
+            <div class="ai-rec-content">
+              <div class="ai-rec-label">ArthRakshak Intelligence</div>
+              <div class="ai-rec-text placeholder" id="aiText">
+                Run a simulation to receive an AI-powered recommendation tailored to your budget inputs.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- FOOTER -->
+<div class="container">
+  <footer>
+    <div class="footer-text">
+      ◈ <span>AI-driven financial simulation</span> — ArthRakshak AI Platform
+    </div>
+    <div class="footer-ver">v2.4.1 · Fiscal Model</div>
+  </footer>
+</div>
+
+<script>
+  // ── Period slider label
+  document.getElementById('period').addEventListener('input', function() {
+    document.getElementById('period-val').textContent = this.value;
+  });
+
+  // ── Chart instance
+  let chartInstance = null;
+
+  // ── AI recommendation database
+  const recommendations = {
+    roads: {
+      surplus: "Road Maintenance shows a healthy surplus. Consider reallocating 8–12% toward preventive maintenance contracts to extend infrastructure life and reduce future emergency repair costs.",
+      deficit: "Reducing road maintenance allocation by 10% may increase infrastructure risk. Deferred maintenance historically leads to 3× higher remediation costs within 2–3 years. Recommend restoring budget or sourcing auxiliary funding.",
+      neutral: "Road Maintenance budget is balanced. Monitor quarterly spending velocity — seasonal demand spikes in Q3 may require a contingency reserve of ₹50–100 Cr."
+    },
+    health: {
+      surplus: "Public Health surplus indicates underspending. Review procurement pipelines — delayed drug/equipment procurement in Q1 often signals systemic delays. Consider frontloading spending on preventive care programs.",
+      deficit: "Public Health overspending alert. Audit high-cost treatment centers and generic drug procurement ratios. A 15% shift to preventive interventions could reduce curative spending by up to 22%.",
+      neutral: "Health budget is on track. Ensure buffer allocation for epidemic response (recommended: 5% of total budget) remains accessible in liquid funds."
+    },
+    education: {
+      surplus: "Education surplus detected. Accelerate infrastructure investment in digital learning labs and teacher training — ROI on these programs typically materializes within 18–24 months.",
+      deficit: "Education deficit may impact enrollment quality. Prioritize teacher salary disbursements and textbook procurement before infrastructure projects. Consider public-private partnerships for school construction.",
+      neutral: "Education allocation is balanced. Monitor mid-year enrollment figures — a 5%+ deviation triggers automatic rebalancing recommendations."
+    },
+    defense: {
+      surplus: "Defense surplus available. Recommend channeling excess funds into cybersecurity modernization and equipment lifecycle maintenance rather than holding idle capital.",
+      deficit: "Defense overspending detected. Conduct audit of operational vs. capital expenditure split. Operational costs exceeding 70% of budget signal structural inefficiency.",
+      neutral: "Defense budget is stable. Maintain emergency operational reserve at ≥8% of total allocation to handle unforeseen deployments."
+    },
+    agriculture: {
+      surplus: "Agriculture surplus present. Invest in cold chain infrastructure and crop insurance expansion — these have the highest multiplier effect on rural income stability.",
+      deficit: "Agriculture deficit risks subsidy shortfalls. Verify fertilizer subsidy disbursements are current. Delayed payments compound into next-season input cost inflation.",
+      neutral: "Agriculture spending is aligned with allocation. Watch for monsoon forecast adjustments — a 10% rainfall deviation warrants immediate budget revision."
+    },
+    urban: {
+      surplus: "Urban Development surplus identified. Accelerate smart city projects with high implementation readiness scores. Idle urban development funds attract audit scrutiny after 6 months.",
+      deficit: "Urban Development overspend is concerning. Audit contractor billing cycles and project milestone payments. Scope creep is the primary driver in 68% of urban deficit cases.",
+      neutral: "Urban Development is on budget. Maintain quarterly project completion reviews to prevent end-of-year expenditure bunching."
+    },
+    energy: {
+      surplus: "Energy & Power surplus available. Prioritize grid modernization and renewable integration projects — these reduce long-term subsidy obligations by 18–25% over 5 years.",
+      deficit: "Energy sector deficit detected. Review power purchase agreements for renegotiation opportunities. Transitioning 15% of procurement to competitive bidding could reduce costs significantly.",
+      neutral: "Energy budget is balanced. Track fuel cost indices monthly — a 12% fuel price increase triggers automatic budget revision protocols."
+    }
+  };
+
+  // ── Run Simulation
+  function runSimulation() {
+    const dept       = document.getElementById('dept').value;
+    const allocation = parseFloat(document.getElementById('allocation').value);
+    const spending   = parseFloat(document.getElementById('spending').value);
+    const period     = parseInt(document.getElementById('period').value);
+
+    if (!allocation || !spending || allocation <= 0 || spending <= 0) {
+      alert('Please enter valid Budget Allocation and Expected Spending values.');
+      return;
+    }
+
+    const btn = document.getElementById('runBtn');
+    btn.classList.add('loading');
+    btn.textContent = 'Analyzing…';
+
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      btn.innerHTML = '<span class="btn-shimmer"></span>▶ Run Simulation';
+
+      // Compute
+      const volatility       = 0.92 + Math.random() * 0.16;           // ±8% noise
+      const projectedSpend   = spending * volatility;
+      const surplusDeficit   = allocation - projectedSpend;
+      const surplusRatio     = surplusDeficit / allocation;
+
+      let riskLevel, riskClass, riskBadge;
+      if (surplusRatio > 0.15)      { riskLevel = 'Low';    riskClass = 'low';  riskBadge = '🟢'; }
+      else if (surplusRatio > 0)    { riskLevel = 'Medium'; riskClass = 'med';  riskBadge = '🟡'; }
+      else if (surplusRatio > -0.1) { riskLevel = 'High';   riskClass = 'high'; riskBadge = '🔴'; }
+      else                          { riskLevel = 'Critical';riskClass='high';  riskBadge = '🔴'; }
+
+      const isSurplus  = surplusDeficit >= 0;
+      const sdClass    = isSurplus ? 'positive' : 'negative';
+      const sdLabel    = isSurplus ? 'SURPLUS'  : 'DEFICIT';
+
+      // Render results
+      document.getElementById('results-body').innerHTML = `
+        <div class="results-grid" style="position:relative">
+          <div class="scan-effect"></div>
+
+          <div class="metric-card ${isSurplus ? 'active' : 'deficit'}">
+            <div class="metric-label">Projected Spending</div>
+            <div class="metric-value neutral">₹${fmt(projectedSpend)}<span style="font-size:14px"> Cr</span></div>
+            <div class="metric-sub">Over ${period} months</div>
+          </div>
+
+          <div class="metric-card ${isSurplus ? 'active' : 'deficit'}">
+            <div class="metric-label">Budget ${sdLabel}</div>
+            <div class="metric-value ${sdClass}">₹${fmt(Math.abs(surplusDeficit))}<span style="font-size:14px"> Cr</span></div>
+            <div class="metric-sub">${isSurplus ? '▲ Under budget' : '▼ Over budget'}</div>
+          </div>
+
+          <div class="metric-card ${riskClass === 'low' ? 'risk-low' : 'risk-high'}">
+            <div class="metric-label">Predicted Risk</div>
+            <div class="metric-value neutral" style="font-size:18px">${riskBadge}</div>
+            <div class="risk-badge ${riskClass}">${riskLevel} Risk</div>
+          </div>
+        </div>
+      `;
+
+      // Chart
+      buildChart(allocation, projectedSpend, period);
+
+      // AI Recommendation
+      const recKey = surplusRatio > 0.05 ? 'surplus' : surplusRatio < 0 ? 'deficit' : 'neutral';
+      const recText = recommendations[dept][recKey];
+      const aiBox   = document.getElementById('aiBox');
+      const aiText  = document.getElementById('aiText');
+
+      aiText.innerHTML = `<div class="ai-typing"><span></span><span></span><span></span></div>`;
+      aiBox.classList.add('visible');
+
+      setTimeout(() => {
+        aiText.classList.remove('placeholder');
+        aiText.textContent = recText;
+      }, 1200);
+
+    }, 1400);
+  }
+
+  // ── Format number
+  function fmt(n) {
+    return n >= 1000
+      ? (n / 1000).toFixed(2) + 'K'
+      : n.toFixed(0);
+  }
+
+  // ── Build Chart
+  function buildChart(allocated, predicted, period) {
+    const ctx = document.getElementById('simChart').getContext('2d');
+    if (chartInstance) chartInstance.destroy();
+
+    // Generate month-by-month data
+    const labels = [];
+    const allocData = [];
+    const predictData = [];
+
+    for (let m = 1; m <= period; m++) {
+      labels.push(`M${m}`);
+      const frac = m / period;
+      allocData.push(+(allocated * frac).toFixed(0));
+      const jitter = 1 + (Math.random() - 0.5) * 0.06;
+      predictData.push(+(predicted * frac * jitter).toFixed(0));
+    }
+
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Allocated Budget',
+            data: allocData,
+            borderColor: '#00e5a0',
+            backgroundColor: 'rgba(0,229,160,0.08)',
+            borderWidth: 2,
+            pointRadius: period <= 12 ? 4 : 2,
+            pointBackgroundColor: '#00e5a0',
+            tension: 0.35,
+            fill: true,
+          },
+          {
+            label: 'Predicted Spending',
+            data: predictData,
+            borderColor: '#0099ff',
+            backgroundColor: 'rgba(0,153,255,0.06)',
+            borderWidth: 2,
+            borderDash: [5, 4],
+            pointRadius: period <= 12 ? 4 : 2,
+            pointBackgroundColor: '#0099ff',
+            tension: 0.35,
+            fill: true,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#718096',
+              font: { family: "'IBM Plex Mono', monospace", size: 11 },
+              boxWidth: 12,
+              padding: 16,
+            }
+          },
+          tooltip: {
+            backgroundColor: '#161c2d',
+            borderColor: '#1e2a42',
+            borderWidth: 1,
+            titleColor: '#e2e8f0',
+            bodyColor: '#718096',
+            titleFont: { family: "'Syne', sans-serif", size: 13, weight: '700' },
+            bodyFont: { family: "'IBM Plex Mono', monospace", size: 12 },
+            callbacks: {
+              label: ctx => ` ₹${ctx.parsed.y.toLocaleString()} Cr`
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#4a5568', font: { family: "'IBM Plex Mono', monospace", size: 10 }, maxTicksLimit: 12 },
+            grid: { color: '#1e2a42' }
+          },
+          y: {
+            ticks: {
+              color: '#4a5568',
+              font: { family: "'IBM Plex Mono', monospace", size: 10 },
+              callback: v => `₹${(v/1000).toFixed(1)}K`
+            },
+            grid: { color: '#1e2a42' }
+          }
+        }
+      }
+    });
+  }
+
+  // ── Init empty chart
+  (function initChart() {
+    const ctx = document.getElementById('simChart').getContext('2d');
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'],
+        datasets: [
+          { label: 'Allocated Budget', data: [], borderColor: '#00e5a0', borderWidth: 2, tension: 0.35 },
+          { label: 'Predicted Spending', data: [], borderColor: '#0099ff', borderWidth: 2, borderDash: [5,4], tension: 0.35 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: { color: '#718096', font: { family: "'IBM Plex Mono', monospace", size: 11 }, boxWidth: 12 }
+          }
+        },
+        scales: {
+          x: { ticks: { color: '#4a5568' }, grid: { color: '#1e2a42' } },
+          y: { ticks: { color: '#4a5568' }, grid: { color: '#1e2a42' } }
+        }
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>

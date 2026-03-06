@@ -552,3 +552,178 @@ footer span { color: rgba(255,255,255,0.6); }
   .otp-group { gap: 7px; }
   .step-connector { width: 36px; }
 }
+/* ===========================
+DASHBOARD LAYOUT
+=========================== */
+
+.topnav{
+    height:60px;
+    background:#1F3A5F;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    z-index:1000;
+  }
+  
+  .topnav input{
+    padding:6px 10px;
+    border-radius:6px;
+    border:none;
+  }
+  
+  .sidebar{
+    position:fixed;
+    top:60px;
+    left:0;
+    width:240px;
+    bottom:0;
+    background:#ffffff;
+    border-right:1px solid #e2e6ed;
+    padding:20px 10px;
+    overflow-y:auto;
+  }
+  
+  .sidebar-nav{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  
+  .nav-item{
+    padding:10px 12px;
+    border-radius:6px;
+    font-size:14px;
+    color:#4e5768;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  
+  .nav-item:hover{
+    background:#f0f2f6;
+  }
+  
+  .nav-item.active{
+    background:#1F3A5F;
+    color:white;
+  }
+  
+  .main-content{
+    margin-left:240px;
+    margin-top:60px;
+    padding:25px;
+  }
+  
+  /* ===========================
+  CARDS
+  =========================== */
+  
+  .overview-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:25px;
+  }
+  
+  .overview-card{
+    background:white;
+    border-radius:10px;
+    padding:18px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.06);
+  }
+  
+  .oc-value{
+    font-size:26px;
+    font-weight:700;
+  }
+  
+  .oc-label{
+    font-size:13px;
+    color:#6b7585;
+  }
+  
+  /* ===========================
+  PANELS
+  =========================== */
+  
+  .panel{
+    background:white;
+    border-radius:10px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.06);
+    margin-bottom:20px;
+  }
+  
+  .panel-head{
+    padding:14px 16px;
+    border-bottom:1px solid #e2e6ed;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  
+  .panel-head h3{
+    font-size:16px;
+  }
+  
+  .data-table{
+    width:100%;
+    border-collapse:collapse;
+  }
+  
+  .data-table th{
+    background:#f8f9fb;
+    text-align:left;
+    padding:10px;
+    font-size:12px;
+  }
+  
+  .data-table td{
+    padding:10px;
+    border-top:1px solid #eee;
+    font-size:13px;
+  }
+  
+  /* ===========================
+  RISK BADGES
+  =========================== */
+  
+  .risk-badge{
+    padding:3px 8px;
+    border-radius:8px;
+    font-size:11px;
+    font-weight:600;
+  }
+  
+  .rb-critical{ background:#fde2e2; color:#c0392b; }
+  .rb-high{ background:#ffe5cc; color:#d97706; }
+  .rb-medium{ background:#e8f0ff; color:#2563eb; }
+  .rb-low{ background:#e7f7ef; color:#2E8B57; }
+  
+  /* ===========================
+  GRID LAYOUTS
+  =========================== */
+  
+  .two-col{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  
+  .three-col{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:20px;
+  }
+  
+  .two-col-equal{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
