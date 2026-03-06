@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArthRakshak AI — Anomaly Detection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════
+       TOP NAVIGATION BAR
+  ════════════════════════════════════════════════ -->
+  <header class="navbar" role="banner">
+    <div class="navbar__container">
+
+      <!-- Brand / Logo -->
+      <a href="#" class="navbar__brand" aria-label="ArthRakshak AI Home">
+        <span class="navbar__brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="8" fill="url(#logoGrad)"/>
+            <path d="M8 22 L16 10 L24 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M11 18 L21 18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="16" cy="10" r="2" fill="white"/>
+            <defs>
+              <linearGradient id="logoGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4f46e5"/>
+                <stop offset="1" stop-color="#2563eb"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </span>
+        <span class="navbar__brand-text">ArthRakshak <em>AI</em></span>
+      </a>
+
+      <!-- Hamburger (mobile) -->
+      <button class="navbar__toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="navMenu">
+        <span class="navbar__toggle-bar"></span>
+        <span class="navbar__toggle-bar"></span>
+        <span class="navbar__toggle-bar"></span>
+      </button>
+
+      <!-- Navigation Links -->
+      <nav class="navbar__nav" id="navMenu" role="navigation" aria-label="Main navigation">
+        <ul class="navbar__list">
+          <li class="navbar__item">
+            <a href="#" class="navbar__link">
+              <span class="navbar__link-icon" aria-hidden="true">⊞</span>
+              Dashboard
+            </a>
+          </li>
+          <li class="navbar__item navbar__item--active">
+            <a href="#" class="navbar__link navbar__link--active" aria-current="page">
+              <span class="navbar__link-icon" aria-hidden="true">◈</span>
+              Anomaly Detection
+            </a>
+          </li>
+          <li class="navbar__item">
+            <a href="#" class="navbar__link">
+              <span class="navbar__link-icon" aria-hidden="true">✦</span>
+              AI Assistant
+            </a>
+          </li>
+          <li class="navbar__item">
+            <a href="#" class="navbar__link navbar__link--logout">
+              <span class="navbar__link-icon" aria-hidden="true">⎋</span>
+              Logout
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════
+       MAIN PAGE CONTENT
+  ════════════════════════════════════════════════ -->
+  <main class="main" role="main">
+    <div class="main__container">
+
+      <!-- ─── PAGE HEADER ─────────────────────────── -->
+      <section class="page-header" aria-labelledby="pageTitle">
+        <div class="page-header__meta">
+          <span class="page-header__breadcrumb">Dashboard / Anomaly Detection</span>
+        </div>
+        <div class="page-header__content">
+          <div class="page-header__text">
+            <h1 class="page-header__title" id="pageTitle">
+              <span class="page-header__title-highlight">AI</span> Anomaly Detection
+            </h1>
+            <p class="page-header__subtitle">
+              Identify unusual spending patterns and financial irregularities using AI.
+            </p>
+          </div>
+          <div class="page-header__stats" role="region" aria-label="Summary statistics">
+            <div class="stat-pill stat-pill--alert">
+              <span class="stat-pill__dot" aria-hidden="true"></span>
+              <span class="stat-pill__label">3 High Risk</span>
+            </div>
+            <div class="stat-pill stat-pill--warn">
+              <span class="stat-pill__dot" aria-hidden="true"></span>
+              <span class="stat-pill__label">2 Medium Risk</span>
+            </div>
+            <div class="stat-pill stat-pill--ok">
+              <span class="stat-pill__dot" aria-hidden="true"></span>
+              <span class="stat-pill__label">4 Normal</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── SUMMARY KPI STRIP ────────────────────── -->
+      <section class="kpi-strip" aria-label="Key performance indicators">
+        <article class="kpi-card kpi-card--indigo">
+          <div class="kpi-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <span class="kpi-card__value">₹ 24.6 Cr</span>
+            <span class="kpi-card__label">Total Budget Analysed</span>
+          </div>
+        </article>
+
+        <article class="kpi-card kpi-card--red">
+          <div class="kpi-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <span class="kpi-card__value">9</span>
+            <span class="kpi-card__label">Anomalies Detected</span>
+          </div>
+        </article>
+
+        <article class="kpi-card kpi-card--blue">
+          <div class="kpi-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <span class="kpi-card__value">2.4 sec</span>
+            <span class="kpi-card__label">Analysis Duration</span>
+          </div>
+        </article>
+
+        <article class="kpi-card kpi-card--green">
+          <div class="kpi-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="kpi-card__body">
+            <span class="kpi-card__value">94.7%</span>
+            <span class="kpi-card__label">Model Accuracy</span>
+          </div>
+        </article>
+      </section>
+
+      <!-- ─── THREE MAIN CARDS ─────────────────────── -->
+      <div class="grid-main">
+
+        <!-- ┌─────────────────────────────────────────┐
+             │  CARD 1 — DATA INPUT                   │
+             └─────────────────────────────────────────┘ -->
+        <section class="card card--upload" aria-labelledby="uploadTitle">
+          <header class="card__header">
+            <div class="card__header-icon card__header-icon--indigo" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </div>
+            <h2 class="card__title" id="uploadTitle">Upload Financial Data</h2>
+          </header>
+
+          <div class="card__body">
+            <p class="card__desc">Upload municipal expenditure dataset for AI-powered anomaly analysis.</p>
+
+            <!-- Drop Zone -->
+            <div class="upload-zone" id="uploadZone" role="region" aria-label="File upload drop zone" tabindex="0">
+              <div class="upload-zone__icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="48" height="48" rx="12" fill="rgba(79,70,229,0.08)"/>
+                  <path d="M24 32V20M24 20L18 26M24 20L30 26" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M14 38h20a2 2 0 002-2V24l-8-8H14a2 2 0 00-2 2v18a2 2 0 002 2z" stroke="#4f46e5" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <p class="upload-zone__primary">Drag &amp; drop your file here</p>
+              <p class="upload-zone__secondary">or click to browse</p>
+              <p class="upload-zone__formats">Supports <strong>CSV</strong>, <strong>XLSX</strong>, <strong>XLS</strong> — max 25 MB</p>
+              <input
+                type="file"
+                id="fileInput"
+                class="upload-zone__input"
+                accept=".csv,.xlsx,.xls"
+                aria-label="Upload CSV or Excel file"
+              />
+            </div>
+
+            <!-- File preview (shown after upload) -->
+            <div class="file-preview" id="filePreview" aria-live="polite" hidden>
+              <div class="file-preview__icon" aria-hidden="true">📄</div>
+              <div class="file-preview__info">
+                <span class="file-preview__name" id="fileName">municipal_data.csv</span>
+                <span class="file-preview__size" id="fileSize">—</span>
+              </div>
+              <button class="file-preview__remove" id="removeFile" aria-label="Remove uploaded file">✕</button>
+            </div>
+
+            <!-- Options -->
+            <fieldset class="upload-options">
+              <legend class="upload-options__legend">Analysis Options</legend>
+              <label class="checkbox-label">
+                <input type="checkbox" class="checkbox-label__input" checked />
+                <span class="checkbox-label__box" aria-hidden="true"></span>
+                Enable deep anomaly scan
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="checkbox-label__input" checked />
+                <span class="checkbox-label__box" aria-hidden="true"></span>
+                Include trend comparison
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="checkbox-label__input" />
+                <span class="checkbox-label__box" aria-hidden="true"></span>
+                Export report after analysis
+              </label>
+            </fieldset>
+
+            <!-- CTA -->
+            <button class="btn btn--primary btn--full" id="runAnalysis" type="button" aria-describedby="uploadTitle">
+              <span class="btn__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+              </span>
+              Run AI Analysis
+            </button>
+            <p class="upload-hint">Last analysis: <time datetime="2025-03-04">4 Mar 2025, 11:42 AM</time></p>
+          </div>
+        </section>
+
+        <!-- ┌─────────────────────────────────────────┐
+             │  CARD 2 — ANOMALY RESULTS TABLE        │
+             └─────────────────────────────────────────┘ -->
+        <section class="card card--results" aria-labelledby="resultsTitle">
+          <header class="card__header">
+            <div class="card__header-icon card__header-icon--red" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+            </div>
+            <h2 class="card__title" id="resultsTitle">Detected Anomalies</h2>
+            <span class="card__badge card__badge--count" aria-label="9 anomalies detected">9</span>
+          </header>
+
+          <div class="card__body card__body--no-pad">
+            <!-- Table filter bar -->
+            <div class="table-toolbar">
+              <div class="table-toolbar__filters" role="group" aria-label="Filter by risk level">
+                <button class="filter-btn filter-btn--active" data-filter="all" type="button">All</button>
+                <button class="filter-btn" data-filter="high" type="button">High</button>
+                <button class="filter-btn" data-filter="medium" type="button">Medium</button>
+                <button class="filter-btn" data-filter="normal" type="button">Normal</button>
+              </div>
+              <button class="btn btn--ghost btn--sm" type="button" aria-label="Export table as CSV">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14" aria-hidden="true">
+                  <path d="M8 11V3M8 11L5 8M8 11L11 8"/><path d="M3 13h10"/>
+                </svg>
+                Export
+              </button>
+            </div>
+
+            <!-- Scrollable table wrapper -->
+            <div class="table-wrap" role="region" aria-label="Anomaly detection results" tabindex="0">
+              <table class="anomaly-table" aria-describedby="resultsTitle">
+                <thead class="anomaly-table__head">
+                  <tr>
+                    <th scope="col" class="anomaly-table__th anomaly-table__th--dept">
+                      <button class="sort-btn" type="button" aria-label="Sort by Department">
+                        Department <span class="sort-btn__icon" aria-hidden="true">↕</span>
+                      </button>
+                    </th>
+                    <th scope="col" class="anomaly-table__th">
+                      <button class="sort-btn" type="button" aria-label="Sort by Budget Allocated">
+                        Budget Allocated <span class="sort-btn__icon" aria-hidden="true">↕</span>
+                      </button>
+                    </th>
+                    <th scope="col" class="anomaly-table__th">
+                      <button class="sort-btn" type="button" aria-label="Sort by Actual Spending">
+                        Actual Spending <span class="sort-btn__icon" aria-hidden="true">↕</span>
+                      </button>
+                    </th>
+                    <th scope="col" class="anomaly-table__th">
+                      <button class="sort-btn" type="button" aria-label="Sort by Deviation">
+                        Deviation % <span class="sort-btn__icon" aria-hidden="true">↕</span>
+                      </button>
+                    </th>
+                    <th scope="col" class="anomaly-table__th">Risk Level</th>
+                  </tr>
+                </thead>
+                <tbody class="anomaly-table__body" id="anomalyTableBody">
+
+                  <tr class="anomaly-table__row anomaly-table__row--high" data-risk="high">
+                    <td class="anomaly-table__td anomaly-table__td--dept">
+                      <div class="dept-cell">
+                        <span class="dept-cell__dot dept-cell__dot--red" aria-hidden="true"></span>
+                        Road Infrastructure
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">₹ 4.20 Cr</td>
+                    <td class="anomaly-table__td anomaly-table__td--over">₹ 5.67 Cr</td>
+                    <td class="anomaly-table__td">
+                      <div class="deviation-cell deviation-cell--high">
+                        <span class="deviation-cell__bar" style="--dev:35" aria-hidden="true"></span>
+                        <span>+35.0%</span>
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">
+                      <span class="badge badge--high" role="status">High Risk</span>
+                    </td>
+                  </tr>
+
+                  <tr class="anomaly-table__row anomaly-table__row--high" data-risk="high">
+                    <td class="anomaly-table__td anomaly-table__td--dept">
+                      <div class="dept-cell">
+                        <span class="dept-cell__dot dept-cell__dot--red" aria-hidden="true"></span>
+                        Solid Waste Mgmt.
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">₹ 2.80 Cr</td>
+                    <td class="anomaly-table__td anomaly-table__td--over">₹ 3.92 Cr</td>
+                    <td class="anomaly-table__td">
+                      <div class="deviation-cell deviation-cell--high">
+                        <span class="deviation-cell__bar" style="--dev:40" aria-hidden="true"></span>
+                        <span>+40.0%</span>
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">
+                      <span class="badge badge--high" role="status">High Risk</span>
+                    </td>
+                  </tr>
+
+                  <tr class="anomaly-table__row anomaly-table__row--high" data-risk="high">
+                    <td class="anomaly-table__td anomaly-table__td--dept">
+                      <div class="dept-cell">
+                        <span class="dept-cell__dot dept-cell__dot--red" aria-hidden="true"></span>
+                        Public Works
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">₹ 6.10 Cr</td>
+                    <td class="anomaly-table__td anomaly-table__td--over">₹ 7.93 Cr</td>
+                    <td class="anomaly-table__td">
+                      <div class="deviation-cell deviation-cell--high">
+                        <span class="deviation-cell__bar" style="--dev:30" aria-hidden="true"></span>
+                        <span>+30.0%</span>
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">
+                      <span class="badge badge--high" role="status">High Risk</span>
+                    </td>
+                  </tr>
+
+                  <tr class="anomaly-table__row anomaly-table__row--medium" data-risk="medium">
+                    <td class="anomaly-table__td anomaly-table__td--dept">
+                      <div class="dept-cell">
+                        <span class="dept-cell__dot dept-cell__dot--orange" aria-hidden="true"></span>
+                        Water Supply
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">₹ 3.50 Cr</td>
+                    <td class="anomaly-table__td">₹ 2.10 Cr</td>
+                    <td class="anomaly-table__td">
+                      <div class="deviation-cell deviation-cell--medium">
+                        <span class="deviation-cell__bar" style="--dev:18" aria-hidden="true"></span>
+                        <span>-18.0%</span>
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">
+                      <span class="badge badge--medium" role="status">Medium Risk</span>
+                    </td>
+                  </tr>
+
+                  <tr class="anomaly-table__row anomaly-table__row--medium" data-risk="medium">
+                    <td class="anomaly-table__td anomaly-table__td--dept">
+                      <div class="dept-cell">
+                        <span class="dept-cell__dot dept-cell__dot--orange" aria-hidden="true"></span>
+                        Urban Planning
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">₹ 1.90 Cr</td>
+                    <td class="anomaly-table__td">₹ 2.28 Cr</td>
+                    <td class="anomaly-table__td">
+                      <div class="deviation-cell deviation-cell--medium">
+                        <span class="deviation-cell__bar" style="--dev:20" aria-hidden="true"></span>
+                        <span>+20.0%</span>
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">
+                      <span class="badge badge--medium" role="status">Medium Risk</span>
+                    </td>
+                  </tr>
+
+                  <tr class="anomaly-table__row anomaly-table__row--normal" data-risk="normal">
+                    <td class="anomaly-table__td anomaly-table__td--dept">
+                      <div class="dept-cell">
+                        <span class="dept-cell__dot dept-cell__dot--green" aria-hidden="true"></span>
+                        Education
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">₹ 5.20 Cr</td>
+                    <td class="anomaly-table__td">₹ 5.14 Cr</td>
+                    <td class="anomaly-table__td">
+                      <div class="deviation-cell deviation-cell--normal">
+                        <span class="deviation-cell__bar" style="--dev:2" aria-hidden="true"></span>
+                        <span>-1.2%</span>
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">
+                      <span class="badge badge--normal" role="status">Normal</span>
+                    </td>
+                  </tr>
+
+                  <tr class="anomaly-table__row anomaly-table__row--normal" data-risk="normal">
+                    <td class="anomaly-table__td anomaly-table__td--dept">
+                      <div class="dept-cell">
+                        <span class="dept-cell__dot dept-cell__dot--green" aria-hidden="true"></span>
+                        Health Services
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">₹ 4.80 Cr</td>
+                    <td class="anomaly-table__td">₹ 4.72 Cr</td>
+                    <td class="anomaly-table__td">
+                      <div class="deviation-cell deviation-cell--normal">
+                        <span class="deviation-cell__bar" style="--dev:2" aria-hidden="true"></span>
+                        <span>-1.7%</span>
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">
+                      <span class="badge badge--normal" role="status">Normal</span>
+                    </td>
+                  </tr>
+
+                  <tr class="anomaly-table__row anomaly-table__row--normal" data-risk="normal">
+                    <td class="anomaly-table__td anomaly-table__td--dept">
+                      <div class="dept-cell">
+                        <span class="dept-cell__dot dept-cell__dot--green" aria-hidden="true"></span>
+                        Parks &amp; Gardens
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">₹ 0.90 Cr</td>
+                    <td class="anomaly-table__td">₹ 0.88 Cr</td>
+                    <td class="anomaly-table__td">
+                      <div class="deviation-cell deviation-cell--normal">
+                        <span class="deviation-cell__bar" style="--dev:1" aria-hidden="true"></span>
+                        <span>-2.2%</span>
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">
+                      <span class="badge badge--normal" role="status">Normal</span>
+                    </td>
+                  </tr>
+
+                  <tr class="anomaly-table__row anomaly-table__row--normal" data-risk="normal">
+                    <td class="anomaly-table__td anomaly-table__td--dept">
+                      <div class="dept-cell">
+                        <span class="dept-cell__dot dept-cell__dot--green" aria-hidden="true"></span>
+                        Street Lighting
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">₹ 1.20 Cr</td>
+                    <td class="anomaly-table__td">₹ 1.19 Cr</td>
+                    <td class="anomaly-table__td">
+                      <div class="deviation-cell deviation-cell--normal">
+                        <span class="deviation-cell__bar" style="--dev:1" aria-hidden="true"></span>
+                        <span>-0.8%</span>
+                      </div>
+                    </td>
+                    <td class="anomaly-table__td">
+                      <span class="badge badge--normal" role="status">Normal</span>
+                    </td>
+                  </tr>
+
+                </tbody>
+              </table>
+            </div>
+            <!-- Table footer -->
+            <div class="table-footer">
+              <span class="table-footer__count">Showing <strong>9</strong> of <strong>9</strong> entries</span>
+              <div class="table-footer__pagination" role="navigation" aria-label="Table pagination">
+                <button class="page-btn" type="button" aria-label="Previous page" disabled>‹</button>
+                <button class="page-btn page-btn--active" type="button" aria-current="page">1</button>
+                <button class="page-btn" type="button" aria-label="Page 2">2</button>
+                <button class="page-btn" type="button" aria-label="Next page">›</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- /grid-main -->
+
+      <!-- ─── BOTTOM ROW: INSIGHTS + CHART ────────── -->
+      <div class="grid-bottom">
+
+        <!-- ┌─────────────────────────────────────────┐
+             │  CARD 3 — AI INSIGHTS                  │
+             └─────────────────────────────────────────┘ -->
+        <section class="card card--insights" aria-labelledby="insightsTitle">
+          <header class="card__header">
+            <div class="card__header-icon card__header-icon--blue" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+            </div>
+            <h2 class="card__title" id="insightsTitle">AI Insights</h2>
+            <span class="card__badge card__badge--ai" aria-label="AI generated">AI</span>
+          </header>
+
+          <div class="card__body">
+            <ul class="insight-list" role="list" aria-label="AI generated insights">
+
+              <li class="insight-item insight-item--critical" role="listitem">
+                <div class="insight-item__icon insight-item__icon--red" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="insight-item__content">
+                  <p class="insight-item__text">Road infrastructure spending exceeded budget by <strong>35%</strong> this quarter — immediate audit recommended.</p>
+                  <span class="insight-item__tag insight-item__tag--red">Critical</span>
+                </div>
+              </li>
+
+              <li class="insight-item insight-item--critical" role="listitem">
+                <div class="insight-item__icon insight-item__icon--red" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="insight-item__content">
+                  <p class="insight-item__text">Solid Waste Management shows a <strong>40% over-expenditure</strong> — possible procurement irregularity detected.</p>
+                  <span class="insight-item__tag insight-item__tag--red">Critical</span>
+                </div>
+              </li>
+
+              <li class="insight-item insight-item--warning" role="listitem">
+                <div class="insight-item__icon insight-item__icon--orange" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="insight-item__content">
+                  <p class="insight-item__text">Water supply maintenance spend is <strong>unusually low</strong> this quarter — potential underreporting or work stoppage.</p>
+                  <span class="insight-item__tag insight-item__tag--orange">Warning</span>
+                </div>
+              </li>
+
+              <li class="insight-item insight-item--warning" role="listitem">
+                <div class="insight-item__icon insight-item__icon--orange" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="insight-item__content">
+                  <p class="insight-item__text">Urban Planning shows <strong>20% budget overrun</strong> — review scope changes and contractor bills.</p>
+                  <span class="insight-item__tag insight-item__tag--orange">Warning</span>
+                </div>
+              </li>
+
+              <li class="insight-item insight-item--normal" role="listitem">
+                <div class="insight-item__icon insight-item__icon--green" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="insight-item__content">
+                  <p class="insight-item__text">Education department spending pattern is <strong>normal</strong> with &lt;2% deviation from allocation.</p>
+                  <span class="insight-item__tag insight-item__tag--green">Normal</span>
+                </div>
+              </li>
+
+              <li class="insight-item insight-item--normal" role="listitem">
+                <div class="insight-item__icon insight-item__icon--green" aria-hidden="true">
+                  <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+                <div class="insight-item__content">
+                  <p class="insight-item__text">Health Services and Street Lighting are within <strong>acceptable variance</strong> — no action needed.</p>
+                  <span class="insight-item__tag insight-item__tag--green">Normal</span>
+                </div>
+              </li>
+
+            </ul>
+
+            <button class="btn btn--outline btn--full" type="button">
+              View Full AI Report
+            </button>
+          </div>
+        </section>
+
+        <!-- ┌─────────────────────────────────────────┐
+             │  CARD 4 — SPENDING DEVIATION CHART     │
+             └─────────────────────────────────────────┘ -->
+        <section class="card card--chart" aria-labelledby="chartTitle">
+          <header class="card__header">
+            <div class="card__header-icon card__header-icon--indigo" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+            <h2 class="card__title" id="chartTitle">Spending Deviation Overview</h2>
+            <div class="chart-legend" role="list" aria-label="Chart legend">
+              <span class="chart-legend__item" role="listitem">
+                <span class="chart-legend__dot chart-legend__dot--over" aria-hidden="true"></span>Over
+              </span>
+              <span class="chart-legend__item" role="listitem">
+                <span class="chart-legend__dot chart-legend__dot--under" aria-hidden="true"></span>Under
+              </span>
+              <span class="chart-legend__item" role="listitem">
+                <span class="chart-legend__dot chart-legend__dot--normal" aria-hidden="true"></span>Normal
+              </span>
+            </div>
+          </header>
+
+          <div class="card__body">
+            <!-- Bar chart — pure CSS/SVG, no external library -->
+            <div class="bar-chart" role="img" aria-label="Spending deviation bar chart for all departments">
+              <div class="bar-chart__y-axis" aria-hidden="true">
+                <span>+50%</span>
+                <span>+25%</span>
+                <span>0%</span>
+                <span>-25%</span>
+                <span>-50%</span>
+              </div>
+              <div class="bar-chart__plot">
+                <!-- Baseline zero line -->
+                <div class="bar-chart__baseline" aria-hidden="true"></div>
+                <!-- Grid lines -->
+                <div class="bar-chart__grid" aria-hidden="true">
+                  <div class="bar-chart__grid-line"></div>
+                  <div class="bar-chart__grid-line"></div>
+                  <div class="bar-chart__grid-line bar-chart__grid-line--zero"></div>
+                  <div class="bar-chart__grid-line"></div>
+                  <div class="bar-chart__grid-line"></div>
+                </div>
+
+                <div class="bar-group">
+                  <div class="bar bar--pos bar--high" style="--h:70%" aria-label="Road Infrastructure: +35% deviation">
+                    <span class="bar__value" aria-hidden="true">+35%</span>
+                  </div>
+                  <span class="bar__label" aria-hidden="true">Road</span>
+                </div>
+
+                <div class="bar-group">
+                  <div class="bar bar--pos bar--high" style="--h:80%" aria-label="Solid Waste: +40% deviation">
+                    <span class="bar__value" aria-hidden="true">+40%</span>
+                  </div>
+                  <span class="bar__label" aria-hidden="true">Waste</span>
+                </div>
+
+                <div class="bar-group">
+                  <div class="bar bar--pos bar--high" style="--h:60%" aria-label="Public Works: +30% deviation">
+                    <span class="bar__value" aria-hidden="true">+30%</span>
+                  </div>
+                  <span class="bar__label" aria-hidden="true">Public Wks</span>
+                </div>
+
+                <div class="bar-group">
+                  <div class="bar bar--neg bar--medium" style="--h:36%" aria-label="Water Supply: -18% deviation">
+                    <span class="bar__value" aria-hidden="true">-18%</span>
+                  </div>
+                  <span class="bar__label" aria-hidden="true">Water</span>
+                </div>
+
+                <div class="bar-group">
+                  <div class="bar bar--pos bar--medium" style="--h:40%" aria-label="Urban Planning: +20% deviation">
+                    <span class="bar__value" aria-hidden="true">+20%</span>
+                  </div>
+                  <span class="bar__label" aria-hidden="true">Urban</span>
+                </div>
+
+                <div class="bar-group">
+                  <div class="bar bar--neg bar--normal" style="--h:4%" aria-label="Education: -1.2% deviation">
+                    <span class="bar__value" aria-hidden="true">-1%</span>
+                  </div>
+                  <span class="bar__label" aria-hidden="true">Education</span>
+                </div>
+
+                <div class="bar-group">
+                  <div class="bar bar--neg bar--normal" style="--h:4%" aria-label="Health: -1.7% deviation">
+                    <span class="bar__value" aria-hidden="true">-2%</span>
+                  </div>
+                  <span class="bar__label" aria-hidden="true">Health</span>
+                </div>
+
+                <div class="bar-group">
+                  <div class="bar bar--neg bar--normal" style="--h:4%" aria-label="Parks: -2.2% deviation">
+                    <span class="bar__value" aria-hidden="true">-2%</span>
+                  </div>
+                  <span class="bar__label" aria-hidden="true">Parks</span>
+                </div>
+
+                <div class="bar-group">
+                  <div class="bar bar--neg bar--normal" style="--h:2%" aria-label="Street Lighting: -0.8% deviation">
+                    <span class="bar__value" aria-hidden="true">-1%</span>
+                  </div>
+                  <span class="bar__label" aria-hidden="true">Lighting</span>
+                </div>
+
+              </div><!-- /bar-chart__plot -->
+            </div><!-- /bar-chart -->
+
+            <p class="chart-caption">
+              Bars above the baseline indicate <strong>over-spending</strong>; below indicates <strong>under-spending</strong>.
+              Red bars represent High Risk, orange Medium Risk, green Normal.
+            </p>
+          </div>
+        </section>
+
+      </div><!-- /grid-bottom -->
+
+    </div><!-- /main__container -->
+  </main>
+
+  <!-- ═══════════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════════ -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__container">
+      <p class="footer__text">
+        <svg class="footer__icon" viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true">
+          <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+        </svg>
+        AI-powered anomaly detection helps improve transparency in governance.
+      </p>
+      <p class="footer__copy">
+        &copy; 2025 ArthRakshak AI &mdash; Smart Civic Platform &middot;
+        <a href="#" class="footer__link">Privacy Policy</a> &middot;
+        <a href="#" class="footer__link">Terms of Use</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════
+       MINIMAL JAVASCRIPT — interactions only
+  ════════════════════════════════════════════════ -->
+  <script src="anomaly.js"></script>
+</body>
+</html>
