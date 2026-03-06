@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Civic Assistant – ArthRakshak AI</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <span class="logo-mark">⬡</span>
+      <span class="logo-text">ArthRakshak <span class="logo-accent">AI</span></span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#">Dashboard</a></li>
+      <li><a href="#">Anomaly Detection</a></li>
+      <li><a href="#" class="active">AI Assistant</a></li>
+      <li><a href="#" class="nav-logout">Logout <span>→</span></a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <div class="header-badge">CIVIC INTELLIGENCE PLATFORM</div>
+    <h1 class="page-title">AI Civic Assistant</h1>
+    <p class="page-subtitle">Ask questions about municipal spending, anomalies, and insights.</p>
+    <div class="header-decoration">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <main class="main-layout">
+
+    <!-- CHAT SECTION -->
+    <section class="chat-section">
+      <!-- Chat window -->
+      <div class="chat-window" id="chatWindow">
+        <!-- AI greeting -->
+        <div class="message ai-message">
+          <div class="avatar ai-avatar">AI</div>
+          <div class="bubble">
+            <p>Hello! I'm your <strong>Civic Intelligence Assistant</strong>. I have access to real-time municipal spending data, infrastructure reports, and anomaly alerts.</p>
+            <p>How can I help you today?</p>
+            <span class="timestamp">10:00 AM</span>
+          </div>
+        </div>
+
+        <!-- Example user message -->
+        <div class="message user-message">
+          <div class="bubble">
+            Why is road maintenance spending high this month?
+            <span class="timestamp">10:02 AM</span>
+          </div>
+          <div class="avatar user-avatar">U</div>
+        </div>
+
+        <!-- Example AI response -->
+        <div class="message ai-message">
+          <div class="avatar ai-avatar">AI</div>
+          <div class="bubble">
+            <p>Road maintenance expenditure increased <strong>34% above baseline</strong> this month due to emergency repairs triggered by heavy rainfall in Districts 4, 7, and 9.</p>
+            <ul class="insight-list">
+              <li>₹2.4 Cr allocated for pothole rectification</li>
+              <li>₹0.8 Cr for drainage overflow repairs</li>
+              <li>₹1.1 Cr for bridge structural inspection</li>
+            </ul>
+            <p>This falls within emergency procurement guidelines. No anomaly flag has been raised.</p>
+            <span class="timestamp">10:02 AM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Suggestion chips -->
+      <div class="suggestion-chips" id="suggestionChips">
+        <span class="chip-label">Try asking:</span>
+        <button class="chip" onclick="sendChip(this)">Show spending anomalies</button>
+        <button class="chip" onclick="sendChip(this)">Which department overspent?</button>
+        <button class="chip" onclick="sendChip(this)">Budget summary</button>
+        <button class="chip" onclick="sendChip(this)">Infrastructure spending trends</button>
+      </div>
+
+      <!-- Input area -->
+      <div class="input-area">
+        <div class="input-wrapper">
+          <input
+            type="text"
+            id="userInput"
+            class="chat-input"
+            placeholder="Ask something about city spending..."
+            autocomplete="off"
+            onkeydown="handleKey(event)"
+          />
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+        <p class="input-hint">ArthRakshak AI · Powered by civic data intelligence</p>
+      </div>
+    </section>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="pulse-dot"></span>
+        Quick Insights
+      </div>
+
+      <div class="insight-card alert">
+        <div class="insight-icon">⚠</div>
+        <div class="insight-body">
+          <strong>Road Dept. Overspending</strong>
+          <span>+34% above Q3 average</span>
+        </div>
+      </div>
+
+      <div class="insight-card warn">
+        <div class="insight-icon">↓</div>
+        <div class="insight-body">
+          <strong>Water Supply Maintenance</strong>
+          <span>18% below planned budget</span>
+        </div>
+      </div>
+
+      <div class="insight-card ok">
+        <div class="insight-icon">✓</div>
+        <div class="insight-body">
+          <strong>Education Sector</strong>
+          <span>Within budget — on track</span>
+        </div>
+      </div>
+
+      <div class="insight-card warn">
+        <div class="insight-icon">↑</div>
+        <div class="insight-body">
+          <strong>Sanitation Contracts</strong>
+          <span>3 flagged for review</span>
+        </div>
+      </div>
+
+      <div class="insight-card ok">
+        <div class="insight-icon">✓</div>
+        <div class="insight-body">
+          <strong>Health Infrastructure</strong>
+          <span>Disbursement on schedule</span>
+        </div>
+      </div>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-stats">
+        <div class="stat-item">
+          <span class="stat-num">₹142 Cr</span>
+          <span class="stat-label">Total Spend (Oct)</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">7</span>
+          <span class="stat-label">Active Anomalies</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">23</span>
+          <span class="stat-label">Depts. Monitored</span>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        Last synced: <strong>2 min ago</strong>
+      </div>
+    </aside>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="page-footer">
+    <span class="footer-logo">⬡ ArthRakshak AI</span>
+    <span class="footer-tagline">AI-powered governance assistant</span>
+    <span class="footer-copy">© 2025 Civic Intelligence Platform</span>
+  </footer>
+
+  <script>
+    const responses = {
+      "show spending anomalies": `<p>I've detected <strong>7 active anomalies</strong> this billing cycle:</p><ul class="insight-list"><li>Road Dept — 34% overspend vs. Q3 average</li><li>Sanitation — 3 contracts with unusual vendor recurrence</li><li>Parks & Recreation — Duplicate invoice pattern detected</li></ul><p>Would you like a detailed breakdown of any specific department?</p>`,
+      "which department overspent?": `<p>The top 3 departments by overspend this quarter:</p><ul class="insight-list"><li><strong>Roads & Infrastructure</strong> — ₹4.3 Cr over budget</li><li><strong>Sanitation Services</strong> — ₹1.8 Cr over budget</li><li><strong>Urban Development</strong> — ₹0.9 Cr over budget</li></ul>`,
+      "budget summary": `<p>Municipal budget snapshot for <strong>October 2025</strong>:</p><ul class="insight-list"><li>Total Allocated: ₹168 Cr</li><li>Total Spent: ₹142 Cr (84.5%)</li><li>Remaining: ₹26 Cr (15.5%)</li><li>Flagged Expenditure: ₹6.2 Cr</li></ul>`,
+      "infrastructure spending trends": `<p>Infrastructure spending over the last 6 months shows a <strong>progressive upward trend</strong>:</p><ul class="insight-list"><li>May–Jun: ₹18.2 Cr (baseline)</li><li>Jul–Aug: ₹21.4 Cr (+17.6%)</li><li>Sep–Oct: ₹28.7 Cr (+34.1%)</li></ul><p>Monsoon season is the primary driver. Historical trend correlation: 92%.</p>`,
+    };
+
+    const defaultResponse = `<p>That's a great question. Let me analyze the municipal data for you.</p><p>Based on current records, I can see relevant patterns in the civic spending database. For a more detailed breakdown, please try one of the suggested queries or rephrase your question with a specific department name.</p>`;
+
+    function getTimestamp() {
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function appendMessage(content, role) {
+      const win = document.getElementById('chatWindow');
+      const div = document.createElement('div');
+      div.className = `message ${role}-message`;
+
+      if (role === 'user') {
+        div.innerHTML = `<div class="bubble">${content}<span class="timestamp">${getTimestamp()}</span></div><div class="avatar user-avatar">U</div>`;
+      } else {
+        div.innerHTML = `<div class="avatar ai-avatar">AI</div><div class="bubble">${content}<span class="timestamp">${getTimestamp()}</span></div>`;
+        div.style.opacity = '0';
+        div.style.transform = 'translateY(8px)';
+        win.appendChild(div);
+        setTimeout(() => {
+          div.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+          div.style.opacity = '1';
+          div.style.transform = 'translateY(0)';
+        }, 50);
+        win.scrollTop = win.scrollHeight;
+        return;
+      }
+      win.appendChild(div);
+      win.scrollTop = win.scrollHeight;
+    }
+
+    function showTyping() {
+      const win = document.getElementById('chatWindow');
+      const div = document.createElement('div');
+      div.className = 'message ai-message typing-indicator';
+      div.id = 'typingIndicator';
+      div.innerHTML = `<div class="avatar ai-avatar">AI</div><div class="bubble"><span class="dot-pulse"></span><span class="dot-pulse"></span><span class="dot-pulse"></span></div>`;
+      win.appendChild(div);
+      win.scrollTop = win.scrollHeight;
+    }
+
+    function removeTyping() {
+      const el = document.getElementById('typingIndicator');
+      if (el) el.remove();
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('userInput');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      appendMessage(text, 'user');
+      showTyping();
+      const key = text.toLowerCase();
+      const reply = responses[key] || defaultResponse;
+      setTimeout(() => {
+        removeTyping();
+        appendMessage(reply, 'ai');
+      }, 1100);
+    }
+
+    function sendChip(btn) {
+      const text = btn.textContent;
+      document.getElementById('userInput').value = text;
+      sendMessage();
+    }
+
+    function handleKey(e) {
+      if (e.key === 'Enter') sendMessage();
+    }
+
+    document.getElementById('hamburger').addEventListener('click', function () {
+      document.querySelector('.nav-links').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
