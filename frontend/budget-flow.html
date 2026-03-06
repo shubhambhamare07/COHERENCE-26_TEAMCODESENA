@@ -1,793 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ArthRakshak AI — Budget Flow Analysis</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="budget-flow.css" />
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ArthRakshak — Budget Flow</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f7f9fc;color:#0f172a;font-size:14px}
+a{text-decoration:none;color:inherit}
+.topbar{background:#002147;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:3px solid #e85d00;box-shadow:0 2px 14px rgba(0,0,0,.3)}
+.tb-brand{display:flex;align-items:center;gap:10px}
+.tb-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.tb-title{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#fff;line-height:1.2}
+.tb-title small{display:block;font-size:9px;font-weight:400;opacity:.6;letter-spacing:1.5px;text-transform:uppercase}
+.tb-nav{display:flex;gap:2px}
+.tb-nav a{color:rgba(255,255,255,.75);font-size:12px;padding:6px 9px;border-radius:5px;white-space:nowrap;transition:.15s}
+.tb-nav a:hover,.tb-nav a.act{background:rgba(255,255,255,.14);color:#fff}
+.tb-right{display:flex;align-items:center;gap:10px}
+.tb-user{display:flex;align-items:center;gap:8px}
+.avatar{width:30px;height:30px;background:#e85d00;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.uinfo{text-align:right}.uname{font-size:12px;font-weight:600;color:#fff}.udept{font-size:10px;opacity:.6;color:#fff}
+.notif{position:relative;background:none;border:none;color:rgba(255,255,255,.8);font-size:17px;cursor:pointer;padding:4px}
+.nbadge{position:absolute;top:0;right:0;width:14px;height:14px;background:#e85d00;border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+.btn-logout{padding:5px 12px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.sidebar{width:210px;background:#001530;position:fixed;top:58px;left:0;bottom:0;overflow-y:auto;z-index:900;padding:12px 0}
+.sb-sec{padding:9px 16px 3px;font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.28)}
+.sidebar a{display:flex;align-items:center;gap:9px;padding:9px 16px;color:rgba(255,255,255,.62);font-size:13px;transition:.15s;border-left:3px solid transparent}
+.sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:rgba(232,93,0,.5)}
+.sidebar a.act{background:rgba(255,255,255,.11);color:#fff;border-left-color:#e85d00}
+.main{margin-left:210px;margin-top:58px;padding:24px 28px;min-height:calc(100vh - 58px)}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #e2e8f0}
+.ph h1{font-family:Georgia,serif;font-size:20px;font-weight:700;color:#002147}
+.ph p{font-size:13px;color:#64748b;margin-top:3px}
+.bc{font-size:11.5px;color:#64748b;margin-bottom:4px}.bc a{color:#003580}
+.card{background:#fff;border:1px solid #d0dae8;border-radius:10px;box-shadow:0 1px 4px rgba(0,33,71,.08);overflow:hidden;margin-bottom:20px}
+.ch{padding:13px 17px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between}
+.ct{font-family:Georgia,serif;font-size:14px;font-weight:700;color:#002147}
+.cb{padding:20px}
+.cr2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+.flow-chain{display:flex;align-items:center;overflow-x:auto;padding:10px 0;gap:0;min-width:600px}
+.fnode{display:flex;flex-direction:column;align-items:center;min-width:110px}
+.fball{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,0,0,.15);color:#fff}
+.fname{font-weight:700;font-size:12px;color:#002147;text-align:center;margin-top:8px}
+.fsub{font-size:10px;color:#64748b;text-align:center}
+.farrow{flex:1;display:flex;flex-direction:column;align-items:center;padding-bottom:24px;min-width:50px}
+.fline{height:2px;align-self:stretch;margin-top:36px;position:relative}
+.fline::after{content:'▶';position:absolute;right:-6px;top:-9px;font-size:14px}
+.fpct{font-size:10px;color:#64748b;margin-top:4px;white-space:nowrap}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:#002147;color:#fff;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;white-space:nowrap}
+tbody tr{border-bottom:1px solid #f0f3f8;transition:.13s}
+tbody tr:nth-child(even){background:#f7f9fc}
+tbody tr:hover{background:#ddeeff}
+td{padding:9px 12px;color:#334155;vertical-align:middle}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.bg{background:#e0f5ea;color:#1a7a4a}.bn{background:#ddeeff;color:#002147}.bo{background:#fff0e6;color:#e85d00}
+@media(max-width:1100px){.tb-nav{display:none}.cr2{grid-template-columns:1fr}}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}}
+</style>
 </head>
 <body>
-
-  <!-- ══════════════════════════════════════════════════
-       NAVBAR
-  ═══════════════════════════════════════════════════ -->
-  <header class="navbar" role="banner">
-    <div class="navbar__container">
-
-      <a href="#" class="navbar__brand" aria-label="ArthRakshak AI Home">
-        <span class="navbar__brand-icon" aria-hidden="true">
-          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="32" height="32" rx="8" fill="url(#ng)"/>
-            <path d="M8 22 L16 10 L24 22" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M11 18 L21 18" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            <circle cx="16" cy="10" r="2" fill="white"/>
-            <defs>
-              <linearGradient id="ng" x1="0" y1="0" x2="32" y2="32">
-                <stop stop-color="#4f46e5"/><stop offset="1" stop-color="#2563eb"/>
-              </linearGradient>
-            </defs>
-          </svg>
-        </span>
-        <span class="navbar__brand-text">ArthRakshak <em>AI</em></span>
-      </a>
-
-      <button class="navbar__toggle" id="navToggle"
-              aria-label="Toggle navigation" aria-expanded="false" aria-controls="navMenu">
-        <span class="navbar__toggle-bar"></span>
-        <span class="navbar__toggle-bar"></span>
-        <span class="navbar__toggle-bar"></span>
-      </button>
-
-      <nav class="navbar__nav" id="navMenu" role="navigation" aria-label="Main navigation">
-        <ul class="navbar__list">
-          <li class="navbar__item">
-            <a href="#" class="navbar__link">
-              <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="2" y="2" width="6" height="6" rx="1.5"/><rect x="10" y="2" width="6" height="6" rx="1.5"/><rect x="2" y="10" width="6" height="6" rx="1.5"/><rect x="10" y="10" width="6" height="6" rx="1.5"/></svg>
-              Dashboard
-            </a>
-          </li>
-          <li class="navbar__item navbar__item--active">
-            <a href="#" class="navbar__link navbar__link--active" aria-current="page">
-              <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 9h4l3-6 4 12 2-6h1"/></svg>
-              Budget Flow
-            </a>
-          </li>
-          <li class="navbar__item">
-            <a href="anomaly.html" class="navbar__link">
-              <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 3L2 15h14L9 3z"/><path d="M9 8v4"/><circle cx="9" cy="13.5" r=".5" fill="currentColor"/></svg>
-              Anomaly Detection
-            </a>
-          </li>
-          <li class="navbar__item">
-            <a href="#" class="navbar__link">
-              <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="9" cy="9" r="7"/><path d="M9 5v4l3 2"/></svg>
-              Risk Score
-            </a>
-          </li>
-          <li class="navbar__item">
-            <a href="#" class="navbar__link">
-              <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 2h7l4 4v10a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z"/><path d="M11 2v4h4M6 9h6M6 12h4"/></svg>
-              Reports
-            </a>
-          </li>
-          <li class="navbar__item">
-            <a href="#" class="navbar__link navbar__link--ai">
-              <svg class="nav-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 2a5 5 0 015 5 5 5 0 01-5 5 5 5 0 01-5-5 5 5 0 015-5z"/><path d="M6.5 8.5l2 2 3-3"/></svg>
-              AI Assistant
-            </a>
-          </li>
-        </ul>
-      </nav>
-
+<header class="topbar">
+  <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<small>National Budget Intelligence Platform</small></div></div>
+  <nav class="tb-nav">
+    <a href="index.html">🏠</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html" class="act">💸 Flow</a>
+    <a href="risk_score.html">🛡️ Risk</a><a href="anomaly.html">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a><a href="ai_assistant.html">🤖 AI</a>
+  </nav>
+  <div class="tb-right">
+    <button class="notif">🔔<span class="nbadge">3</span></button>
+    <div class="tb-user"><div class="uinfo"><div class="uname" id="u-name">—</div><div class="udept" id="u-dept">—</div></div><div class="avatar" id="u-avatar">?</div></div>
+    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+  </div>
+</header>
+<aside class="sidebar">
+  <div class="sb-sec">Main</div><a href="index.html">🏠 Portal Home</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html" class="act">💸 Budget Flow</a>
+  <div class="sb-sec">Intelligence</div><a href="risk_score.html">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a>
+  <div class="sb-sec">Tools</div><a href="simulator.html">🔬 Simulator</a><a href="ai_assistant.html">🤖 AI Assistant</a>
+</aside>
+<main class="main">
+  <div class="ph">
+    <div><div class="bc"><a href="index.html">Home</a> › Budget Flow</div><h1>💸 Budget Flow Visualization</h1><p>Complete money trail from Union Budget to end beneficiaries across all government tiers.</p></div>
+  </div>
+  <div class="card">
+    <div class="ch"><span class="ct">🔄 Fund Flow Chain — Government to Beneficiary</span></div>
+    <div class="cb">
+      <div class="flow-chain" id="flow-chain"></div>
     </div>
-  </header>
+  </div>
+  <div class="cr2">
+    <div class="card" style="margin-bottom:0"><div class="ch"><span class="ct">Budget Distribution by Tier</span></div><div class="cb"><canvas id="flowBar" height="260"></canvas></div></div>
+    <div class="card" style="margin-bottom:0"><div class="ch"><span class="ct">Monthly Disbursement Trend</span></div><div class="cb"><canvas id="disbLine" height="260"></canvas></div></div>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <div class="ch"><span class="ct">📋 Recent Fund Transfer Log</span></div>
+    <div class="tw"><table><thead><tr><th>Txn ID</th><th>From</th><th>To</th><th>Amount</th><th>Date</th><th>Scheme</th><th>Status</th></tr></thead><tbody id="txn-tbody"></tbody></table></div>
+  </div>
+</main>
+<script src="data.js"></script>
+<script>
+const user=getUser();if(!user)window.location.href='login.html';
+setTopbar(user);
+const schemes=getSchemes(user);
+const NODES=[
+  {label:'Union Budget',icon:'🏛️',color:'#002147',sub:'Min. of Finance'},
+  {label:'Central Ministry',icon:'🏢',color:'#003580',sub:'Nodal Ministry'},
+  {label:'State Treasury',icon:'🏦',color:'#e85d00',sub:'State Finance'},
+  {label:'District Office',icon:'🏬',color:'#1a7a4a',sub:'Dist. Collector'},
+  {label:'Block/Taluka',icon:'🏘️',color:'#6366f1',sub:'Block Dev.'},
+  {label:'Beneficiaries',icon:'👥',color:'#14b8a6',sub:'End Recipients'}
+];
+const chain=document.getElementById('flow-chain');
+NODES.forEach((n,i)=>{
+  const nd=document.createElement('div');nd.className='fnode';
+  nd.innerHTML=`<div class="fball" style="background:${n.color}">${n.icon}</div><div class="fname">${n.label}</div><div class="fsub">${n.sub}</div>`;
+  chain.appendChild(nd);
+  if(i<NODES.length-1){
+    const pcts=[100,92,88,85,82];
+    const ar=document.createElement('div');ar.className='farrow';
+    ar.innerHTML=`<div class="fline" style="background:linear-gradient(90deg,${n.color},${NODES[i+1].color});flex:1;align-self:stretch;margin-top:36px;position:relative"><span style="position:absolute;right:-6px;top:-9px;font-size:14px;color:${NODES[i+1].color}">▶</span></div><div class="fpct">${pcts[i]}%</div>`;
+    chain.appendChild(ar);
+  }
+});
 
-  <!-- ══════════════════════════════════════════════════
-       MAIN
-  ═══════════════════════════════════════════════════ -->
-  <main class="main" role="main" id="main-content">
-    <div class="main__container">
+const txns=schemes.slice(0,8).map((s,i)=>({id:'TXN-2025'+String(i+1).padStart(5,'0'),from:['Min. of Finance','State Treasury','District Office'][i%3],to:['State Treasury','District Office','Block Office'][i%3],amount:'₹'+(Math.random()*500+50).toFixed(0)+' Cr',date:String(Math.floor(Math.random()*28)+1).padStart(2,'0')+'/0'+String(Math.floor(Math.random()*3)+1)+'/2025',scheme:s.name.substring(0,28),status:['Credited','Pending','Credited','In Transit'][i%4]}));
+document.getElementById('txn-tbody').innerHTML=txns.map(t=>`<tr><td><code style="font-size:11px;background:#f0f3f8;padding:2px 5px;border-radius:3px">${t.id}</code></td><td style="font-size:12px">${t.from}</td><td style="font-size:12px">${t.to}</td><td style="color:#1a7a4a;font-weight:600">${t.amount}</td><td style="font-size:12px;color:#64748b">${t.date}</td><td style="font-size:12px">${t.scheme}…</td><td><span class="badge ${t.status==='Credited'?'bg':t.status==='Pending'?'bo':'bn'}">${t.status}</span></td></tr>`).join('');
 
-      <!-- ── PAGE HEADER ───────────────────────────── -->
-      <section class="page-header bf-fadein" aria-labelledby="pageTitle">
-        <div class="page-header__top">
-          <nav aria-label="Breadcrumb">
-            <ol class="breadcrumb">
-              <li class="breadcrumb__item"><a href="#" class="breadcrumb__link">Dashboard</a></li>
-              <li class="breadcrumb__sep" aria-hidden="true">›</li>
-              <li class="breadcrumb__item breadcrumb__item--current" aria-current="page">Budget Flow</li>
-            </ol>
-          </nav>
-          <div class="page-header__actions">
-            <button class="btn btn--ghost btn--sm" type="button">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1 4h14M4 8h8M6 12h4"/></svg>
-              Filter
-            </button>
-            <button class="btn btn--ghost btn--sm" type="button">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 11V3M8 11L5 8M8 11L11 8"/><path d="M3 13h10"/></svg>
-              Export
-            </button>
-            <div class="period-badge" role="status">
-              <span class="period-badge__dot" aria-hidden="true"></span>
-              FY 2024–25
-            </div>
-          </div>
-        </div>
-        <div class="page-header__content">
-          <div class="page-header__text">
-            <h1 class="page-header__title" id="pageTitle">
-              Budget <span class="page-header__title-accent">Flow</span> Analysis
-            </h1>
-            <p class="page-header__subtitle">
-              Track how municipal funds move across departments — allocations, spending, and remaining balances at a glance.
-            </p>
-          </div>
-          <div class="page-header__meta" role="region" aria-label="Period summary">
-            <div class="meta-chip">
-              <span class="meta-chip__label">Total Municipal Budget</span>
-              <span class="meta-chip__value">₹ 124.6 Cr</span>
-            </div>
-            <div class="meta-chip meta-chip--spent">
-              <span class="meta-chip__label">Funds Released</span>
-              <span class="meta-chip__value">₹ 89.2 Cr</span>
-            </div>
-            <div class="meta-chip meta-chip--remain">
-              <span class="meta-chip__label">Remaining</span>
-              <span class="meta-chip__value">₹ 35.4 Cr</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── KPI ROW ────────────────────────────────── -->
-      <section class="kpi-strip bf-fadein bf-fadein--d1" aria-label="Key financial indicators">
-        <article class="kpi-card kpi-card--indigo" tabindex="0">
-          <div class="kpi-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg></div>
-          <div class="kpi-card__body">
-            <span class="kpi-card__value">71.6%</span>
-            <span class="kpi-card__label">Overall Utilisation</span>
-            <span class="kpi-card__trend kpi-card__trend--up" aria-label="Up 4.2% from last quarter">↑ 4.2% vs last qtr</span>
-          </div>
-        </article>
-        <article class="kpi-card kpi-card--blue" tabindex="0">
-          <div class="kpi-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7"/></svg></div>
-          <div class="kpi-card__body">
-            <span class="kpi-card__value">5</span>
-            <span class="kpi-card__label">Departments Tracked</span>
-            <span class="kpi-card__trend kpi-card__trend--neutral" aria-label="No change from last quarter">→ No change</span>
-          </div>
-        </article>
-        <article class="kpi-card kpi-card--red" tabindex="0">
-          <div class="kpi-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div>
-          <div class="kpi-card__body">
-            <span class="kpi-card__value">3</span>
-            <span class="kpi-card__label">Active Budget Alerts</span>
-            <span class="kpi-card__trend kpi-card__trend--down" aria-label="Down 1 from last month">↓ 1 from last month</span>
-          </div>
-        </article>
-        <article class="kpi-card kpi-card--green" tabindex="0">
-          <div class="kpi-card__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
-          <div class="kpi-card__body">
-            <span class="kpi-card__value">2</span>
-            <span class="kpi-card__label">On-Track Depts</span>
-            <span class="kpi-card__trend kpi-card__trend--up" aria-label="Up 1 from last month">↑ 1 from last month</span>
-          </div>
-        </article>
-      </section>
-
-      <!-- ══════════════════════════════════════════════
-           SECTION 1 — BUDGET FLOW VISUALISATION
-      ═════════════════════════════════════════════════ -->
-      <section class="bf-section bf-fadein bf-fadein--d2" aria-labelledby="flowTitle">
-        <div class="card flow-card">
-          <header class="card__header flow-card__header">
-            <div class="card__header-icon card__header-icon--indigo" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h4l3-8 4 16 3-8h6"/></svg>
-            </div>
-            <div class="flow-card__titles">
-              <h2 class="card__title" id="flowTitle">Budget Flow Visualisation</h2>
-              <p class="flow-card__subtitle">Department → Allocation → Actual Spending</p>
-            </div>
-            <div class="flow-card__controls" role="group" aria-label="Chart view options">
-              <button class="view-btn view-btn--active" data-view="sankey" type="button">Flow</button>
-              <button class="view-btn" data-view="bar" type="button">Bar</button>
-              <button class="view-btn" data-view="donut" type="button">Donut</button>
-            </div>
-          </header>
-
-          <div class="card__body flow-card__body">
-
-            <!-- ── SANKEY VIEW (default) ─────────── -->
-            <div class="chart-view chart-view--active" id="view-sankey" role="img" aria-label="Sankey flow diagram showing budget allocation and spending by department">
-              <div class="sankey">
-
-                <!-- Column 1: Source label -->
-                <div class="sankey__col sankey__col--source">
-                  <div class="sankey__source-node" aria-label="Municipal Corporation total budget 124.6 Crore">
-                    <div class="sankey__source-box">
-                      <span class="sankey__source-icon" aria-hidden="true">🏛</span>
-                      <span class="sankey__source-name">Municipal<br>Corporation</span>
-                      <span class="sankey__source-amount">₹ 124.6 Cr</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Column 2: SVG flow paths -->
-                <div class="sankey__col sankey__col--paths" aria-hidden="true">
-                  <svg class="sankey__svg" viewBox="0 0 200 420" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                      <linearGradient id="flowRoad"    x1="0" x2="1"><stop stop-color="#4f46e5" stop-opacity=".7"/><stop offset="1" stop-color="#2563eb" stop-opacity=".7"/></linearGradient>
-                      <linearGradient id="flowWater"   x1="0" x2="1"><stop stop-color="#4f46e5" stop-opacity=".6"/><stop offset="1" stop-color="#0ea5e9" stop-opacity=".6"/></linearGradient>
-                      <linearGradient id="flowEdu"     x1="0" x2="1"><stop stop-color="#4f46e5" stop-opacity=".6"/><stop offset="1" stop-color="#8b5cf6" stop-opacity=".6"/></linearGradient>
-                      <linearGradient id="flowHealth"  x1="0" x2="1"><stop stop-color="#4f46e5" stop-opacity=".5"/><stop offset="1" stop-color="#14b8a6" stop-opacity=".5"/></linearGradient>
-                      <linearGradient id="flowSanit"   x1="0" x2="1"><stop stop-color="#4f46e5" stop-opacity=".5"/><stop offset="1" stop-color="#22c55e" stop-opacity=".5"/></linearGradient>
-                    </defs>
-                    <!-- Roads ~26% → y≈42 -->
-                    <path d="M0,200 C100,200 100,42  200,42"  fill="none" stroke="url(#flowRoad)"   stroke-width="22" stroke-linecap="round"/>
-                    <!-- Water ~18% → y≈116 -->
-                    <path d="M0,200 C100,200 100,116 200,116" fill="none" stroke="url(#flowWater)"  stroke-width="16" stroke-linecap="round"/>
-                    <!-- Education ~22% → y≈200 -->
-                    <path d="M0,200 C100,200 100,200 200,200" fill="none" stroke="url(#flowEdu)"    stroke-width="20" stroke-linecap="round"/>
-                    <!-- Healthcare ~20% → y≈286 -->
-                    <path d="M0,200 C100,200 100,286 200,286" fill="none" stroke="url(#flowHealth)" stroke-width="18" stroke-linecap="round"/>
-                    <!-- Sanitation ~14% → y≈368 -->
-                    <path d="M0,200 C100,200 100,368 200,368" fill="none" stroke="url(#flowSanit)"  stroke-width="13" stroke-linecap="round"/>
-                    <!-- Central node -->
-                    <ellipse cx="0" cy="200" rx="6" ry="80" fill="#4f46e5" opacity=".25"/>
-                  </svg>
-                </div>
-
-                <!-- Column 3: Department nodes -->
-                <div class="sankey__col sankey__col--depts">
-
-                  <div class="sankey__dept-node" style="--node-color:#4f46e5" aria-label="Roads: 32.4 Crore allocated, 29.1 Crore spent">
-                    <div class="sankey__dept-header">
-                      <span class="sankey__dept-dot" aria-hidden="true"></span>
-                      <span class="sankey__dept-name">Roads</span>
-                      <span class="sankey__dept-alloc">₹ 32.4 Cr</span>
-                    </div>
-                    <div class="sankey__dept-bar" role="progressbar" aria-valuenow="89" aria-valuemin="0" aria-valuemax="100" aria-label="89% utilised">
-                      <div class="sankey__dept-fill" style="--pct:89;--bar-color:#4f46e5"></div>
-                    </div>
-                    <div class="sankey__dept-row">
-                      <span class="sankey__spent">Spent ₹ 28.8 Cr</span>
-                      <span class="sankey__pct sankey__pct--warn">89%</span>
-                    </div>
-                  </div>
-
-                  <div class="sankey__dept-node" style="--node-color:#0ea5e9" aria-label="Water Supply: 22.1 Crore allocated, 11.5 Crore spent">
-                    <div class="sankey__dept-header">
-                      <span class="sankey__dept-dot" aria-hidden="true"></span>
-                      <span class="sankey__dept-name">Water Supply</span>
-                      <span class="sankey__dept-alloc">₹ 22.1 Cr</span>
-                    </div>
-                    <div class="sankey__dept-bar" role="progressbar" aria-valuenow="52" aria-valuemin="0" aria-valuemax="100" aria-label="52% utilised">
-                      <div class="sankey__dept-fill" style="--pct:52;--bar-color:#0ea5e9"></div>
-                    </div>
-                    <div class="sankey__dept-row">
-                      <span class="sankey__spent">Spent ₹ 11.5 Cr</span>
-                      <span class="sankey__pct sankey__pct--low">52%</span>
-                    </div>
-                  </div>
-
-                  <div class="sankey__dept-node" style="--node-color:#8b5cf6" aria-label="Education: 27.3 Crore allocated, 27.3 Crore spent">
-                    <div class="sankey__dept-header">
-                      <span class="sankey__dept-dot" aria-hidden="true"></span>
-                      <span class="sankey__dept-name">Education</span>
-                      <span class="sankey__dept-alloc">₹ 27.3 Cr</span>
-                    </div>
-                    <div class="sankey__dept-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-label="100% utilised">
-                      <div class="sankey__dept-fill" style="--pct:100;--bar-color:#8b5cf6"></div>
-                    </div>
-                    <div class="sankey__dept-row">
-                      <span class="sankey__spent">Spent ₹ 27.3 Cr</span>
-                      <span class="sankey__pct sankey__pct--full">100%</span>
-                    </div>
-                  </div>
-
-                  <div class="sankey__dept-node" style="--node-color:#14b8a6" aria-label="Healthcare: 24.8 Crore allocated, 17.2 Crore spent">
-                    <div class="sankey__dept-header">
-                      <span class="sankey__dept-dot" aria-hidden="true"></span>
-                      <span class="sankey__dept-name">Healthcare</span>
-                      <span class="sankey__dept-alloc">₹ 24.8 Cr</span>
-                    </div>
-                    <div class="sankey__dept-bar" role="progressbar" aria-valuenow="69" aria-valuemin="0" aria-valuemax="100" aria-label="69% utilised">
-                      <div class="sankey__dept-fill" style="--pct:69;--bar-color:#14b8a6"></div>
-                    </div>
-                    <div class="sankey__dept-row">
-                      <span class="sankey__spent">Spent ₹ 17.1 Cr</span>
-                      <span class="sankey__pct sankey__pct--ok">69%</span>
-                    </div>
-                  </div>
-
-                  <div class="sankey__dept-node" style="--node-color:#22c55e" aria-label="Sanitation: 18 Crore allocated, 4.5 Crore spent">
-                    <div class="sankey__dept-header">
-                      <span class="sankey__dept-dot" aria-hidden="true"></span>
-                      <span class="sankey__dept-name">Sanitation</span>
-                      <span class="sankey__dept-alloc">₹ 18.0 Cr</span>
-                    </div>
-                    <div class="sankey__dept-bar" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" aria-label="25% utilised">
-                      <div class="sankey__dept-fill" style="--pct:25;--bar-color:#22c55e"></div>
-                    </div>
-                    <div class="sankey__dept-row">
-                      <span class="sankey__spent">Spent ₹ 4.5 Cr</span>
-                      <span class="sankey__pct sankey__pct--low">25%</span>
-                    </div>
-                  </div>
-
-                </div><!-- /sankey__col--depts -->
-
-                <!-- Column 4: Spending breakdown -->
-                <div class="sankey__col sankey__col--spend" aria-hidden="true">
-                  <div class="spend-legend">
-                    <div class="spend-legend__title">Spending Split</div>
-                    <div class="spend-legend__row">
-                      <span class="spend-legend__dot" style="background:#4f46e5"></span>
-                      <span class="spend-legend__dept">Roads</span>
-                      <div class="spend-legend__bar-wrap"><div class="spend-legend__bar" style="width:89%;background:#4f46e5"></div></div>
-                      <span class="spend-legend__val">₹28.8Cr</span>
-                    </div>
-                    <div class="spend-legend__row">
-                      <span class="spend-legend__dot" style="background:#0ea5e9"></span>
-                      <span class="spend-legend__dept">Water</span>
-                      <div class="spend-legend__bar-wrap"><div class="spend-legend__bar" style="width:52%;background:#0ea5e9"></div></div>
-                      <span class="spend-legend__val">₹11.5Cr</span>
-                    </div>
-                    <div class="spend-legend__row">
-                      <span class="spend-legend__dot" style="background:#8b5cf6"></span>
-                      <span class="spend-legend__dept">Education</span>
-                      <div class="spend-legend__bar-wrap"><div class="spend-legend__bar" style="width:100%;background:#8b5cf6"></div></div>
-                      <span class="spend-legend__val">₹27.3Cr</span>
-                    </div>
-                    <div class="spend-legend__row">
-                      <span class="spend-legend__dot" style="background:#14b8a6"></span>
-                      <span class="spend-legend__dept">Health</span>
-                      <div class="spend-legend__bar-wrap"><div class="spend-legend__bar" style="width:69%;background:#14b8a6"></div></div>
-                      <span class="spend-legend__val">₹17.1Cr</span>
-                    </div>
-                    <div class="spend-legend__row">
-                      <span class="spend-legend__dot" style="background:#22c55e"></span>
-                      <span class="spend-legend__dept">Sanitation</span>
-                      <div class="spend-legend__bar-wrap"><div class="spend-legend__bar" style="width:25%;background:#22c55e"></div></div>
-                      <span class="spend-legend__val">₹4.5Cr</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div><!-- /sankey -->
-
-              <!-- Chart footer note -->
-              <p class="chart-caption">
-                Flow width represents proportional budget share. Bars show current utilisation. 
-                <strong>Total: ₹89.2 Cr</strong> released of <strong>₹124.6 Cr</strong> allocated.
-              </p>
-            </div>
-
-            <!-- ── BAR VIEW (hidden by default) ──── -->
-            <div class="chart-view" id="view-bar" role="img" aria-label="Grouped bar chart: allocated vs spent by department">
-              <div class="bar-chart-v2" aria-hidden="true">
-                <div class="bcv2__y-axis">
-                  <span>35Cr</span><span>28Cr</span><span>21Cr</span><span>14Cr</span><span>7Cr</span><span>0</span>
-                </div>
-                <div class="bcv2__plot">
-                  <div class="bcv2__grid">
-                    <div class="bcv2__gl"></div><div class="bcv2__gl"></div>
-                    <div class="bcv2__gl"></div><div class="bcv2__gl"></div>
-                    <div class="bcv2__gl"></div><div class="bcv2__gl bcv2__gl--zero"></div>
-                  </div>
-                  <div class="bcv2__group">
-                    <div class="bcv2__pair">
-                      <div class="bcv2__bar bcv2__bar--alloc" style="height:92%;--bc:#a5b4fc" aria-label="Roads allocated 32.4Cr"></div>
-                      <div class="bcv2__bar bcv2__bar--spent" style="height:82%;--bc:#4f46e5" aria-label="Roads spent 28.8Cr"></div>
-                    </div>
-                    <span class="bcv2__label">Roads</span>
-                  </div>
-                  <div class="bcv2__group">
-                    <div class="bcv2__pair">
-                      <div class="bcv2__bar bcv2__bar--alloc" style="height:63%;--bc:#7dd3fc" aria-label="Water allocated 22.1Cr"></div>
-                      <div class="bcv2__bar bcv2__bar--spent" style="height:33%;--bc:#0ea5e9" aria-label="Water spent 11.5Cr"></div>
-                    </div>
-                    <span class="bcv2__label">Water</span>
-                  </div>
-                  <div class="bcv2__group">
-                    <div class="bcv2__pair">
-                      <div class="bcv2__bar bcv2__bar--alloc" style="height:78%;--bc:#c4b5fd" aria-label="Education allocated 27.3Cr"></div>
-                      <div class="bcv2__bar bcv2__bar--spent" style="height:78%;--bc:#8b5cf6" aria-label="Education spent 27.3Cr"></div>
-                    </div>
-                    <span class="bcv2__label">Education</span>
-                  </div>
-                  <div class="bcv2__group">
-                    <div class="bcv2__pair">
-                      <div class="bcv2__bar bcv2__bar--alloc" style="height:71%;--bc:#99f6e4" aria-label="Healthcare allocated 24.8Cr"></div>
-                      <div class="bcv2__bar bcv2__bar--spent" style="height:49%;--bc:#14b8a6" aria-label="Healthcare spent 17.1Cr"></div>
-                    </div>
-                    <span class="bcv2__label">Health</span>
-                  </div>
-                  <div class="bcv2__group">
-                    <div class="bcv2__pair">
-                      <div class="bcv2__bar bcv2__bar--alloc" style="height:51%;--bc:#bbf7d0" aria-label="Sanitation allocated 18Cr"></div>
-                      <div class="bcv2__bar bcv2__bar--spent" style="height:13%;--bc:#22c55e" aria-label="Sanitation spent 4.5Cr"></div>
-                    </div>
-                    <span class="bcv2__label">Sanitation</span>
-                  </div>
-                </div>
-              </div>
-              <div class="bar-chart-legend" role="list" aria-label="Chart legend">
-                <span class="bcl-item" role="listitem"><span class="bcl-dot bcl-dot--alloc" aria-hidden="true"></span>Allocated</span>
-                <span class="bcl-item" role="listitem"><span class="bcl-dot bcl-dot--spent" aria-hidden="true"></span>Spent</span>
-              </div>
-              <p class="chart-caption">Lighter bar = allocated amount. Darker bar = actual spend. Gap indicates unutilised funds.</p>
-            </div>
-
-            <!-- ── DONUT VIEW (hidden by default) ── -->
-            <div class="chart-view" id="view-donut" role="img" aria-label="Donut charts showing budget distribution">
-              <div class="donut-grid">
-                <div class="donut-wrap">
-                  <div class="donut-chart-placeholder" aria-label="Budget allocation donut chart" id="donut-alloc">
-                    <canvas id="canvasAlloc" width="200" height="200"></canvas>
-                    <div class="donut-center">
-                      <span class="donut-center__val">₹124.6Cr</span>
-                      <span class="donut-center__lbl">Allocated</span>
-                    </div>
-                  </div>
-                  <p class="donut-label">Budget Allocation</p>
-                </div>
-                <div class="donut-wrap">
-                  <div class="donut-chart-placeholder" aria-label="Actual spending donut chart" id="donut-spent">
-                    <canvas id="canvasSpent" width="200" height="200"></canvas>
-                    <div class="donut-center">
-                      <span class="donut-center__val">₹89.2Cr</span>
-                      <span class="donut-center__lbl">Spent</span>
-                    </div>
-                  </div>
-                  <p class="donut-label">Actual Spending</p>
-                </div>
-                <div class="donut-legend-list" role="list" aria-label="Department colour legend">
-                  <div class="dll-item" role="listitem"><span class="dll-dot" style="background:#4f46e5" aria-hidden="true"></span><span>Roads</span><span class="dll-pct">26%</span></div>
-                  <div class="dll-item" role="listitem"><span class="dll-dot" style="background:#0ea5e9" aria-hidden="true"></span><span>Water Supply</span><span class="dll-pct">18%</span></div>
-                  <div class="dll-item" role="listitem"><span class="dll-dot" style="background:#8b5cf6" aria-hidden="true"></span><span>Education</span><span class="dll-pct">22%</span></div>
-                  <div class="dll-item" role="listitem"><span class="dll-dot" style="background:#14b8a6" aria-hidden="true"></span><span>Healthcare</span><span class="dll-pct">20%</span></div>
-                  <div class="dll-item" role="listitem"><span class="dll-dot" style="background:#22c55e" aria-hidden="true"></span><span>Sanitation</span><span class="dll-pct">14%</span></div>
-                </div>
-              </div>
-              <p class="chart-caption">Left donut = share of budget allocated. Right donut = share of actual expenditure. Differences reveal spending imbalances.</p>
-            </div>
-
-          </div><!-- /card__body -->
-        </div><!-- /card -->
-      </section>
-
-      <!-- ══════════════════════════════════════════════
-           SECTION 2 + 3 — TABLE & ALERTS
-      ═════════════════════════════════════════════════ -->
-      <div class="bf-bottom-grid bf-fadein bf-fadein--d3">
-
-        <!-- ── SECTION 2: DEPARTMENT BUDGET TABLE ─── -->
-        <section class="card table-card" aria-labelledby="tableTitle">
-          <header class="card__header">
-            <div class="card__header-icon card__header-icon--blue" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
-            </div>
-            <h2 class="card__title" id="tableTitle">Department Budget Table</h2>
-            <div class="card__header-right">
-              <input type="search" class="table-search" placeholder="Search dept…" aria-label="Search departments" id="deptSearch" />
-            </div>
-          </header>
-
-          <div class="card__body--no-pad">
-            <div class="table-wrap" role="region" aria-label="Department budget breakdown" tabindex="0">
-              <table class="dept-table" id="deptTable" aria-describedby="tableTitle">
-                <thead class="dept-table__head">
-                  <tr>
-                    <th scope="col" class="dept-table__th">
-                      <button class="sort-btn" type="button" data-col="dept">Department <span class="sort-btn__icon">↕</span></button>
-                    </th>
-                    <th scope="col" class="dept-table__th dept-table__th--num">
-                      <button class="sort-btn" type="button" data-col="alloc">Allocated <span class="sort-btn__icon">↕</span></button>
-                    </th>
-                    <th scope="col" class="dept-table__th dept-table__th--num">
-                      <button class="sort-btn" type="button" data-col="spent">Spent <span class="sort-btn__icon">↕</span></button>
-                    </th>
-                    <th scope="col" class="dept-table__th dept-table__th--num">
-                      <button class="sort-btn" type="button" data-col="remain">Remaining <span class="sort-btn__icon">↕</span></button>
-                    </th>
-                    <th scope="col" class="dept-table__th">
-                      <button class="sort-btn" type="button" data-col="util">Utilisation % <span class="sort-btn__icon">↕</span></button>
-                    </th>
-                    <th scope="col" class="dept-table__th">Status</th>
-                  </tr>
-                </thead>
-                <tbody class="dept-table__body" id="deptTableBody">
-
-                  <tr class="dept-table__row" data-dept="Roads">
-                    <td class="dept-table__td dept-table__td--dept">
-                      <div class="dept-name-cell">
-                        <span class="dept-color-dot" style="background:#4f46e5" aria-hidden="true"></span>
-                        <div>
-                          <span class="dept-name-cell__name">Roads</span>
-                          <span class="dept-name-cell__sub">Infrastructure</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="dept-table__td dept-table__td--num">₹ 32.4 Cr</td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--spent">₹ 28.8 Cr</td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--remain dept-table__td--warn">₹ 3.6 Cr</td>
-                    <td class="dept-table__td">
-                      <div class="util-cell">
-                        <div class="util-bar" role="presentation">
-                          <div class="util-bar__fill util-bar__fill--warn" style="width:89%" aria-hidden="true"></div>
-                        </div>
-                        <span class="util-pct util-pct--warn" aria-label="89 percent utilised">89%</span>
-                      </div>
-                    </td>
-                    <td class="dept-table__td"><span class="badge badge--medium">Near Limit</span></td>
-                  </tr>
-
-                  <tr class="dept-table__row" data-dept="Water Supply">
-                    <td class="dept-table__td dept-table__td--dept">
-                      <div class="dept-name-cell">
-                        <span class="dept-color-dot" style="background:#0ea5e9" aria-hidden="true"></span>
-                        <div>
-                          <span class="dept-name-cell__name">Water Supply</span>
-                          <span class="dept-name-cell__sub">Utilities</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="dept-table__td dept-table__td--num">₹ 22.1 Cr</td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--spent">₹ 11.5 Cr</td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--remain">₹ 10.6 Cr</td>
-                    <td class="dept-table__td">
-                      <div class="util-cell">
-                        <div class="util-bar" role="presentation">
-                          <div class="util-bar__fill util-bar__fill--low" style="width:52%" aria-hidden="true"></div>
-                        </div>
-                        <span class="util-pct util-pct--low" aria-label="52 percent utilised">52%</span>
-                      </div>
-                    </td>
-                    <td class="dept-table__td"><span class="badge badge--high">Under-spent</span></td>
-                  </tr>
-
-                  <tr class="dept-table__row" data-dept="Education">
-                    <td class="dept-table__td dept-table__td--dept">
-                      <div class="dept-name-cell">
-                        <span class="dept-color-dot" style="background:#8b5cf6" aria-hidden="true"></span>
-                        <div>
-                          <span class="dept-name-cell__name">Education</span>
-                          <span class="dept-name-cell__sub">Public Services</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="dept-table__td dept-table__td--num">₹ 27.3 Cr</td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--spent">₹ 27.3 Cr</td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--remain dept-table__td--zero">₹ 0.0 Cr</td>
-                    <td class="dept-table__td">
-                      <div class="util-cell">
-                        <div class="util-bar" role="presentation">
-                          <div class="util-bar__fill util-bar__fill--full" style="width:100%" aria-hidden="true"></div>
-                        </div>
-                        <span class="util-pct util-pct--full" aria-label="100 percent utilised">100%</span>
-                      </div>
-                    </td>
-                    <td class="dept-table__td"><span class="badge badge--normal">Fully Utilised</span></td>
-                  </tr>
-
-                  <tr class="dept-table__row" data-dept="Healthcare">
-                    <td class="dept-table__td dept-table__td--dept">
-                      <div class="dept-name-cell">
-                        <span class="dept-color-dot" style="background:#14b8a6" aria-hidden="true"></span>
-                        <div>
-                          <span class="dept-name-cell__name">Healthcare</span>
-                          <span class="dept-name-cell__sub">Public Services</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="dept-table__td dept-table__td--num">₹ 24.8 Cr</td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--spent">₹ 17.1 Cr</td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--remain">₹ 7.7 Cr</td>
-                    <td class="dept-table__td">
-                      <div class="util-cell">
-                        <div class="util-bar" role="presentation">
-                          <div class="util-bar__fill util-bar__fill--ok" style="width:69%" aria-hidden="true"></div>
-                        </div>
-                        <span class="util-pct util-pct--ok" aria-label="69 percent utilised">69%</span>
-                      </div>
-                    </td>
-                    <td class="dept-table__td"><span class="badge badge--normal">On Track</span></td>
-                  </tr>
-
-                  <tr class="dept-table__row" data-dept="Sanitation">
-                    <td class="dept-table__td dept-table__td--dept">
-                      <div class="dept-name-cell">
-                        <span class="dept-color-dot" style="background:#22c55e" aria-hidden="true"></span>
-                        <div>
-                          <span class="dept-name-cell__name">Sanitation</span>
-                          <span class="dept-name-cell__sub">Public Works</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td class="dept-table__td dept-table__td--num">₹ 18.0 Cr</td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--spent">₹ 4.5 Cr</td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--remain">₹ 13.5 Cr</td>
-                    <td class="dept-table__td">
-                      <div class="util-cell">
-                        <div class="util-bar" role="presentation">
-                          <div class="util-bar__fill util-bar__fill--low" style="width:25%" aria-hidden="true"></div>
-                        </div>
-                        <span class="util-pct util-pct--low" aria-label="25 percent utilised">25%</span>
-                      </div>
-                    </td>
-                    <td class="dept-table__td"><span class="badge badge--high">Under-spent</span></td>
-                  </tr>
-
-                </tbody>
-                <tfoot class="dept-table__foot">
-                  <tr>
-                    <td class="dept-table__td dept-table__td--foot" colspan="1"><strong>TOTAL</strong></td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--foot"><strong>₹ 124.6 Cr</strong></td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--foot"><strong>₹ 89.2 Cr</strong></td>
-                    <td class="dept-table__td dept-table__td--num dept-table__td--foot"><strong>₹ 35.4 Cr</strong></td>
-                    <td class="dept-table__td dept-table__td--foot" colspan="2">
-                      <div class="util-cell">
-                        <div class="util-bar" role="presentation">
-                          <div class="util-bar__fill util-bar__fill--ok" style="width:71.6%" aria-hidden="true"></div>
-                        </div>
-                        <span class="util-pct util-pct--ok" aria-label="71.6 percent overall utilised"><strong>71.6%</strong></span>
-                      </div>
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- ── SECTION 3: BUDGET ALERTS ────────────── -->
-        <aside class="alerts-sidebar" aria-labelledby="alertsTitle">
-
-          <!-- Alerts card -->
-          <div class="card alerts-card">
-            <header class="card__header">
-              <div class="card__header-icon card__header-icon--red" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
-              </div>
-              <h2 class="card__title" id="alertsTitle">Budget Alerts</h2>
-              <span class="card__badge card__badge--count" aria-label="3 alerts">3</span>
-            </header>
-            <div class="card__body alerts-card__body">
-              <ul class="alert-list" role="list">
-
-                <li class="alert-item alert-item--warn" role="listitem">
-                  <div class="alert-item__icon-wrap" aria-hidden="true">
-                    <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                  </div>
-                  <div class="alert-item__body">
-                    <div class="alert-item__top">
-                      <span class="alert-item__dept">Roads Department</span>
-                      <span class="alert-item__tag alert-item__tag--warn">89% used</span>
-                    </div>
-                    <p class="alert-item__desc">Nearing budget limit — only ₹3.6 Cr remaining. Review pending work orders before approving new contracts.</p>
-                    <time class="alert-item__time" datetime="2025-03-04">4 Mar 2025</time>
-                  </div>
-                </li>
-
-                <li class="alert-item alert-item--info" role="listitem">
-                  <div class="alert-item__icon-wrap" aria-hidden="true">
-                    <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-                  </div>
-                  <div class="alert-item__body">
-                    <div class="alert-item__top">
-                      <span class="alert-item__dept">Water Supply</span>
-                      <span class="alert-item__tag alert-item__tag--info">52% used</span>
-                    </div>
-                    <p class="alert-item__desc">Spending is below expected level for Q3. Investigation into project delays or fund reallocation required.</p>
-                    <time class="alert-item__time" datetime="2025-03-03">3 Mar 2025</time>
-                  </div>
-                </li>
-
-                <li class="alert-item alert-item--success" role="listitem">
-                  <div class="alert-item__icon-wrap" aria-hidden="true">
-                    <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-                  </div>
-                  <div class="alert-item__body">
-                    <div class="alert-item__top">
-                      <span class="alert-item__dept">Education</span>
-                      <span class="alert-item__tag alert-item__tag--success">100% used</span>
-                    </div>
-                    <p class="alert-item__desc">Budget fully utilised. All planned programmes executed. Request supplementary allocation for remaining FY needs.</p>
-                    <time class="alert-item__time" datetime="2025-03-01">1 Mar 2025</time>
-                  </div>
-                </li>
-
-              </ul>
-
-              <div class="alerts-card__actions">
-                <button class="btn btn--outline btn--full" type="button">View All Alerts</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Mini donut summary card -->
-          <div class="card summary-card">
-            <header class="card__header">
-              <div class="card__header-icon card__header-icon--indigo" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              </div>
-              <h3 class="card__title">Quick Summary</h3>
-            </header>
-            <div class="card__body">
-              <div class="summary-donut" aria-label="Overall budget utilisation 71.6 percent">
-                <svg viewBox="0 0 120 120" class="summary-donut__svg">
-                  <circle cx="60" cy="60" r="48" fill="none" stroke="#e0e7ff" stroke-width="12"/>
-                  <!-- 71.6% of 2π×48 ≈ 215.9 -->
-                  <circle cx="60" cy="60" r="48" fill="none" stroke="url(#summGrad)"
-                          stroke-width="12" stroke-linecap="round"
-                          stroke-dasharray="215.9 301.6"
-                          stroke-dashoffset="75.4"
-                          transform="rotate(-90 60 60)"/>
-                  <defs>
-                    <linearGradient id="summGrad" x1="0" y1="0" x2="1" y2="0">
-                      <stop stop-color="#4f46e5"/><stop offset="1" stop-color="#2563eb"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <div class="summary-donut__center">
-                  <span class="summary-donut__pct">71.6%</span>
-                  <span class="summary-donut__lbl">Utilised</span>
-                </div>
-              </div>
-              <dl class="summary-dl">
-                <div class="summary-dl__row">
-                  <dt class="summary-dl__term">Total Allocated</dt>
-                  <dd class="summary-dl__def">₹ 124.6 Cr</dd>
-                </div>
-                <div class="summary-dl__row">
-                  <dt class="summary-dl__term">Total Spent</dt>
-                  <dd class="summary-dl__def summary-dl__def--spent">₹ 89.2 Cr</dd>
-                </div>
-                <div class="summary-dl__row">
-                  <dt class="summary-dl__term">Unspent Funds</dt>
-                  <dd class="summary-dl__def summary-dl__def--remain">₹ 35.4 Cr</dd>
-                </div>
-                <div class="summary-dl__row">
-                  <dt class="summary-dl__term">Fiscal Year</dt>
-                  <dd class="summary-dl__def">2024–25</dd>
-                </div>
-              </dl>
-              <button class="btn btn--primary btn--full" type="button" style="margin-top:0.75rem">
-                Download Full Report
-              </button>
-            </div>
-          </div>
-
-        </aside>
-      </div><!-- /bf-bottom-grid -->
-
-    </div><!-- /main__container -->
-  </main>
-
-  <!-- ══════════════════════════════════════════════════
-       FOOTER
-  ═══════════════════════════════════════════════════ -->
-  <footer class="footer" role="contentinfo">
-    <div class="footer__container">
-      <p class="footer__text">
-        <svg class="footer__icon" viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true">
-          <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM6.343 5.343a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zM16 11a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1zM5.05 6.464A1 1 0 106.465 5.05l-.707-.707A1 1 0 004.343 5.757l.707.707zM11 15a1 1 0 10-2 0v1a1 1 0 102 0v-1zM3 10a1 1 0 011-1h1a1 1 0 110 2H4a1 1 0 01-1-1zM13.536 14.95a1 1 0 001.414-1.415l-.707-.707a1 1 0 00-1.414 1.415l.707.707zM10 7a3 3 0 100 6 3 3 0 000-6z"/>
-        </svg>
-        AI-driven financial transparency for better municipal governance.
-      </p>
-      <p class="footer__copy">
-        &copy; 2025 ArthRakshak AI &mdash; Smart Civic Platform &middot;
-        <a href="#" class="footer__link">Privacy Policy</a> &middot;
-        <a href="#" class="footer__link">Terms of Use</a>
-      </p>
-    </div>
-  </footer>
-
-  <script src="budget-flow.js"></script>
+if(typeof Chart!=='undefined'){
+  new Chart(document.getElementById('flowBar'),{type:'bar',data:{labels:['Allocated','Released','State Rcvd','Dist Level','Block Level','Beneficiaries'],datasets:[{data:[100,92,85,78,72,65],backgroundColor:['#002147','#003580','#e85d00','#1a7a4a','#6366f1','#14b8a6'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'K Cr'},grid:{color:'#f0f3f8'}},x:{grid:{display:false}}}}});
+  const months=['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  new Chart(document.getElementById('disbLine'),{type:'line',data:{labels:months,datasets:[{label:'Planned',data:[8000,8000,8000,8000,8000,8000,8000,8000,8000,8000,8000,8000],borderColor:'#002147',borderDash:[5,5],tension:.3},{label:'Actual',data:[6200,7100,7800,6500,8200,7900,6800,8100,7600,8300,7200,6900],borderColor:'#e85d00',backgroundColor:'rgba(232,93,0,.08)',fill:true,tension:.4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{ticks:{callback:v=>'₹'+v+' Cr'},grid:{color:'#f0f3f8'}},x:{grid:{display:false}}}}});
+}
+</script>
 </body>
 </html>

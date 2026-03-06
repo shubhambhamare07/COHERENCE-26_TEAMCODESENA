@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ArthRakshak — Portal Home</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f7f9fc;color:#0f172a;font-size:14px}
+a{text-decoration:none;color:inherit}
+.topbar{background:#002147;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:3px solid #e85d00;box-shadow:0 2px 14px rgba(0,0,0,.3)}
+.tb-brand{display:flex;align-items:center;gap:10px}
+.tb-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.tb-title{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#fff;line-height:1.2}
+.tb-title small{display:block;font-family:inherit;font-size:9px;font-weight:400;opacity:.6;letter-spacing:1.5px;text-transform:uppercase}
+.tb-nav{display:flex;gap:2px}
+.tb-nav a{color:rgba(255,255,255,.75);font-size:12px;padding:6px 9px;border-radius:5px;transition:.15s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.tb-nav a:hover,.tb-nav a.act{background:rgba(255,255,255,.14);color:#fff}
+.tb-right{display:flex;align-items:center;gap:10px}
+.tb-user{display:flex;align-items:center;gap:8px}
+.avatar{width:30px;height:30px;background:#e85d00;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+.uinfo{text-align:right}.uname{font-size:12px;font-weight:600;color:#fff}.udept{font-size:10px;opacity:.6;color:#fff}
+.notif{position:relative;background:none;border:none;color:rgba(255,255,255,.8);font-size:17px;cursor:pointer;padding:4px}
+.nbadge{position:absolute;top:0;right:0;width:14px;height:14px;background:#e85d00;border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+.btn-logout{padding:5px 12px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit}
+.btn-logout:hover{background:rgba(255,255,255,.22)}
+.sidebar{width:210px;background:#001530;position:fixed;top:58px;left:0;bottom:0;overflow-y:auto;z-index:900;padding:12px 0}
+.sb-sec{padding:9px 16px 3px;font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.28)}
+.sidebar a{display:flex;align-items:center;gap:9px;padding:9px 16px;color:rgba(255,255,255,.62);font-size:13px;transition:.15s;border-left:3px solid transparent}
+.sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:rgba(232,93,0,.5)}
+.sidebar a.act{background:rgba(255,255,255,.11);color:#fff;border-left-color:#e85d00}
+.main{margin-left:210px;margin-top:58px;padding:28px 32px;min-height:calc(100vh - 58px)}
+.ph h1{font-family:Georgia,serif;font-size:20px;font-weight:700;color:#002147;margin-bottom:4px}
+.ph p{font-size:13px;color:#64748b;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.mod-card{background:#fff;border:1px solid #d0dae8;border-radius:10px;padding:24px;cursor:pointer;transition:all .2s;box-shadow:0 1px 4px rgba(0,33,71,.08);display:block}
+.mod-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,33,71,.14);border-color:#003580}
+.mod-card.featured{border:2px solid #e85d00}
+.mod-card.featured:hover{box-shadow:0 8px 24px rgba(232,93,0,.2)}
+.mod-icon{font-size:38px;margin-bottom:12px}
+.mod-title{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#002147;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.mod-desc{font-size:12.5px;color:#64748b;line-height:1.6}
+.new-tag{font-size:10px;background:#fff0e6;color:#e85d00;padding:2px 7px;border-radius:10px;font-weight:700}
+.welcome-bar{background:#002147;color:#fff;padding:16px 20px;border-radius:10px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between}
+.wb-text h2{font-family:Georgia,serif;font-size:17px;margin-bottom:3px}
+.wb-text p{font-size:12px;opacity:.7}
+.wb-badge{background:rgba(255,255,255,.12);padding:8px 14px;border-radius:6px;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.2)}
+@media(max-width:1100px){.tb-nav{display:none}}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}}
+@media(max-width:600px){.main{padding:14px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">🏛️</div>
+    <div class="tb-title">ArthRakshak<small>National Budget Intelligence Platform</small></div>
+  </div>
+  <nav class="tb-nav">
+    <a href="index.html" class="act">🏠 Home</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="budget-flow.html">💸 Flow</a>
+    <a href="risk_score.html">🛡️ Risk</a>
+    <a href="anomaly.html">⚠️ Anomalies</a>
+    <a href="reports.html">📄 Reports</a>
+    <a href="simulator.html">🔬 Simulator</a>
+    <a href="ai_assistant.html">🤖 AI</a>
+  </nav>
+  <div class="tb-right">
+    <button class="notif">🔔<span class="nbadge">3</span></button>
+    <div class="tb-user">
+      <div class="uinfo"><div class="uname" id="u-name">—</div><div class="udept" id="u-dept">—</div></div>
+      <div class="avatar" id="u-avatar">?</div>
+    </div>
+    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+  </div>
+</header>
+<aside class="sidebar">
+  <div class="sb-sec">Main</div>
+  <a href="index.html" class="act">🏠 Portal Home</a>
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="budget-flow.html">💸 Budget Flow</a>
+  <div class="sb-sec">Intelligence</div>
+  <a href="risk_score.html">🛡️ Risk Scores</a>
+  <a href="anomaly.html">⚠️ Anomalies</a>
+  <a href="reports.html">📄 Reports</a>
+  <div class="sb-sec">Tools</div>
+  <a href="simulator.html">🔬 Simulator</a>
+  <a href="ai_assistant.html">🤖 AI Assistant</a>
+</aside>
+<main class="main">
+  <div class="welcome-bar">
+    <div class="wb-text"><h2 id="wb-greet">Welcome back!</h2><p id="wb-sub">Loading department info...</p></div>
+    <div class="wb-badge" id="wb-badge">—</div>
+  </div>
+  <div class="ph"><h1>Portal Modules</h1><p>Select a module to begin your budget intelligence workflow.</p></div>
+  <div class="grid">
+    <a href="dashboard.html" class="mod-card"><div class="mod-icon">📊</div><div class="mod-title">Dashboard</div><div class="mod-desc">View all accessible schemes, budget utilization metrics, and department KPIs.</div></a>
+    <a href="budget-flow.html" class="mod-card"><div class="mod-icon">💸</div><div class="mod-title">Budget Flow</div><div class="mod-desc">Visualize the complete money trail from Union Budget to end beneficiaries.</div></a>
+    <a href="risk_score.html" class="mod-card"><div class="mod-icon">🛡️</div><div class="mod-title">Risk Scores</div><div class="mod-desc">AI-computed corruption and misutilization risk scores across all schemes.</div></a>
+    <a href="anomaly.html" class="mod-card"><div class="mod-icon">⚠️</div><div class="mod-title">Anomaly Detection</div><div class="mod-desc">Automatically flagged irregularities in fund allocation and disbursement patterns.</div></a>
+    <a href="reports.html" class="mod-card"><div class="mod-icon">📄</div><div class="mod-title">Reports</div><div class="mod-desc">Download official reports, audit summaries, and compliance documents.</div></a>
+    <a href="simulator.html" class="mod-card"><div class="mod-icon">🔬</div><div class="mod-title">Budget Simulator</div><div class="mod-desc">Simulate budget reallocation scenarios and model impact on outcomes.</div></a>
+    <a href="ai_assistant.html" class="mod-card featured"><div class="mod-icon">🤖</div><div class="mod-title">AI Assistant <span class="new-tag">NEW</span></div><div class="mod-desc">Ask questions about schemes, budgets, risks and get intelligent recommendations.</div></a>
+  </div>
+</main>
+<script src="data.js"></script>
+<script>
+const user=getUser();
+if(!user)window.location.href='login.html';
+setTopbar(user);
+const schemes=getSchemes(user);
+document.getElementById('wb-greet').textContent='Welcome back, '+user.name+'!';
+document.getElementById('wb-sub').textContent=user.dept+' — '+levelLabel(user)+' — '+schemes.length+' schemes accessible';
+document.getElementById('wb-badge').textContent='🔒 Secure Session';
+</script>
+</body>
+</html>

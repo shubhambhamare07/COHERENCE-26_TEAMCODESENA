@@ -1,446 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ArthRakshak – OTP Verification | Two-Factor Authentication</title>
-  <link rel="stylesheet" href="styles.css" />
-  <style>
-    .otp-card-body { padding: 32px 28px; text-align: center; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ArthRakshak — OTP Verification</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#002147;min-height:100vh;display:flex}
+.left{flex:1;padding:60px 52px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(150deg,#001228 0%,#002147 55%,#003070 100%);color:#fff;position:relative;overflow:hidden}
+.left::before{content:'';position:absolute;top:-80px;right:-80px;width:360px;height:360px;border:60px solid rgba(232,93,0,.12);border-radius:50%;pointer-events:none}
+.left::after{content:'';position:absolute;bottom:-60px;left:-60px;width:260px;height:260px;border:50px solid rgba(255,255,255,.05);border-radius:50%;pointer-events:none}
+.emblem{width:68px;height:68px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:24px;position:relative;z-index:1}
+.left h1{font-family:Georgia,serif;font-size:32px;font-weight:700;margin-bottom:5px;position:relative;z-index:1}
+.tagline{font-size:11px;opacity:.6;letter-spacing:2px;text-transform:uppercase;margin-bottom:32px;position:relative;z-index:1}
+.info-box{padding:20px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;font-size:13px;line-height:1.8;opacity:.9;position:relative;z-index:1}
+.meta{margin-top:22px;font-size:13px;opacity:.6;position:relative;z-index:1;display:flex;flex-direction:column;gap:8px}
 
-    .secure-icon {
-      width: 64px;
-      height: 64px;
-      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      box-shadow: 0 6px 20px rgba(31,58,95,0.25);
-    }
-    .secure-icon svg { width: 30px; height: 30px; stroke: white; fill: none; stroke-width: 1.7; }
+.right{width:440px;background:#fff;padding:56px 44px;display:flex;flex-direction:column;justify-content:center;overflow-y:auto}
+.back-link{font-size:12px;color:#64748b;text-decoration:none;display:inline-flex;align-items:center;gap:5px;margin-bottom:28px;transition:.15s}
+.back-link:hover{color:#002147}
+.icon-wrap{width:58px;height:58px;background:#ddeeff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:18px}
+.form-title{font-family:Georgia,serif;font-size:22px;font-weight:700;color:#002147;margin-bottom:5px}
+.form-sub{font-size:13px;color:#64748b;margin-bottom:8px}
 
-    .otp-heading {
-      font-family: 'EB Garamond', serif;
-      font-size: 22px;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 6px;
-    }
-    .otp-sub {
-      font-size: 13px;
-      color: var(--gray-500);
-      line-height: 1.6;
-      max-width: 340px;
-      margin: 0 auto 6px;
-    }
-    .otp-email-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 12px;
-      background: var(--gray-100);
-      border: 1px solid var(--gray-200);
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--navy);
-      margin: 10px auto 0;
-    }
-    .otp-email-badge svg { width: 12px; height: 12px; stroke: var(--navy); fill: none; stroke-width: 2; }
+.error-box{display:none;padding:11px 14px;background:#fde8e6;border:1px solid #f5c6c2;border-left:4px solid #c0392b;border-radius:6px;font-size:13px;color:#8b1a1a;margin-bottom:16px}
 
-    .otp-group { margin: 28px 0 6px; }
+.otp-row{display:flex;gap:10px;justify-content:center;margin:24px 0}
+.otp-row input{width:48px;height:54px;text-align:center;font-size:22px;font-weight:700;border:2px solid #d0dae8;border-radius:6px;color:#002147;outline:none;font-family:inherit;transition:.15s}
+.otp-row input:focus{border-color:#002147;box-shadow:0 0 0 3px rgba(0,33,71,.09)}
 
-    .otp-actions { margin-top: 24px; }
+.demo-hint{text-align:center;margin-bottom:20px;font-size:12px;color:#64748b}
+code{background:#e2e8f0;padding:2px 8px;border-radius:4px;font-size:14px;font-weight:700;color:#002147;letter-spacing:3px}
 
-    .divider-sm { height: 1px; background: var(--gray-200); margin: 20px 0; }
+.btn-verify{width:100%;padding:12px;background:#002147;color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-verify:hover{background:#003580}
 
-    .otp-footer-links {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 2px;
-    }
+.resend-row{margin-top:20px;text-align:center}
+.resend-row p{font-size:12px;color:#64748b;margin-bottom:8px}
+.btn-resend{padding:6px 14px;background:#f0f3f8;color:#334155;border:1px solid #d0dae8;border-radius:6px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.btn-resend:hover{background:#e2e8f0}
 
-    .attempt-counter {
-      font-size: 11px;
-      color: var(--gray-400);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .attempt-counter svg { width: 11px; height: 11px; stroke: var(--gray-400); fill: none; stroke-width: 2; }
-
-    .success-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(31,58,95,0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 900;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      backdrop-filter: blur(4px);
-    }
-    .success-overlay.show { opacity: 1; pointer-events: all; }
-    .success-box {
-      background: var(--white);
-      border-radius: var(--radius-xl);
-      padding: 40px 36px;
-      text-align: center;
-      box-shadow: var(--shadow-xl);
-      max-width: 320px;
-      width: 90%;
-      animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
-    }
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.85); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-    .success-check {
-      width: 64px;
-      height: 64px;
-      background: var(--green-bg);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 18px;
-      border: 2px solid var(--green-border);
-    }
-    .success-check svg { width: 30px; height: 30px; stroke: var(--green); fill: none; stroke-width: 2.5; }
-    .success-box h3 {
-      font-family: 'EB Garamond', serif;
-      font-size: 20px;
-      color: var(--navy);
-      margin-bottom: 8px;
-    }
-    .success-box p { font-size: 13px; color: var(--gray-500); line-height: 1.6; }
-    .success-loader {
-      margin: 16px auto 0;
-      width: 36px;
-      height: 36px;
-      border: 3px solid var(--gray-200);
-      border-top-color: var(--navy);
-      border-radius: 50%;
-      animation: spin 0.75s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    @media (max-width: 560px) {
-      .otp-card-body { padding: 24px 16px; }
-    }
-  </style>
+.footer-note{margin-top:22px;font-size:11px;color:#94a3b8;text-align:center;line-height:1.7}
+@media(max-width:800px){.left{display:none}.right{width:100%}}
+</style>
 </head>
 <body>
 
-  <div class="top-bar">
-    <span class="status">
-      <span class="dot"></span>
-      Two-Factor Authentication &nbsp;|&nbsp; Session Active &nbsp;|&nbsp; NIC Secured
-    </span>
-    <span id="clockDisplay"></span>
+<div class="left">
+  <div class="emblem">🏛️</div>
+  <h1>ArthRakshak</h1>
+  <p class="tagline">National Budget Intelligence Platform</p>
+  <div class="info-box">
+    🛡️ <strong>Two-Factor Authentication</strong><br><br>
+    Your account is protected with OTP verification. A 6-digit code has been sent to your registered mobile.<br><br>
+    <span style="opacity:.7;font-size:12px">Logging in as:</span><br>
+    <strong id="pending-name" style="font-size:14px">—</strong>
+  </div>
+  <div class="meta">
+    <span>⏱️ OTP valid for <strong>10 minutes</strong></span>
+    <span>📱 Demo OTP: <strong style="letter-spacing:3px;color:#e85d00">1 2 3 4 5 6</strong></span>
+  </div>
+</div>
+
+<div class="right">
+  <a href="login.html" class="back-link">← Back to Login</a>
+  <div class="icon-wrap">📱</div>
+  <div class="form-title">OTP Verification</div>
+  <p class="form-sub">Enter the 6-digit OTP sent to your registered mobile number.</p>
+
+  <div class="error-box" id="err">Invalid OTP. Please try again.</div>
+
+  <form id="otp-form">
+    <div class="otp-row">
+      <input type="text" maxlength="1" inputmode="numeric" autofocus>
+      <input type="text" maxlength="1" inputmode="numeric">
+      <input type="text" maxlength="1" inputmode="numeric">
+      <input type="text" maxlength="1" inputmode="numeric">
+      <input type="text" maxlength="1" inputmode="numeric">
+      <input type="text" maxlength="1" inputmode="numeric">
+    </div>
+    <div class="demo-hint">Demo OTP: <code>1 2 3 4 5 6</code></div>
+    <button type="submit" class="btn-verify">✅ Verify &amp; Continue</button>
+  </form>
+
+  <div class="resend-row">
+    <p>Didn't receive the OTP?</p>
+    <button class="btn-resend" onclick="alert('OTP resent! Demo OTP: 123456')">🔄 Resend OTP</button>
   </div>
 
-  <header>
-    <svg class="emblem" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="24" cy="24" r="23" stroke="#1F3A5F" stroke-width="1.5" fill="#f8f9fb"/>
-      <circle cx="24" cy="24" r="18" stroke="#1F3A5F" stroke-width="0.75" stroke-dasharray="2.5 2" fill="none"/>
-      <path d="M24 9 L26.2 16.5 L34 16.5 L27.9 21 L30.1 28.5 L24 24 L17.9 28.5 L20.1 21 L14 16.5 L21.8 16.5 Z" fill="#1F3A5F"/>
-      <circle cx="24" cy="24" r="4.5" fill="#2E8B57"/>
-      <rect x="17" y="33" width="14" height="2.2" rx="1.1" fill="#1F3A5F"/>
-      <rect x="19.5" y="36.2" width="9" height="1.8" rx="0.9" fill="#1F3A5F"/>
-    </svg>
+  <div class="footer-note">🔒 This is a secure government portal.<br>Never share your OTP with anyone, including officials.</div>
+</div>
 
-    <div class="header-title">
-      <h1>ArthRakshak – <em>National Budget Intelligence Platform</em></h1>
-      <p>Ministry of Finance, Government of India · Two-Factor Authentication</p>
-    </div>
+<script>
+// ── Guard: redirect to login if no pending session ──
+(function(){
+  const pending = sessionStorage.getItem('ar_pending');
+  if(!pending){
+    window.location.href='login.html';
+    throw new Error('No session');
+  }
+  // Show the name of user logging in
+  try {
+    const u = JSON.parse(pending);
+    const el = document.getElementById('pending-name');
+    if(el) el.textContent = u.name + ' (' + u.dept + ')';
+  } catch(e){}
+})();
 
-    <div class="header-badges">
-      <span class="badge badge-navy">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        STEP 2 OF 3
-      </span>
-      <span class="badge badge-green">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        IDENTITY VERIFIED
-      </span>
-    </div>
-  </header>
-
-  <main>
-    <div class="card-wrapper" style="max-width: 460px;">
-
-      <div class="page-heading">
-        <h2>Two-Factor Authentication</h2>
-        <p class="subtitle">OTP Verification</p>
-      </div>
-
-      <div class="step-bar">
-        <div class="step done">
-          <div class="step-circle">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="step-label">Identity</div>
-        </div>
-        <div class="step-connector done"></div>
-        <div class="step active">
-          <div class="step-circle">2</div>
-          <div class="step-label">OTP</div>
-        </div>
-        <div class="step-connector"></div>
-        <div class="step">
-          <div class="step-circle">3</div>
-          <div class="step-label">Dashboard</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <div class="card-head-icon">
-            <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="3"/></svg>
-          </div>
-          <div>
-            <h3>Enter One-Time Password</h3>
-            <p>6-digit code sent to your registered email</p>
-          </div>
-        </div>
-
-        <div class="otp-card-body">
-
-          <div class="secure-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-
-          <div class="otp-heading">Verify Your Identity</div>
-          <p class="otp-sub">Enter the One Time Password sent to your registered government email address</p>
-
-          <div class="otp-email-badge">
-            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            ●●●●●●@gov.in
-          </div>
-
-          <div class="otp-group">
-            <div class="otp-group" style="margin:0;">
-              <input class="otp-box" id="o1" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" />
-              <input class="otp-box" id="o2" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" />
-              <input class="otp-box" id="o3" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" />
-              <input class="otp-box" id="o4" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" />
-              <input class="otp-box" id="o5" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" />
-              <input class="otp-box" id="o6" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="off" />
-            </div>
-          </div>
-
-          <div class="otp-meta">
-            <div class="otp-expire">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              OTP expires in &nbsp;<span class="timer safe" id="timerDisplay">60s</span>
-            </div>
-            <span class="attempt-counter">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span id="attemptsLeft">3 attempts remaining</span>
-            </span>
-          </div>
-
-          <div class="otp-actions">
-            <button class="btn btn-green" onclick="verifyOTP()">
-              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Verify Access
-            </button>
-          </div>
-
-          <div class="divider-sm"></div>
-
-          <div class="otp-footer-links">
-            <span style="font-size:12px; color:var(--gray-400);">Didn't receive the OTP?</span>
-            <button class="resend-link" id="resendBtn" onclick="resendOTP()">Resend OTP</button>
-          </div>
-
-        </div>
-
-        <div class="card-foot">
-          <p>For security reasons, OTP expires in 60 seconds</p>
-          <div class="ssl-badge">
-            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            256-bit SSL
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </main>
-
-  <footer>
-    &copy; 2024 <span>Ministry of Finance, Government of India</span> &nbsp;·&nbsp; ArthRakshak v3.2 &nbsp;·&nbsp; Hosted by NIC &nbsp;·&nbsp; Best viewed in Chrome / Edge
-  </footer>
-
-  <div class="toast toast-error" id="toast">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <span id="toastMsg"></span>
-  </div>
-
-  <div class="success-overlay" id="successOverlay">
-    <div class="success-box">
-      <div class="success-check">
-        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-      </div>
-      <h3>Authentication Successful</h3>
-      <p>Identity verified. Redirecting to your secure dashboard…</p>
-      <div class="success-loader"></div>
-    </div>
-  </div>
-
-  <script>
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('clockDisplay').textContent =
-        now.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }) +
-        '  ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    const boxes = Array.from({ length: 6 }, (_, i) => document.getElementById('o' + (i + 1)));
-
-    boxes.forEach((box, i) => {
-      box.addEventListener('input', (e) => {
-        const val = e.target.value.replace(/\D/g, '');
-        box.value = val;
-        if (val) {
-          box.classList.add('filled');
-          if (i < 5) boxes[i + 1].focus();
-        } else {
-          box.classList.remove('filled');
-        }
-      });
-
-      box.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && !box.value && i > 0) {
-          boxes[i - 1].focus();
-          boxes[i - 1].value = '';
-          boxes[i - 1].classList.remove('filled');
-        }
-        if (e.key === 'ArrowLeft' && i > 0) boxes[i - 1].focus();
-        if (e.key === 'ArrowRight' && i < 5) boxes[i + 1].focus();
-      });
-
-      box.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-        pasted.split('').forEach((ch, j) => {
-          if (boxes[j]) {
-            boxes[j].value = ch;
-            boxes[j].classList.add('filled');
-          }
-        });
-        const next = Math.min(pasted.length, 5);
-        boxes[next].focus();
-      });
+const inputs=document.querySelectorAll('.otp-row input');
+inputs.forEach((inp,i)=>{
+  inp.addEventListener('input',()=>{
+    inp.value=inp.value.replace(/\D/g,'').slice(0,1);
+    if(inp.value&&i<inputs.length-1)inputs[i+1].focus();
+  });
+  inp.addEventListener('keydown',(e)=>{
+    if(e.key==='Backspace'&&!inp.value&&i>0)inputs[i-1].focus();
+  });
+  // Auto-submit when last digit entered
+  if(i===inputs.length-1){
+    inp.addEventListener('input',()=>{
+      if(inp.value) document.getElementById('otp-form').requestSubmit();
     });
+  }
+});
 
-    boxes[0].focus();
-
-    let timeLeft = 60;
-    let attempts = 3;
-    let timerInterval;
-
-    function startTimer() {
-      clearInterval(timerInterval);
-      timeLeft = 60;
-      const display = document.getElementById('timerDisplay');
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        display.textContent = timeLeft + 's';
-        display.className = 'timer' + (timeLeft <= 10 ? '' : ' safe');
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          display.textContent = 'Expired';
-          display.className = 'timer';
-          document.getElementById('resendBtn').disabled = false;
-        }
-      }, 1000);
+document.getElementById('otp-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  const entered=Array.from(inputs).map(i=>i.value).join('');
+  const expected=sessionStorage.getItem('ar_otp')||'123456';
+  if(entered.length<6){
+    document.getElementById('err').textContent='Please enter all 6 digits.';
+    document.getElementById('err').style.display='block';
+    return;
+  }
+  if(entered===expected){
+    const user=JSON.parse(sessionStorage.getItem('ar_pending')||'null');
+    if(user){
+      sessionStorage.setItem('ar_user',JSON.stringify(user));
+      sessionStorage.removeItem('ar_pending');
+      sessionStorage.removeItem('ar_otp');
+      // Show success flash before redirect
+      const btn=document.querySelector('.btn-verify');
+      btn.textContent='✅ Verified! Redirecting...';
+      btn.style.background='#1a7a4a';
+      btn.disabled=true;
+      setTimeout(()=>{ window.location.href='dashboard.html'; }, 600);
+    }else{
+      window.location.href='login.html';
     }
-
-    startTimer();
-
-    let toastTimer;
-    function showToast(msg, type = 'error') {
-      const toast = document.getElementById('toast');
-      document.getElementById('toastMsg').textContent = msg;
-      toast.className = `toast toast-${type}`;
-      toast.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
-    }
-
-    function getOTP() {
-      return boxes.map(b => b.value).join('');
-    }
-
-    function clearErrors() {
-      boxes.forEach(b => b.classList.remove('error-box'));
-    }
-
-    function shakeBoxes() {
-      boxes.forEach(b => {
-        b.classList.add('error-box');
-        b.style.transform = 'translateX(-4px)';
-        setTimeout(() => b.style.transform = 'translateX(4px)', 80);
-        setTimeout(() => b.style.transform = '', 160);
-      });
-    }
-
-    function verifyOTP() {
-      clearErrors();
-      const otp = getOTP();
-
-      if (otp.length < 6) {
-        shakeBoxes();
-        showToast('Please enter all 6 digits of the OTP.');
-        boxes[otp.length] && boxes[otp.length].focus();
-        return;
-      }
-
-      if (timeLeft <= 0) {
-        shakeBoxes();
-        showToast('OTP has expired. Please request a new one.');
-        return;
-      }
-
-      attempts--;
-      document.getElementById('attemptsLeft').textContent = attempts + ' attempt' + (attempts !== 1 ? 's' : '') + ' remaining';
-
-      if (otp === '123456' || true) {
-        clearInterval(timerInterval);
-        document.getElementById('successOverlay').classList.add('show');
-        setTimeout(() => { window.location.href = 'dashboard.html'; }, 2200);
-        return;
-      }
-
-      shakeBoxes();
-      if (attempts <= 0) {
-        showToast('Maximum attempts exceeded. Session terminated.');
-        setTimeout(() => { window.location.href = 'login.html'; }, 3000);
-      } else {
-        showToast(`Incorrect OTP. ${attempts} attempt${attempts !== 1 ? 's' : ''} remaining.`);
-        boxes.forEach(b => { b.value = ''; b.classList.remove('filled'); });
-        boxes[0].focus();
-      }
-    }
-
-    function resendOTP() {
-      boxes.forEach(b => { b.value = ''; b.classList.remove('filled', 'error-box'); });
-      attempts = 3;
-      document.getElementById('attemptsLeft').textContent = '3 attempts remaining';
-      startTimer();
-      showToast('A new OTP has been sent to your registered email.', 'success');
-      boxes[0].focus();
-    }
-  </script>
-
+  }else{
+    document.getElementById('err').textContent='Invalid OTP. Demo OTP is 123456.';
+    document.getElementById('err').style.display='block';
+    inputs.forEach(i=>{i.value='';});
+    inputs[0].focus();
+  }
+});
+</script>
 </body>
 </html>

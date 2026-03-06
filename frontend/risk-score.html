@@ -1,299 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Department Risk Score – ArthRakshak AI</title>
-  <link rel="stylesheet" href="risk-styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ArthRakshak — Risk Scores</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f7f9fc;color:#0f172a;font-size:14px}
+a{text-decoration:none;color:inherit}
+.topbar{background:#002147;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:3px solid #e85d00;box-shadow:0 2px 14px rgba(0,0,0,.3)}
+.tb-brand{display:flex;align-items:center;gap:10px}
+.tb-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.tb-title{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#fff;line-height:1.2}
+.tb-title small{display:block;font-family:inherit;font-size:9px;font-weight:400;opacity:.6;letter-spacing:1.5px;text-transform:uppercase}
+.tb-nav{display:flex;gap:2px}
+.tb-nav a{color:rgba(255,255,255,.75);font-size:12px;padding:6px 9px;border-radius:5px;transition:.15s;white-space:nowrap}
+.tb-nav a:hover,.tb-nav a.act{background:rgba(255,255,255,.14);color:#fff}
+.tb-right{display:flex;align-items:center;gap:10px}
+.tb-user{display:flex;align-items:center;gap:8px}
+.avatar{width:30px;height:30px;background:#e85d00;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.uinfo{text-align:right}.uname{font-size:12px;font-weight:600;color:#fff}.udept{font-size:10px;opacity:.6;color:#fff}
+.notif{position:relative;background:none;border:none;color:rgba(255,255,255,.8);font-size:17px;cursor:pointer;padding:4px}
+.nbadge{position:absolute;top:0;right:0;width:14px;height:14px;background:#e85d00;border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+.btn-logout{padding:5px 12px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
+.sidebar{width:210px;background:#001530;position:fixed;top:58px;left:0;bottom:0;overflow-y:auto;z-index:900;padding:12px 0}
+.sb-sec{padding:9px 16px 3px;font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.28)}
+.sidebar a{display:flex;align-items:center;gap:9px;padding:9px 16px;color:rgba(255,255,255,.62);font-size:13px;transition:.15s;border-left:3px solid transparent}
+.sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:rgba(232,93,0,.5)}
+.sidebar a.act{background:rgba(255,255,255,.11);color:#fff;border-left-color:#e85d00}
+.main{margin-left:210px;margin-top:58px;padding:24px 28px;min-height:calc(100vh - 58px)}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #e2e8f0}
+.ph h1{font-family:Georgia,serif;font-size:20px;font-weight:700;color:#002147}
+.ph p{font-size:13px;color:#64748b;margin-top:3px}
+.bc{font-size:11.5px;color:#64748b;margin-bottom:4px}.bc a{color:#003580}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-bottom:20px}
+.sc{background:#fff;border:1px solid #d0dae8;border-radius:10px;padding:17px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,33,71,.08)}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sc.cg::before{background:#1a7a4a}.sc.cs::before{background:#e85d00}.sc.cr::before{background:#c0392b}.sc.cn::before{background:#002147}
+.si{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:10px}
+.si.cg{background:#e0f5ea}.si.cs{background:#fff0e6}.si.cr{background:#fde8e6}.si.cn{background:#ddeeff}
+.sv{font-family:Georgia,serif;font-size:21px;font-weight:700;color:#0f172a}
+.sl{font-size:12px;color:#64748b;margin-top:3px}
+.cr2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+.card{background:#fff;border:1px solid #d0dae8;border-radius:10px;box-shadow:0 1px 4px rgba(0,33,71,.08);overflow:hidden}
+.ch{padding:13px 17px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between}
+.ct{font-family:Georgia,serif;font-size:14px;font-weight:700;color:#002147}
+.cb{padding:16px}
+.mt20{margin-top:20px}
+.fb{display:flex;gap:9px;margin-bottom:12px;flex-wrap:wrap}
+.fb input,.fb select{padding:7px 10px;border:1.5px solid #d0dae8;border-radius:6px;font-family:inherit;font-size:12.5px;outline:none;flex:1;min-width:140px;max-width:260px}
+.fb input:focus,.fb select:focus{border-color:#002147}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:#002147;color:#fff;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;white-space:nowrap}
+tbody tr{border-bottom:1px solid #f0f3f8;transition:.13s}
+tbody tr:nth-child(even){background:#f7f9fc}
+tbody tr:hover{background:#ddeeff}
+td{padding:9px 12px;color:#334155;vertical-align:middle}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.bn{background:#ddeeff;color:#002147}
+.rb{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-weight:700;font-size:11px}
+.rlow{background:#e0f5ea;color:#1a7a4a}.rmed{background:#fff8e1;color:#c47000}.rhigh{background:#fde8e6;color:#c0392b}.rcrit{background:#f0e6ff;color:#5b21b6}
+.pb{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle}
+.pf{height:100%;border-radius:3px}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;transition:.15s}
+.bsaffron{background:#e85d00;color:#fff}.bsaffron:hover{background:#c94e00}
+.legend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.leg{padding:14px;border-radius:8px;border-left:4px solid}
+.leg-g{background:#e0f5ea;border-color:#1a7a4a}.leg-y{background:#fff8e1;border-color:#f59e0b}.leg-r{background:#fde8e6;border-color:#c0392b}.leg-p{background:#f0e6ff;border-color:#5b21b6}
+.leg-title{font-weight:700;font-size:13px;margin-bottom:4px}
+.leg-g .leg-title{color:#1a7a4a}.leg-y .leg-title{color:#c47000}.leg-r .leg-title{color:#c0392b}.leg-p .leg-title{color:#5b21b6}
+.leg p{font-size:12px;color:#64748b;line-height:1.5}
+@media(max-width:1100px){.tb-nav{display:none}.cr2{grid-template-columns:1fr}}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}}
+</style>
 </head>
 <body>
-
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="nav-logo">
-      <span class="logo-hex">⬡</span>
-      <span class="logo-text">ArthRakshak <em>AI</em></span>
-    </div>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#">Dashboard</a></li>
-      <li><a href="#">Anomaly Detection</a></li>
-      <li><a href="#">AI Assistant</a></li>
-      <li><a href="#" class="active">Risk Score</a></li>
-      <li><a href="#" class="nav-logout">Logout →</a></li>
-    </ul>
-    <button class="hamburger" id="hamburger">
-      <span></span><span></span><span></span>
-    </button>
+<header class="topbar">
+  <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<small>National Budget Intelligence Platform</small></div></div>
+  <nav class="tb-nav">
+    <a href="index.html">🏠</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html">💸 Flow</a>
+    <a href="risk_score.html" class="act">🛡️ Risk</a><a href="anomaly.html">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a><a href="ai_assistant.html">🤖 AI</a>
   </nav>
-
-  <!-- PAGE HEADER -->
-  <header class="page-header">
-    <div class="header-inner">
-      <div class="badge-row">
-        <span class="badge">FINANCIAL RISK INTELLIGENCE</span>
-        <span class="live-pill"><span class="live-dot"></span>Live Assessment</span>
-      </div>
-      <h1>Department Risk Score</h1>
-      <p>AI-generated financial risk assessment across municipal departments</p>
-    </div>
-    <div class="header-bg-grid"></div>
-  </header>
-
-  <!-- MAIN -->
-  <main class="page-main">
-
-    <!-- SUMMARY BAR -->
-    <div class="summary-bar">
-      <div class="summary-item">
-        <span class="s-value high">2</span>
-        <span class="s-label">High Risk</span>
-      </div>
-      <div class="summary-divider"></div>
-      <div class="summary-item">
-        <span class="s-value medium">2</span>
-        <span class="s-label">Medium Risk</span>
-      </div>
-      <div class="summary-divider"></div>
-      <div class="summary-item">
-        <span class="s-value low">1</span>
-        <span class="s-label">Low Risk</span>
-      </div>
-      <div class="summary-divider"></div>
-      <div class="summary-item">
-        <span class="s-value neutral">5</span>
-        <span class="s-label">Depts. Assessed</span>
-      </div>
-      <div class="summary-divider"></div>
-      <div class="summary-item">
-        <span class="s-value neutral">Oct 2025</span>
-        <span class="s-label">Assessment Period</span>
+  <div class="tb-right">
+    <button class="notif">🔔<span class="nbadge">3</span></button>
+    <div class="tb-user"><div class="uinfo"><div class="uname" id="u-name">—</div><div class="udept" id="u-dept">—</div></div><div class="avatar" id="u-avatar">?</div></div>
+    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+  </div>
+</header>
+<aside class="sidebar">
+  <div class="sb-sec">Main</div><a href="index.html">🏠 Portal Home</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html">💸 Budget Flow</a>
+  <div class="sb-sec">Intelligence</div><a href="risk_score.html" class="act">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a>
+  <div class="sb-sec">Tools</div><a href="simulator.html">🔬 Simulator</a><a href="ai_assistant.html">🤖 AI Assistant</a>
+</aside>
+<main class="main">
+  <div class="ph">
+    <div><div class="bc"><a href="index.html">Home</a> › Risk Scores</div><h1>🛡️ Corruption &amp; Risk Intelligence</h1><p>AI-computed risk scores for budget misutilization and corruption probability per scheme.</p></div>
+    <a href="ai_assistant.html" class="btn bsaffron">🤖 Ask AI About Risk</a>
+  </div>
+  <div class="sg" id="risk-stats"></div>
+  <div class="cr2">
+    <div class="card"><div class="ch"><span class="ct">Risk Score by Scheme</span></div><div class="cb" style="height:300px"><canvas id="riskBar"></canvas></div></div>
+    <div class="card"><div class="ch"><span class="ct">Risk Category Breakdown</span></div><div class="cb" style="height:300px"><canvas id="riskPie"></canvas></div></div>
+  </div>
+  <div class="card mt20">
+    <div class="ch"><span class="ct">📊 Scheme Risk Register</span><span class="badge bn" id="risk-count">—</span></div>
+    <div class="cb" style="padding-bottom:0">
+      <div class="fb">
+        <input type="text" id="rsrch" placeholder="🔍 Search scheme...">
+        <select id="rcat">
+          <option value="">All Categories</option>
+          <option value="low">🟢 Low (0–29)</option>
+          <option value="medium">🟡 Medium (30–54)</option>
+          <option value="high">🔴 High (55–74)</option>
+          <option value="critical">🟣 Critical (75+)</option>
+        </select>
       </div>
     </div>
-
-    <!-- SECTION 1: RISK SCORE CARDS -->
-    <section class="section" id="section-cards">
-      <div class="section-header">
-        <div class="section-title-group">
-          <span class="section-num">01</span>
-          <h2>Risk Score Overview</h2>
-        </div>
-        <p class="section-desc">Financial risk index per department (0 = no risk, 100 = critical)</p>
+    <div class="tw"><table><thead><tr><th>#</th><th>Scheme</th><th>Sector</th><th>Score</th><th>Level</th><th>Key Risk Factor</th><th>Action</th></tr></thead><tbody id="risk-tbody"></tbody></table></div>
+  </div>
+  <div class="card mt20">
+    <div class="ch"><span class="ct">📖 Risk Score Methodology</span></div>
+    <div class="cb">
+      <div class="legend-grid">
+        <div class="leg leg-g"><div class="leg-title">🟢 Low Risk (0–29)</div><p>Strong audit trail, high utilization, minimal irregularities. Routine monitoring sufficient.</p></div>
+        <div class="leg leg-y"><div class="leg-title">🟡 Medium Risk (30–54)</div><p>Some irregularities detected. Enhanced monitoring and quarterly audits recommended.</p></div>
+        <div class="leg leg-r"><div class="leg-title">🔴 High Risk (55–74)</div><p>Significant anomalies present. Immediate investigation and disbursement review required.</p></div>
+        <div class="leg leg-p"><div class="leg-title">🟣 Critical (75–100)</div><p>Fraud suspected. Escalate to CBI/CAG immediately. Consider freezing disbursements.</p></div>
       </div>
-
-      <div class="risk-cards-grid">
-
-        <!-- Road Infrastructure — HIGH -->
-        <div class="risk-card high" style="--delay:0.05s" onclick="selectDept(this, 'road')">
-          <div class="card-top">
-            <div class="dept-icon">🛣️</div>
-            <div class="risk-badge high">HIGH</div>
-          </div>
-          <h3>Road Infrastructure</h3>
-          <div class="score-ring-wrap">
-            <svg class="score-ring" viewBox="0 0 80 80">
-              <circle class="ring-bg" cx="40" cy="40" r="34"/>
-              <circle class="ring-fill high" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="calc(213.6 - (213.6 * 82 / 100))" />
-            </svg>
-            <div class="score-center">
-              <span class="score-num">82</span>
-              <span class="score-slash">/100</span>
-            </div>
-          </div>
-          <div class="card-meta">
-            <span class="meta-tag">↑ 12pts from last month</span>
-          </div>
-        </div>
-
-        <!-- Water Supply — MEDIUM -->
-        <div class="risk-card medium" style="--delay:0.12s" onclick="selectDept(this, 'water')">
-          <div class="card-top">
-            <div class="dept-icon">💧</div>
-            <div class="risk-badge medium">MEDIUM</div>
-          </div>
-          <h3>Water Supply</h3>
-          <div class="score-ring-wrap">
-            <svg class="score-ring" viewBox="0 0 80 80">
-              <circle class="ring-bg" cx="40" cy="40" r="34"/>
-              <circle class="ring-fill medium" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="calc(213.6 - (213.6 * 56 / 100))" />
-            </svg>
-            <div class="score-center">
-              <span class="score-num">56</span>
-              <span class="score-slash">/100</span>
-            </div>
-          </div>
-          <div class="card-meta">
-            <span class="meta-tag neutral">→ Stable this month</span>
-          </div>
-        </div>
-
-        <!-- Education — LOW -->
-        <div class="risk-card low" style="--delay:0.19s" onclick="selectDept(this, 'education')">
-          <div class="card-top">
-            <div class="dept-icon">🎓</div>
-            <div class="risk-badge low">LOW</div>
-          </div>
-          <h3>Education</h3>
-          <div class="score-ring-wrap">
-            <svg class="score-ring" viewBox="0 0 80 80">
-              <circle class="ring-bg" cx="40" cy="40" r="34"/>
-              <circle class="ring-fill low" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="calc(213.6 - (213.6 * 21 / 100))" />
-            </svg>
-            <div class="score-center">
-              <span class="score-num">21</span>
-              <span class="score-slash">/100</span>
-            </div>
-          </div>
-          <div class="card-meta">
-            <span class="meta-tag low">↓ 4pts improved</span>
-          </div>
-        </div>
-
-        <!-- Healthcare — HIGH -->
-        <div class="risk-card high" style="--delay:0.26s" onclick="selectDept(this, 'healthcare')">
-          <div class="card-top">
-            <div class="dept-icon">🏥</div>
-            <div class="risk-badge high">HIGH</div>
-          </div>
-          <h3>Healthcare</h3>
-          <div class="score-ring-wrap">
-            <svg class="score-ring" viewBox="0 0 80 80">
-              <circle class="ring-bg" cx="40" cy="40" r="34"/>
-              <circle class="ring-fill high" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="calc(213.6 - (213.6 * 74 / 100))" />
-            </svg>
-            <div class="score-center">
-              <span class="score-num">74</span>
-              <span class="score-slash">/100</span>
-            </div>
-          </div>
-          <div class="card-meta">
-            <span class="meta-tag">↑ 8pts from last month</span>
-          </div>
-        </div>
-
-        <!-- Sanitation — MEDIUM -->
-        <div class="risk-card medium" style="--delay:0.33s" onclick="selectDept(this, 'sanitation')">
-          <div class="card-top">
-            <div class="dept-icon">♻️</div>
-            <div class="risk-badge medium">MEDIUM</div>
-          </div>
-          <h3>Sanitation</h3>
-          <div class="score-ring-wrap">
-            <svg class="score-ring" viewBox="0 0 80 80">
-              <circle class="ring-bg" cx="40" cy="40" r="34"/>
-              <circle class="ring-fill medium" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="calc(213.6 - (213.6 * 61 / 100))" />
-            </svg>
-            <div class="score-center">
-              <span class="score-num">61</span>
-              <span class="score-slash">/100</span>
-            </div>
-          </div>
-          <div class="card-meta">
-            <span class="meta-tag">↑ 3pts flagged</span>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- SECTION 2: CHARTS -->
-    <section class="section" id="section-charts">
-      <div class="section-header">
-        <div class="section-title-group">
-          <span class="section-num">02</span>
-          <h2>Risk Breakdown Analysis</h2>
-        </div>
-        <p class="section-desc">Factor-level contribution to overall department risk scores</p>
-      </div>
-
-      <div class="charts-grid">
-
-        <!-- Radar chart -->
-        <div class="chart-card wide">
-          <div class="chart-card-header">
-            <h4>Risk Factor Distribution</h4>
-            <span class="chart-badge">Multi-factor radar</span>
-          </div>
-          <div class="chart-wrap">
-            <canvas id="radarChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Bar chart -->
-        <div class="chart-card">
-          <div class="chart-card-header">
-            <h4>Factor Intensity by Department</h4>
-            <span class="chart-badge">Grouped bars</span>
-          </div>
-          <div class="chart-wrap">
-            <canvas id="barChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Horizontal bar -->
-        <div class="chart-card">
-          <div class="chart-card-header">
-            <h4>Overall Risk Score Comparison</h4>
-            <span class="chart-badge">Ranked</span>
-          </div>
-          <div class="chart-wrap">
-            <canvas id="hbarChart"></canvas>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- SECTION 3: AI EXPLANATION PANEL -->
-    <section class="section" id="section-ai">
-      <div class="section-header">
-        <div class="section-title-group">
-          <span class="section-num">03</span>
-          <h2>AI Risk Analysis</h2>
-        </div>
-        <p class="section-desc">Natural language explanations generated by ArthRakshak AI</p>
-      </div>
-
-      <div class="ai-panel">
-        <div class="ai-panel-sidebar">
-          <div class="ai-dept-list" id="aiDeptList">
-            <button class="ai-dept-btn active high" data-key="road" onclick="switchAnalysis(this)">
-              <span>🛣️</span> Road Infrastructure
-            </button>
-            <button class="ai-dept-btn medium" data-key="water" onclick="switchAnalysis(this)">
-              <span>💧</span> Water Supply
-            </button>
-            <button class="ai-dept-btn low" data-key="education" onclick="switchAnalysis(this)">
-              <span>🎓</span> Education
-            </button>
-            <button class="ai-dept-btn high" data-key="healthcare" onclick="switchAnalysis(this)">
-              <span>🏥</span> Healthcare
-            </button>
-            <button class="ai-dept-btn medium" data-key="sanitation" onclick="switchAnalysis(this)">
-              <span>♻️</span> Sanitation
-            </button>
-          </div>
-        </div>
-
-        <div class="ai-panel-content" id="aiContent">
-          <!-- Filled by JS -->
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="page-footer">
-    <div class="footer-inner">
-      <span class="footer-logo">⬡ ArthRakshak AI</span>
-      <span class="footer-tag">AI-powered risk intelligence</span>
-      <span class="footer-copy">© 2025 Civic Intelligence Platform</span>
     </div>
-  </footer>
+  </div>
+</main>
+<script src="data.js"></script>
+<script>
+const user=getUser();if(!user)window.location.href='login.html';
+setTopbar(user);
+const schemes=getSchemes(user);
+const byLvl={low:0,medium:0,high:0,critical:0};
+schemes.forEach(s=>{const l=riskClass(s.riskScore);byLvl[l]++;});
+const avgR=Math.round(schemes.reduce((a,s)=>a+s.riskScore,0)/schemes.length);
 
-  <script src="risk-script.js"></script>
+document.getElementById('risk-stats').innerHTML=`
+<div class="sc cg"><div class="si cg">🟢</div><div class="sv">${byLvl.low}</div><div class="sl">Low Risk</div></div>
+<div class="sc cs"><div class="si cs">🟡</div><div class="sv">${byLvl.medium}</div><div class="sl">Medium Risk</div></div>
+<div class="sc cr"><div class="si cr">🔴</div><div class="sv">${byLvl.high}</div><div class="sl">High Risk</div></div>
+<div class="sc cn"><div class="si cn">📊</div><div class="sv">${avgR}</div><div class="sl">Avg Risk Score</div></div>`;
+document.getElementById('risk-count').textContent=schemes.length+' schemes';
+
+const FACTORS={low:['Regular audits conducted','Beneficiary verification complete','Utilization on track'],medium:['Minor documentation gaps','Slight underspending pattern','Beneficiary list needs update'],high:['Duplicate beneficiary entries detected','Irregular fund transfers','Low utilization with full disbursement'],critical:['Systematic fraud indicators','Shell beneficiary accounts flagged','Unauthorized sub-contractor payments']};
+const ACTIONS={low:'✅ Routine Monitor',medium:'📋 Quarterly Audit',high:'🔍 Investigate Now',critical:'🚨 Freeze & Escalate'};
+
+function renderRisk(data){
+  const sorted=[...data].sort((a,b)=>b.riskScore-a.riskScore);
+  document.getElementById('risk-tbody').innerHTML=sorted.map((s,i)=>{
+    const l=riskClass(s.riskScore);
+    const f=FACTORS[l][Math.floor(i%3)];
+    return`<tr><td>${i+1}</td><td style="font-weight:600;max-width:200px">${s.name}</td><td><span class="badge bn">${s.sector}</span></td>
+    <td><div style="display:flex;align-items:center;gap:7px"><div class="pb" style="width:70px"><div class="pf" style="width:${s.riskScore}%;background:${l==='low'?'#1a7a4a':l==='medium'?'#f59e0b':l==='high'?'#c0392b':'#5b21b6'}"></div></div><strong>${s.riskScore}</strong></div></td>
+    <td><span class="rb r${l}">${riskLabel(s.riskScore)}</span></td><td style="font-size:12px;color:#64748b">${f}</td><td style="font-size:12px">${ACTIONS[l]}</td></tr>`;
+  }).join('');
+}
+renderRisk(schemes);
+document.getElementById('rsrch').addEventListener('input',function(){const q=this.value.toLowerCase();renderRisk(schemes.filter(s=>s.name.toLowerCase().includes(q)));});
+document.getElementById('rcat').addEventListener('change',function(){
+  const v=this.value;if(!v){renderRisk(schemes);return;}
+  renderRisk(schemes.filter(s=>{if(v==='low')return s.riskScore<30;if(v==='medium')return s.riskScore>=30&&s.riskScore<55;if(v==='high')return s.riskScore>=55&&s.riskScore<75;return s.riskScore>=75;}));
+});
+
+if(typeof Chart!=='undefined'){
+  const sorted=[...schemes].sort((a,b)=>b.riskScore-a.riskScore);
+  new Chart(document.getElementById('riskBar'),{type:'bar',data:{labels:sorted.map(s=>s.name.length>16?s.name.substring(0,16)+'…':s.name),datasets:[{data:sorted.map(s=>s.riskScore),backgroundColor:sorted.map(s=>s.riskScore<30?'#1a7a4a':s.riskScore<55?'#f59e0b':s.riskScore<75?'#c0392b':'#5b21b6'),borderRadius:3}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{max:100,grid:{color:'#f0f3f8'}},y:{ticks:{font:{size:10}},grid:{display:false}}}}});
+  new Chart(document.getElementById('riskPie'),{type:'doughnut',data:{labels:['Low','Medium','High','Critical'],datasets:[{data:[byLvl.low,byLvl.medium,byLvl.high,byLvl.critical],backgroundColor:['#1a7a4a','#f59e0b','#c0392b','#5b21b6'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{padding:12,font:{size:12}}}},cutout:'55%'}});
+}
+</script>
 </body>
 </html>

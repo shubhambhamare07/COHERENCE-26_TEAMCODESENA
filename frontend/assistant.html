@@ -1,273 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI Civic Assistant – ArthRakshak AI</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ArthRakshak — AI Assistant</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f7f9fc;color:#0f172a;font-size:14px}
+.topbar{background:#002147;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:3px solid #e85d00;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.tb-brand{display:flex;align-items:center;gap:10px}.tb-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.tb-title{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#fff}.tb-title span{display:block;font-size:10px;font-family:-apple-system,sans-serif;font-weight:400;opacity:.6;letter-spacing:1.2px;text-transform:uppercase}
+.tb-nav{display:flex;gap:2px}.tb-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:12px;padding:6px 9px;border-radius:5px;transition:.15s;white-space:nowrap}.tb-nav a:hover,.tb-nav a.active{background:rgba(255,255,255,.14);color:#fff}
+.tb-right{display:flex;align-items:center;gap:10px}.uavatar{width:30px;height:30px;background:#e85d00;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.uinfo{text-align:right}.un{font-size:12px;font-weight:600;color:#fff}.ud{font-size:11px;opacity:.6;color:#fff}
+.nb{position:relative;background:none;border:none;color:rgba(255,255,255,.8);font-size:18px;cursor:pointer;padding:4px}.nb-badge{position:absolute;top:0;right:0;width:15px;height:15px;background:#e85d00;border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+.sidebar{width:210px;background:#001530;position:fixed;top:58px;left:0;bottom:0;overflow-y:auto;z-index:900;padding:12px 0}
+.sb-sec{padding:10px 16px 4px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.sidebar a{display:flex;align-items:center;gap:9px;padding:9px 17px;color:rgba(255,255,255,.65);text-decoration:none;font-size:13px;transition:.15s;border-left:3px solid transparent}
+.sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:rgba(232,93,0,.5)}.sidebar a.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#e85d00}
+.main{margin-left:210px;margin-top:58px;padding:24px 28px;height:calc(100vh - 58px);display:flex;flex-direction:column}
+.ph{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #e2e8f0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.ph h1{font-family:Georgia,serif;font-size:20px;font-weight:700;color:#002147}.ph p{color:#64748b;font-size:13px;margin-top:3px}
+.bc{display:flex;align-items:center;gap:6px;font-size:12px;color:#64748b;margin-bottom:4px}.bc a{color:#003580;text-decoration:none}
+.ai-grid{display:grid;grid-template-columns:1fr 280px;gap:18px;flex:1;min-height:0}
+.chat-card{background:#fff;border:1px solid #d0dae8;border-radius:10px;box-shadow:0 1px 4px rgba(0,33,71,.08);display:flex;flex-direction:column;overflow:hidden}
+.chat-hdr{padding:13px 17px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.ai-avatar{width:36px;height:36px;background:linear-gradient(135deg,#002147,#003580);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;margin-right:10px}
+.chat-hdr-info{font-size:12.5px;font-weight:700;color:#002147}
+.chat-hdr-sub{font-size:11px;color:#64748b}
+.online-dot{width:8px;height:8px;background:#1a7a4a;border-radius:50%;display:inline-block;margin-right:4px}
+.msgs{flex:1;overflow-y:auto;padding:14px;background:#f7f9fc;display:flex;flex-direction:column;gap:11px}
+.msg{max-width:78%;padding:10px 13px;border-radius:12px;font-size:13px;line-height:1.55;word-wrap:break-word}
+.msg.user{background:#002147;color:#fff;margin-left:auto;border-bottom-right-radius:3px}
+.msg.bot{background:#fff;border:1px solid #e2e8f0;color:#0f172a;border-bottom-left-radius:3px}
+.msg.typing{background:#fff;border:1px solid #e2e8f0}
+.typing-dots span{display:inline-block;width:6px;height:6px;background:#94a3b8;border-radius:50%;animation:tdot 1.2s infinite ease-in-out;margin:0 2px}
+.typing-dots span:nth-child(2){animation-delay:.2s}.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes tdot{0%,80%,100%{transform:scale(.7);opacity:.5}40%{transform:scale(1);opacity:1}}
+.quick-bar{padding:10px 14px;border-top:1px solid #e2e8f0;background:#f7f9fc;flex-shrink:0}
+.quick-title{font-size:10.5px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px}
+.quick-btns{display:flex;flex-wrap:wrap;gap:5px}
+.qbtn{background:#fff;border:1px solid #d0dae8;border-radius:5px;padding:5px 9px;font-size:11.5px;font-weight:500;color:#334155;cursor:pointer;font-family:inherit;transition:.15s}
+.qbtn:hover{background:#ddeeff;border-color:#002147;color:#002147}
+.input-row{padding:12px 14px;border-top:1px solid #e2e8f0;display:flex;gap:8px;flex-shrink:0}
+.input-row input{flex:1;padding:9px 15px;border:1.5px solid #d0dae8;border-radius:20px;font-family:inherit;font-size:13px;color:#0f172a;background:#fff;outline:none}
+.input-row input:focus{border-color:#002147}
+.send-btn{background:#e85d00;color:#fff;border:none;padding:9px 18px;border-radius:20px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;flex-shrink:0}
+.send-btn:hover{background:#c94e00}
+.enc-note{font-size:10.5px;color:#94a3b8;text-align:center;padding:4px 0 0;flex-shrink:0}
+/* RIGHT PANEL */
+.side-card{background:#fff;border:1px solid #d0dae8;border-radius:10px;box-shadow:0 1px 4px rgba(0,33,71,.08);overflow:hidden;margin-bottom:14px}
+.side-hdr{padding:11px 14px;border-bottom:1px solid #e2e8f0;font-family:Georgia,serif;font-size:13px;font-weight:700;color:#002147}
+.side-body{padding:14px}
+.scope-row{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:8px}
+.scope-row:last-child{margin-bottom:0}
+.scope-lbl{color:#64748b}
+.scope-val{font-weight:700;color:#002147}
+.topic-card{cursor:pointer;padding:9px;background:#f7f9fc;border:1px solid #e2e8f0;border-radius:6px;display:flex;gap:8px;align-items:center;margin-bottom:8px;transition:.15s}
+.topic-card:hover{background:#ddeeff;border-color:#002147}
+.topic-icon{font-size:18px;flex-shrink:0}
+.topic-title{font-size:12px;font-weight:700;color:#002147}
+.topic-sub{font-size:11px;color:#64748b}
+.qa-btn{width:100%;background:#f0f3f8;color:#334155;border:1px solid #e2e8f0;padding:7px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:7px;text-align:left;transition:.15s}
+.qa-btn:hover{background:#ddeeff;color:#002147}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:.15s;text-decoration:none;white-space:nowrap}
+.btn-ghost{background:#f0f3f8;color:#334155}.btn-ghost:hover{background:#e2e8f0}
+.btn-sm{padding:5px 10px;font-size:12px}
+@media(max-width:1100px){.tb-nav{display:none}.ai-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}}
+</style>
 </head>
 <body>
-
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="nav-logo">
-      <span class="logo-mark">⬡</span>
-      <span class="logo-text">ArthRakshak <span class="logo-accent">AI</span></span>
+<header class="topbar">
+  <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<span>National Budget Intelligence Platform</span></div></div>
+  <nav class="tb-nav"><a href="index.html">🏠</a><a href="dashboard.html">📊</a><a href="budget-flow.html">💸</a><a href="risk_score.html">🛡️</a><a href="anomaly.html">⚠️</a><a href="reports.html">📄</a><a href="simulator.html">🔬</a><a href="ai_assistant.html" class="active">🤖 AI</a></nav>
+  <div class="tb-right">
+    <button class="nb">🔔<span class="nb-badge">3</span></button>
+    <div style="display:flex;align-items:center;gap:8px"><div class="uinfo"><div class="un" id="uname">—</div><div class="ud" id="udept">—</div></div><div class="uavatar" id="uavatar">?</div></div>
+    <button onclick="logout()" class="btn btn-ghost btn-sm">🚪 Logout</button>
+  </div>
+</header>
+<aside class="sidebar">
+  <div class="sb-sec">Main</div><a href="index.html">🏠 Home</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html">💸 Flow</a>
+  <div class="sb-sec">Intelligence</div><a href="risk_score.html">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomaly Detection</a><a href="reports.html">📄 Reports</a>
+  <div class="sb-sec">Tools</div><a href="simulator.html">🔬 Simulator</a><a href="ai_assistant.html" class="active">🤖 AI Assistant</a>
+</aside>
+<main class="main">
+  <div class="ph">
+    <div><div class="bc"><a href="index.html">Home</a> › AI Assistant</div><h1>🤖 ArthRakshak AI Assistant</h1><p id="ai-sub">Intelligent budget intelligence — scoped to your department's schemes.</p></div>
+    <div style="display:flex;gap:8px;align-items:center"><span style="font-size:12px;background:#e0f5ea;color:#1a7a4a;padding:6px 12px;border-radius:20px;font-weight:600"><span class="online-dot"></span>Online</span><button class="btn btn-ghost btn-sm" onclick="clearChat()">🗑️ Clear</button></div>
+  </div>
+  <div class="ai-grid">
+    <div class="chat-card">
+      <div class="chat-hdr">
+        <div style="display:flex;align-items:center"><div class="ai-avatar">🤖</div><div><div class="chat-hdr-info">ArthRakshak AI</div><div class="chat-hdr-sub">Budget Intelligence Assistant — Govt. Mode</div></div></div>
+        <span style="font-size:11px;background:#e0f5ea;color:#1a7a4a;padding:3px 8px;border-radius:10px;font-weight:600">🔒 Secured</span>
+      </div>
+      <div class="msgs" id="msgs"></div>
+      <div class="quick-bar">
+        <div class="quick-title">Quick Questions</div>
+        <div class="quick-btns" id="qbtns"></div>
+      </div>
+      <div class="input-row">
+        <input type="text" id="chat-inp" placeholder="Ask about schemes, budget, risk, anomalies…">
+        <button class="send-btn" id="send-btn">Send ➤</button>
+      </div>
+      <div class="enc-note">🔒 Encrypted • Scoped to your department's data only</div>
     </div>
-    <ul class="nav-links">
-      <li><a href="#">Dashboard</a></li>
-      <li><a href="#">Anomaly Detection</a></li>
-      <li><a href="#" class="active">AI Assistant</a></li>
-      <li><a href="#" class="nav-logout">Logout <span>→</span></a></li>
-    </ul>
-    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
-  </nav>
-
-  <!-- PAGE HEADER -->
-  <header class="page-header">
-    <div class="header-badge">CIVIC INTELLIGENCE PLATFORM</div>
-    <h1 class="page-title">AI Civic Assistant</h1>
-    <p class="page-subtitle">Ask questions about municipal spending, anomalies, and insights.</p>
-    <div class="header-decoration">
-      <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    <div>
+      <div class="side-card"><div class="side-hdr">📋 Your Data Scope</div><div class="side-body" id="scope-panel"></div></div>
+      <div class="side-card"><div class="side-hdr">💡 Suggested Topics</div><div class="side-body" id="topics-panel"></div></div>
+      <div class="side-card"><div class="side-hdr">⚡ Quick Actions</div>
+        <div class="side-body">
+          <a href="risk_score.html" style="display:flex;align-items:center;gap:6px;padding:8px 0;text-decoration:none;color:#002147;font-size:13px;font-weight:600;border-bottom:1px solid #f0f3f8">🛡️ View Risk Scores</a>
+          <a href="anomaly.html" style="display:flex;align-items:center;gap:6px;padding:8px 0;text-decoration:none;color:#002147;font-size:13px;font-weight:600;border-bottom:1px solid #f0f3f8">⚠️ Check Anomalies</a>
+          <a href="reports.html" style="display:flex;align-items:center;gap:6px;padding:8px 0;text-decoration:none;color:#002147;font-size:13px;font-weight:600;border-bottom:1px solid #f0f3f8">📄 Download Reports</a>
+          <a href="simulator.html" style="display:flex;align-items:center;gap:6px;padding:8px 0;text-decoration:none;color:#002147;font-size:13px;font-weight:600">🔬 Run Simulation</a>
+        </div>
+      </div>
     </div>
-  </header>
-
-  <!-- MAIN LAYOUT -->
-  <main class="main-layout">
-
-    <!-- CHAT SECTION -->
-    <section class="chat-section">
-      <!-- Chat window -->
-      <div class="chat-window" id="chatWindow">
-        <!-- AI greeting -->
-        <div class="message ai-message">
-          <div class="avatar ai-avatar">AI</div>
-          <div class="bubble">
-            <p>Hello! I'm your <strong>Civic Intelligence Assistant</strong>. I have access to real-time municipal spending data, infrastructure reports, and anomaly alerts.</p>
-            <p>How can I help you today?</p>
-            <span class="timestamp">10:00 AM</span>
-          </div>
-        </div>
-
-        <!-- Example user message -->
-        <div class="message user-message">
-          <div class="bubble">
-            Why is road maintenance spending high this month?
-            <span class="timestamp">10:02 AM</span>
-          </div>
-          <div class="avatar user-avatar">U</div>
-        </div>
-
-        <!-- Example AI response -->
-        <div class="message ai-message">
-          <div class="avatar ai-avatar">AI</div>
-          <div class="bubble">
-            <p>Road maintenance expenditure increased <strong>34% above baseline</strong> this month due to emergency repairs triggered by heavy rainfall in Districts 4, 7, and 9.</p>
-            <ul class="insight-list">
-              <li>₹2.4 Cr allocated for pothole rectification</li>
-              <li>₹0.8 Cr for drainage overflow repairs</li>
-              <li>₹1.1 Cr for bridge structural inspection</li>
-            </ul>
-            <p>This falls within emergency procurement guidelines. No anomaly flag has been raised.</p>
-            <span class="timestamp">10:02 AM</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Suggestion chips -->
-      <div class="suggestion-chips" id="suggestionChips">
-        <span class="chip-label">Try asking:</span>
-        <button class="chip" onclick="sendChip(this)">Show spending anomalies</button>
-        <button class="chip" onclick="sendChip(this)">Which department overspent?</button>
-        <button class="chip" onclick="sendChip(this)">Budget summary</button>
-        <button class="chip" onclick="sendChip(this)">Infrastructure spending trends</button>
-      </div>
-
-      <!-- Input area -->
-      <div class="input-area">
-        <div class="input-wrapper">
-          <input
-            type="text"
-            id="userInput"
-            class="chat-input"
-            placeholder="Ask something about city spending..."
-            autocomplete="off"
-            onkeydown="handleKey(event)"
-          />
-          <button class="send-btn" id="sendBtn" onclick="sendMessage()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-            </svg>
-          </button>
-        </div>
-        <p class="input-hint">ArthRakshak AI · Powered by civic data intelligence</p>
-      </div>
-    </section>
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <span class="pulse-dot"></span>
-        Quick Insights
-      </div>
-
-      <div class="insight-card alert">
-        <div class="insight-icon">⚠</div>
-        <div class="insight-body">
-          <strong>Road Dept. Overspending</strong>
-          <span>+34% above Q3 average</span>
-        </div>
-      </div>
-
-      <div class="insight-card warn">
-        <div class="insight-icon">↓</div>
-        <div class="insight-body">
-          <strong>Water Supply Maintenance</strong>
-          <span>18% below planned budget</span>
-        </div>
-      </div>
-
-      <div class="insight-card ok">
-        <div class="insight-icon">✓</div>
-        <div class="insight-body">
-          <strong>Education Sector</strong>
-          <span>Within budget — on track</span>
-        </div>
-      </div>
-
-      <div class="insight-card warn">
-        <div class="insight-icon">↑</div>
-        <div class="insight-body">
-          <strong>Sanitation Contracts</strong>
-          <span>3 flagged for review</span>
-        </div>
-      </div>
-
-      <div class="insight-card ok">
-        <div class="insight-icon">✓</div>
-        <div class="insight-body">
-          <strong>Health Infrastructure</strong>
-          <span>Disbursement on schedule</span>
-        </div>
-      </div>
-
-      <div class="sidebar-divider"></div>
-
-      <div class="sidebar-stats">
-        <div class="stat-item">
-          <span class="stat-num">₹142 Cr</span>
-          <span class="stat-label">Total Spend (Oct)</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-num">7</span>
-          <span class="stat-label">Active Anomalies</span>
-        </div>
-        <div class="stat-item">
-          <span class="stat-num">23</span>
-          <span class="stat-label">Depts. Monitored</span>
-        </div>
-      </div>
-
-      <div class="sidebar-footer">
-        Last synced: <strong>2 min ago</strong>
-      </div>
-    </aside>
-  </main>
-
-  <!-- FOOTER -->
-  <footer class="page-footer">
-    <span class="footer-logo">⬡ ArthRakshak AI</span>
-    <span class="footer-tagline">AI-powered governance assistant</span>
-    <span class="footer-copy">© 2025 Civic Intelligence Platform</span>
-  </footer>
-
-  <script>
-    const responses = {
-      "show spending anomalies": `<p>I've detected <strong>7 active anomalies</strong> this billing cycle:</p><ul class="insight-list"><li>Road Dept — 34% overspend vs. Q3 average</li><li>Sanitation — 3 contracts with unusual vendor recurrence</li><li>Parks & Recreation — Duplicate invoice pattern detected</li></ul><p>Would you like a detailed breakdown of any specific department?</p>`,
-      "which department overspent?": `<p>The top 3 departments by overspend this quarter:</p><ul class="insight-list"><li><strong>Roads & Infrastructure</strong> — ₹4.3 Cr over budget</li><li><strong>Sanitation Services</strong> — ₹1.8 Cr over budget</li><li><strong>Urban Development</strong> — ₹0.9 Cr over budget</li></ul>`,
-      "budget summary": `<p>Municipal budget snapshot for <strong>October 2025</strong>:</p><ul class="insight-list"><li>Total Allocated: ₹168 Cr</li><li>Total Spent: ₹142 Cr (84.5%)</li><li>Remaining: ₹26 Cr (15.5%)</li><li>Flagged Expenditure: ₹6.2 Cr</li></ul>`,
-      "infrastructure spending trends": `<p>Infrastructure spending over the last 6 months shows a <strong>progressive upward trend</strong>:</p><ul class="insight-list"><li>May–Jun: ₹18.2 Cr (baseline)</li><li>Jul–Aug: ₹21.4 Cr (+17.6%)</li><li>Sep–Oct: ₹28.7 Cr (+34.1%)</li></ul><p>Monsoon season is the primary driver. Historical trend correlation: 92%.</p>`,
-    };
-
-    const defaultResponse = `<p>That's a great question. Let me analyze the municipal data for you.</p><p>Based on current records, I can see relevant patterns in the civic spending database. For a more detailed breakdown, please try one of the suggested queries or rephrase your question with a specific department name.</p>`;
-
-    function getTimestamp() {
-      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-
-    function appendMessage(content, role) {
-      const win = document.getElementById('chatWindow');
-      const div = document.createElement('div');
-      div.className = `message ${role}-message`;
-
-      if (role === 'user') {
-        div.innerHTML = `<div class="bubble">${content}<span class="timestamp">${getTimestamp()}</span></div><div class="avatar user-avatar">U</div>`;
-      } else {
-        div.innerHTML = `<div class="avatar ai-avatar">AI</div><div class="bubble">${content}<span class="timestamp">${getTimestamp()}</span></div>`;
-        div.style.opacity = '0';
-        div.style.transform = 'translateY(8px)';
-        win.appendChild(div);
-        setTimeout(() => {
-          div.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-          div.style.opacity = '1';
-          div.style.transform = 'translateY(0)';
-        }, 50);
-        win.scrollTop = win.scrollHeight;
-        return;
-      }
-      win.appendChild(div);
-      win.scrollTop = win.scrollHeight;
-    }
-
-    function showTyping() {
-      const win = document.getElementById('chatWindow');
-      const div = document.createElement('div');
-      div.className = 'message ai-message typing-indicator';
-      div.id = 'typingIndicator';
-      div.innerHTML = `<div class="avatar ai-avatar">AI</div><div class="bubble"><span class="dot-pulse"></span><span class="dot-pulse"></span><span class="dot-pulse"></span></div>`;
-      win.appendChild(div);
-      win.scrollTop = win.scrollHeight;
-    }
-
-    function removeTyping() {
-      const el = document.getElementById('typingIndicator');
-      if (el) el.remove();
-    }
-
-    function sendMessage() {
-      const input = document.getElementById('userInput');
-      const text = input.value.trim();
-      if (!text) return;
-      input.value = '';
-      appendMessage(text, 'user');
-      showTyping();
-      const key = text.toLowerCase();
-      const reply = responses[key] || defaultResponse;
-      setTimeout(() => {
-        removeTyping();
-        appendMessage(reply, 'ai');
-      }, 1100);
-    }
-
-    function sendChip(btn) {
-      const text = btn.textContent;
-      document.getElementById('userInput').value = text;
-      sendMessage();
-    }
-
-    function handleKey(e) {
-      if (e.key === 'Enter') sendMessage();
-    }
-
-    document.getElementById('hamburger').addEventListener('click', function () {
-      document.querySelector('.nav-links').classList.toggle('open');
-    });
-  </script>
+  </div>
+</main>
+<script src="script.js"></script>
+<script>
+requireAuth();var user=getUser();initTopbar(user);
+var schemes=getSchemes(user);
+var lvl={'Finance Ministry':'National','Chief Economic Advisory':'National','State Department':user.state,'District Administration':user.district+' District','Rural Administration':user.town}[user.dept]||'';
+document.getElementById('ai-sub').textContent='Scoped to '+schemes.length+' schemes for '+user.dept+' ('+lvl+')';
+// Scope panel
+document.getElementById('scope-panel').innerHTML='<div class="scope-row"><span class="scope-lbl">Department</span><span class="scope-val">'+user.dept+'</span></div><div class="scope-row"><span class="scope-lbl">Access Level</span><span class="scope-val">'+lvl+'</span></div><div class="scope-row"><span class="scope-lbl">Schemes</span><span class="scope-val" style="color:#002147">'+schemes.length+'</span></div><div class="scope-row"><span class="scope-lbl">High Risk</span><span class="scope-val" style="color:#c0392b">'+schemes.filter(function(s){return s.riskScore>=55;}).length+'</span></div>';
+// Topics
+var TOPICS=[{ico:'💰',t:'Budget Status',q:'What is the overall budget utilization?'},{ico:'⚠️',t:'Risk Overview',q:'Which schemes have high risk scores?'},{ico:'📊',t:'Performance',q:'Which schemes are performing well?'},{ico:'🔍',t:'Anomalies',q:'Are there any budget anomalies?'}];
+document.getElementById('topics-panel').innerHTML=TOPICS.map(function(t){return'<div class="topic-card" onclick="ask(\''+t.q+'\')"><div class="topic-icon">'+t.ico+'</div><div><div class="topic-title">'+t.t+'</div><div class="topic-sub">'+t.q.substring(0,34)+'…</div></div></div>';}).join('');
+// Quick btns
+var QS=['How many schemes do I have access to?','Which schemes have high risk?','What is the average utilization?','List all sectors covered'];
+document.getElementById('qbtns').innerHTML=QS.map(function(q){return'<button class="qbtn" onclick="ask(\''+q+'\')">'+q+'</button>';}).join('');
+// Chat
+var msgs=document.getElementById('msgs');
+function addMsg(text,role){var d=document.createElement('div');d.className='msg '+role;if(role==='typing'){d.innerHTML='<div class="typing-dots"><span></span><span></span><span></span></div>';}else{d.innerHTML=text.replace(/\n/g,'<br>');}msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d;}
+function genReply(msg){
+  var m=msg.toLowerCase();
+  if(m.includes('how many')||m.includes('access to'))return'You have access to <strong>'+schemes.length+' schemes</strong> as '+user.dept+' ('+lvl+' level).';
+  if(m.includes('high risk')||m.includes('risk')){
+    var hr=schemes.filter(function(s){return s.riskScore>=55;});
+    if(hr.length)return'⚠️ <strong>'+hr.length+' schemes</strong> have elevated risk:\n\n'+hr.map(function(s){return'• '+s.name+' — Risk: '+s.riskScore+'/100';}).join('\n');
+    return'✅ All schemes show acceptable risk levels. Highest score: '+Math.max.apply(null,schemes.map(function(s){return s.riskScore;}))+'/100.';
+  }
+  if(m.includes('utilization')||m.includes('budget')){
+    var avg=Math.round(schemes.reduce(function(a,s){return a+s.utilization;},0)/schemes.length);
+    return'Average budget utilization across your '+schemes.length+' schemes is <strong>'+avg+'%</strong>. Range: '+Math.min.apply(null,schemes.map(function(s){return s.utilization;}))+'% – '+Math.max.apply(null,schemes.map(function(s){return s.utilization;}))+'%.';
+  }
+  if(m.includes('sector')||m.includes('category')){
+    var secs=[...new Set(schemes.map(function(s){return s.sector;}))];
+    return'Your '+schemes.length+' schemes span <strong>'+secs.length+' sectors</strong>:\n\n'+secs.map(function(s){return'• '+s;}).join('\n');
+  }
+  if(m.includes('performing')||m.includes('well')){
+    var good=schemes.filter(function(s){return s.utilization>=70;});
+    if(good.length)return'✅ <strong>'+good.length+' schemes</strong> with ≥70% utilization:\n\n'+good.map(function(s){return'• '+s.name+' ('+s.utilization+'%)';}).join('\n');
+    return'No schemes currently have 70%+ utilization. Consider reviewing disbursement targets.';
+  }
+  if(m.includes('anomal')||m.includes('fraud'))return'🔍 Anomaly detection has flagged irregular patterns in '+schemes.filter(function(s){return s.riskScore>45;}).length+' schemes. Visit the Anomaly Detection page for detailed analysis.';
+  return'I can help with:\n\n• Budget utilization analysis\n• Risk assessments\n• Scheme performance\n• Anomaly summaries\n• Sector breakdowns\n\nTry asking: "Which schemes have high risk?" or "What is the average utilization?"';
+}
+function ask(q){
+  var inp=document.getElementById('chat-inp');
+  inp.value=q;
+  send();
+}
+function send(){
+  var inp=document.getElementById('chat-inp');
+  var text=inp.value.trim();
+  if(!text)return;
+  addMsg(text,'user');
+  inp.value='';
+  var typing=addMsg('','typing');
+  setTimeout(function(){typing.remove();addMsg(genReply(text),'bot');},700+Math.random()*500);
+}
+document.getElementById('send-btn').addEventListener('click',send);
+document.getElementById('chat-inp').addEventListener('keydown',function(e){if(e.key==='Enter')send();});
+// Welcome message
+setTimeout(function(){addMsg('Namaste! 🙏 I\'m ArthRakshak AI. I have access to <strong>'+schemes.length+' schemes</strong> for '+user.dept+'. How may I assist you today?','bot');},200);
+function clearChat(){if(confirm('Clear chat history?')){msgs.innerHTML='';setTimeout(function(){addMsg('Chat cleared. How may I help you?','bot');},100);}}
+</script>
 </body>
 </html>

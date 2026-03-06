@@ -1,919 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ArthRakshak – Dashboard | National Budget Intelligence Platform</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ArthRakshak — Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f7f9fc;color:#0f172a;font-size:14px;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+
+/* TOPBAR */
+.topbar{background:#002147;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:3px solid #e85d00;box-shadow:0 2px 14px rgba(0,0,0,.3)}
+.tb-brand{display:flex;align-items:center;gap:10px}
+.tb-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.tb-title{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#fff;line-height:1.2}
+.tb-title small{display:block;font-family:inherit;font-size:9px;font-weight:400;opacity:.6;letter-spacing:1.5px;text-transform:uppercase}
+.tb-nav{display:flex;gap:2px}
+.tb-nav a{color:rgba(255,255,255,.75);font-size:12px;padding:6px 9px;border-radius:5px;transition:.15s;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.tb-nav a:hover,.tb-nav a.act{background:rgba(255,255,255,.14);color:#fff}
+.tb-right{display:flex;align-items:center;gap:10px}
+.tb-user{display:flex;align-items:center;gap:8px}
+.avatar{width:30px;height:30px;background:#e85d00;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+.uinfo{text-align:right}
+.uname{font-size:12px;font-weight:600;color:#fff}
+.udept{font-size:10px;opacity:.6;color:#fff}
+.notif{position:relative;background:none;border:none;color:rgba(255,255,255,.8);font-size:17px;cursor:pointer;padding:4px}
+.nbadge{position:absolute;top:0;right:0;width:14px;height:14px;background:#e85d00;border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+.btn-logout{padding:5px 12px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit}
+.btn-logout:hover{background:rgba(255,255,255,.22)}
+
+/* SIDEBAR */
+.sidebar{width:210px;background:#001530;position:fixed;top:58px;left:0;bottom:0;overflow-y:auto;z-index:900;padding:12px 0}
+.sb-sec{padding:9px 16px 3px;font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:rgba(255,255,255,.28)}
+.sidebar a{display:flex;align-items:center;gap:9px;padding:9px 16px;color:rgba(255,255,255,.62);font-size:13px;transition:.15s;border-left:3px solid transparent}
+.sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:rgba(232,93,0,.5)}
+.sidebar a.act{background:rgba(255,255,255,.11);color:#fff;border-left-color:#e85d00}
+
+/* MAIN */
+.main{margin-left:210px;margin-top:58px;padding:24px 28px;min-height:calc(100vh - 58px)}
+
+/* PAGE HEADER */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #e2e8f0}
+.ph h1{font-family:Georgia,serif;font-size:20px;font-weight:700;color:#002147}
+.ph p{font-size:13px;color:#64748b;margin-top:3px}
+.bc{display:flex;align-items:center;gap:5px;font-size:11.5px;color:#64748b;margin-bottom:4px}
+.bc a{color:#003580}
+.ph-actions{display:flex;gap:8px;align-items:center}
+
+/* STAT CARDS */
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:14px;margin-bottom:20px}
+.sc{background:#fff;border:1px solid #d0dae8;border-radius:10px;padding:18px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,33,71,.08);transition:.2s}
+.sc:hover{box-shadow:0 4px 14px rgba(0,33,71,.12);transform:translateY(-2px)}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sc.cn::before{background:#002147}.sc.cs::before{background:#e85d00}.sc.cg::before{background:#1a7a4a}.sc.cr::before{background:#c0392b}
+.si{width:38px;height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:11px}
+.si.cn{background:#ddeeff}.si.cs{background:#fff0e6}.si.cg{background:#e0f5ea}.si.cr{background:#fde8e6}
+.sv{font-family:Georgia,serif;font-size:22px;font-weight:700;color:#0f172a;line-height:1.1}
+.sl{font-size:12px;color:#64748b;margin-top:3px;font-weight:500}
+.schange{font-size:11px;margin-top:6px;display:flex;align-items:center;gap:3px}
+.schange.up{color:#1a7a4a}.schange.dn{color:#c0392b}
+
+/* CHARTS ROW */
+.cr2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+
+/* CARD */
+.card{background:#fff;border:1px solid #d0dae8;border-radius:10px;box-shadow:0 1px 4px rgba(0,33,71,.08);overflow:hidden}
+.ch{padding:13px 17px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between}
+.ct{font-family:Georgia,serif;font-size:14px;font-weight:700;color:#002147}
+.cb{padding:16px}
+
+/* FILTER BAR */
+.fb{display:flex;gap:9px;margin-bottom:13px;flex-wrap:wrap;align-items:center}
+.fb input,.fb select{padding:7px 10px;border:1.5px solid #d0dae8;border-radius:6px;font-family:inherit;font-size:12.5px;color:#0f172a;background:#fff;outline:none;transition:.15s;flex:1;min-width:140px;max-width:260px}
+.fb input:focus,.fb select:focus{border-color:#002147}
+.fb input::placeholder{color:#cbd5e1}
+
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:#002147;color:#fff;padding:10px 12px;text-align:left;font-size:11px;font-weight:600;letter-spacing:.3px;white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{background:#003580}
+tbody tr{border-bottom:1px solid #f0f3f8;transition:.13s}
+tbody tr:nth-child(even){background:#f7f9fc}
+tbody tr:hover{background:#ddeeff;cursor:pointer}
+td{padding:9px 12px;color:#334155;vertical-align:middle}
+
+/* BADGES */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.bg{background:#e0f5ea;color:#1a7a4a}.br{background:#fde8e6;color:#c0392b}
+.bn{background:#ddeeff;color:#002147}.bo{background:#fff0e6;color:#e85d00}.bx{background:#e2e8f0;color:#334155}
+
+/* RISK BADGES */
+.rb{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-weight:700;font-size:11px}
+.rlow{background:#e0f5ea;color:#1a7a4a}.rmed{background:#fff8e1;color:#c47000}.rhigh{background:#fde8e6;color:#c0392b}.rcrit{background:#f0e6ff;color:#5b21b6}
+
+/* PROGRESS */
+.pb{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle}
+.pf{height:100%;border-radius:3px;transition:width .7s ease}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;transition:.15s;text-decoration:none;white-space:nowrap}
+.bprimary{background:#002147;color:#fff}.bprimary:hover{background:#003580}
+.bsaffron{background:#e85d00;color:#fff}.bsaffron:hover{background:#c94e00}
+.boutline{background:transparent;color:#002147;border:1.5px solid #002147}.boutline:hover{background:#ddeeff}
+.bghost{background:#f0f3f8;color:#334155}.bghost:hover{background:#e2e8f0}
+
+/* MODAL */
+.moverlay{position:fixed;inset:0;background:rgba(0,15,40,.6);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+.moverlay.open{display:flex}
+.modal{background:#fff;border-radius:10px;width:100%;max-width:650px;max-height:87vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,33,71,.22);animation:mup .22s ease}
+@keyframes mup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.mh{padding:17px 22px;background:#002147;color:#fff;display:flex;align-items:flex-start;justify-content:space-between;border-radius:10px 10px 0 0}
+.mh h2{font-family:Georgia,serif;font-size:16px;font-weight:700}
+.mh p{font-size:11px;opacity:.65;margin-top:2px}
+.mclose{background:none;border:none;color:rgba(255,255,255,.7);font-size:24px;cursor:pointer;line-height:1;padding:0}
+.mclose:hover{color:#fff}
+.mb{padding:22px}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.di label{font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:3px}
+.di p{font-size:13.5px;font-weight:600;color:#0f172a}
+.divider{height:1px;background:#e2e8f0;margin:14px 0}
+
+/* TABLE BOTTOM BAR */
+.tbb{padding:10px 16px;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center}
+.tbb span{font-size:12px;color:#64748b}
+
+@media(max-width:1100px){.tb-nav{display:none}.cr2{grid-template-columns:1fr}}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}}
+@media(max-width:600px){.main{padding:14px}.sg{grid-template-columns:1fr 1fr}}
+</style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════
-     TOP NAVIGATION
-══════════════════════════════════════════ -->
-<nav class="topnav">
-  <div class="topnav-brand">
-    <svg class="nav-emblem" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="17" cy="17" r="16" stroke="rgba(255,255,255,0.3)" stroke-width="1" fill="rgba(255,255,255,0.06)"/>
-      <path d="M17 6 L19 12.5 L26 12.5 L20.5 16.5 L22.5 23 L17 19 L11.5 23 L13.5 16.5 L8 12.5 L15 12.5 Z" fill="white"/>
-      <circle cx="17" cy="17" r="3.5" fill="#2E8B57"/>
-      <rect x="12" y="24.5" width="10" height="1.8" rx="0.9" fill="rgba(255,255,255,0.6)"/>
-    </svg>
-    <div class="brand-text">
-      <strong>ArthRakshak</strong>
-      <span>Budget Intelligence</span>
-    </div>
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">🏛️</div>
+    <div class="tb-title">ArthRakshak<small>National Budget Intelligence Platform</small></div>
   </div>
-
-  <div class="topnav-search">
-    <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" placeholder="Search scheme, contractor, district…" id="globalSearch" />
-  </div>
-
-  <div class="topnav-right">
-    <div class="nav-alert-btn" onclick="showToast('3 new anomalies detected in Rajasthan', 'warn')">
-      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span class="badge-dot"></span>
+  <nav class="tb-nav">
+    <a href="index.html">🏠 Home</a>
+    <a href="dashboard.html" class="act">📊 Dashboard</a>
+    <a href="budget-flow.html">💸 Flow</a>
+    <a href="risk_score.html">🛡️ Risk</a>
+    <a href="anomaly.html">⚠️ Anomalies</a>
+    <a href="reports.html">📄 Reports</a>
+    <a href="simulator.html">🔬 Simulator</a>
+    <a href="ai_assistant.html">🤖 AI</a>
+  </nav>
+  <div class="tb-right">
+    <button class="notif">🔔<span class="nbadge">3</span></button>
+    <div class="tb-user">
+      <div class="uinfo"><div class="uname" id="u-name">—</div><div class="udept" id="u-dept">—</div></div>
+      <div class="avatar" id="u-avatar">?</div>
     </div>
-
-    <div class="officer-chip">
-      <div class="officer-avatar">RK</div>
-      <div class="officer-info">
-        <strong>Rajiv Kumar, IAS</strong>
-        <span>Finance Ministry</span>
-      </div>
-    </div>
-
-    <button class="logout-btn" onclick="window.location.href='login.html'">
-      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Logout
-    </button>
+    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
   </div>
-</nav>
+</header>
 
-<!-- ══════════════════════════════════════════
-     LEFT SIDEBAR
-══════════════════════════════════════════ -->
+<!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="sidebar-section-label">Main Navigation</div>
-  <nav class="sidebar-nav">
-    <a class="nav-item active" onclick="scrollToSection('overview')">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Dashboard
-    </a>
-    <a class="nav-item" onclick="scrollToSection('schemes')">
-      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      All Schemes
-      <span class="nav-badge nav-badge-green">248</span>
-    </a>
-    <a class="nav-item" onclick="scrollToSection('budget-map')">
-      <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-      Budget Flow Map
-    </a>
-    <a class="nav-item" onclick="scrollToSection('anomaly')">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      AI Anomaly Detection
-      <span class="nav-badge nav-badge-red">7</span>
-    </a>
-    <a class="nav-item" onclick="scrollToSection('risk')">
-      <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-      Risk Score Analysis
-    </a>
-  </nav>
-
-  <div class="sidebar-section-label">Tools</div>
-  <nav class="sidebar-nav">
-    <a class="nav-item" onclick="scrollToSection('simulator')">
-      <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
-      Reallocation Simulator
-    </a>
-    <a class="nav-item" onclick="scrollToSection('ai-chat')">
-      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      AI Financial Assistant
-    </a>
-    <a class="nav-item" onclick="showToast('Generating government report…', 'info')">
-      <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      Generate Gov Report
-    </a>
-  </nav>
-
-  <div class="sidebar-footer">
-    <p>Session Active<br><strong>Rajiv Kumar, IAS</strong><br>Finance Ministry · Level 3</p>
-  </div>
+  <div class="sb-sec">Analytics</div>
+  <a href="dashboard.html" class="act">📊 Dashboard</a>
+  <a href="budget-flow.html">💸 Budget Flow</a>
+  <div class="sb-sec">Intelligence</div>
+  <a href="risk_score.html">🛡️ Risk Scores</a>
+  <a href="anomaly.html">⚠️ Anomalies</a>
+  <a href="reports.html">📄 Reports</a>
+  <div class="sb-sec">Tools</div>
+  <a href="simulator.html">🔬 Simulator</a>
+  <a href="ai_assistant.html">🤖 AI Assistant</a>
 </aside>
 
-<!-- ══════════════════════════════════════════
-     MAIN CONTENT
-══════════════════════════════════════════ -->
-<main class="main-content">
-
-  <!-- Page Header -->
-  <div class="page-header" id="overview">
-    <div class="page-header-text">
-      <h1>Financial Intelligence Dashboard</h1>
-      <p>National Budget Intelligence Platform · Real-time monitoring as of <span id="dateDisplay"></span></p>
+<!-- MAIN -->
+<main class="main">
+  <div class="ph">
+    <div>
+      <div class="bc"><a href="index.html">Home</a> › Dashboard</div>
+      <h1>Budget Dashboard</h1>
+      <p id="dash-sub">Loading schemes...</p>
     </div>
-    <div class="page-header-actions">
-      <button class="btn-xs btn-xs-outline" onclick="showToast('Data refreshed successfully', 'success')">
-        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.2"/></svg>
-        Refresh
-      </button>
-      <button class="btn-xs btn-xs-navy" onclick="showToast('Generating report…', 'info')">
-        <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export Report
-      </button>
+    <div class="ph-actions">
+      <a href="ai_assistant.html" class="btn bsaffron">🤖 Ask AI</a>
+      <a href="reports.html" class="btn boutline">📥 Export</a>
     </div>
   </div>
 
-  <!-- 12. Filters Bar -->
-  <div class="filters-bar">
-    <label>Filters:</label>
-    <select class="filter-select" id="filterState" onchange="applyFilters()">
-      <option value="">All States</option>
-      <option>Rajasthan</option>
-      <option>Maharashtra</option>
-      <option>Uttar Pradesh</option>
-      <option>Bihar</option>
-      <option>Madhya Pradesh</option>
-      <option>Gujarat</option>
-      <option>Tamil Nadu</option>
-    </select>
-    <select class="filter-select" id="filterDistrict" onchange="applyFilters()">
-      <option value="">All Districts</option>
-      <option>Jaipur</option>
-      <option>Jodhpur</option>
-      <option>Pune</option>
-      <option>Lucknow</option>
-      <option>Patna</option>
-      <option>Bhopal</option>
-    </select>
-    <select class="filter-select" id="filterDept" onchange="applyFilters()">
-      <option value="">All Departments</option>
-      <option>Finance Ministry</option>
-      <option>Rural Development</option>
-      <option>Health Ministry</option>
-      <option>Education Department</option>
-      <option>District Administration</option>
-    </select>
-    <div class="filter-divider"></div>
-    <select class="filter-select" id="filterRisk" onchange="applyFilters()">
-      <option value="">All Risk Levels</option>
-      <option>Low</option>
-      <option>Medium</option>
-      <option>High</option>
-      <option>Critical</option>
-    </select>
-    <button class="filter-reset" onclick="resetFilters()">✕ Reset</button>
+  <!-- STATS -->
+  <div class="sg">
+    <div class="sc cn"><div class="si cn">📋</div><div class="sv" id="s-count">—</div><div class="sl">Accessible Schemes</div><div class="schange up" id="s-level">—</div></div>
+    <div class="sc cs"><div class="si cs">💰</div><div class="sv" id="s-budget">—</div><div class="sl">Total Budget Allocated</div><div class="schange up">FY 2025–26</div></div>
+    <div class="sc cg"><div class="si cg">✅</div><div class="sv" id="s-util">—</div><div class="sl">Avg. Utilization</div><div class="schange up">↑ vs last quarter</div></div>
+    <div class="sc cr"><div class="si cr">⚠️</div><div class="sv" id="s-risk">—</div><div class="sl">High Risk Schemes</div><div class="schange dn">Needs attention</div></div>
   </div>
 
-  <!-- 3. Overview Cards -->
-  <div class="overview-grid">
-    <div class="overview-card oc-navy">
-      <div class="oc-top">
-        <div class="oc-icon navy">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        </div>
-        <span class="oc-trend up"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>+12</span>
-      </div>
-      <div>
-        <div class="oc-value">248</div>
-        <div class="oc-label">Total Schemes</div>
-        <div class="oc-sub">Across 28 states &amp; 8 UTs</div>
-      </div>
-    </div>
-    <div class="overview-card oc-green">
-      <div class="oc-top">
-        <div class="oc-icon green">
-          <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </div>
-        <span class="oc-trend up"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>+₹840 Cr</span>
-      </div>
-      <div>
-        <div class="oc-value">₹4.72L Cr</div>
-        <div class="oc-label">Budget Allocated</div>
-        <div class="oc-sub">FY 2024–25 total outlay</div>
-      </div>
-    </div>
-    <div class="overview-card oc-amber">
-      <div class="oc-top">
-        <div class="oc-icon amber">
-          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        </div>
-        <span class="oc-trend neutral">68.4%</span>
-      </div>
-      <div>
-        <div class="oc-value">₹3.23L Cr</div>
-        <div class="oc-label">Budget Utilized</div>
-        <div class="oc-sub">₹1.49L Cr remaining</div>
-      </div>
-    </div>
-    <div class="overview-card oc-red">
-      <div class="oc-top">
-        <div class="oc-icon red">
-          <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        </div>
-        <span class="oc-trend down"><svg viewBox="0 0 24 24"><polyline points="18 9 12 15 6 9"/></svg>+3</span>
-      </div>
-      <div>
-        <div class="oc-value">34</div>
-        <div class="oc-label">High Risk Projects</div>
-        <div class="oc-sub">Require immediate review</div>
-      </div>
-    </div>
+  <!-- CHARTS -->
+  <div class="cr2">
+    <div class="card"><div class="ch"><span class="ct">Budget Utilization by Scheme</span><span class="badge bn">Bar</span></div><div class="cb"><canvas id="chart-util" height="230"></canvas></div></div>
+    <div class="card"><div class="ch"><span class="ct">Schemes by Sector</span><span class="badge bg">Distribution</span></div><div class="cb"><canvas id="chart-sector" height="230"></canvas></div></div>
   </div>
 
-  <!-- 4 & 5. Scheme Explorer + Detail Panel -->
-  <div class="two-col" id="schemes">
-    <div class="panel">
-      <div class="panel-head">
-        <div class="panel-head-left">
-          <div class="panel-head-icon phi-navy">
-            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-          </div>
-          <div>
-            <h3>Scheme Explorer</h3>
-            <p>Click a row to view details</p>
-          </div>
-        </div>
-        <div class="panel-head-actions">
-          <span style="font-size:11px;color:var(--gray-400);font-weight:600;">Showing <span id="schemeCount">10</span> of 248</span>
-          <button class="btn-xs btn-xs-outline" onclick="showToast('Exporting scheme data…', 'info')">
-            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Export
-          </button>
-        </div>
-      </div>
-      <div class="data-table-wrap">
-        <table class="data-table" id="schemeTable">
-          <thead>
-            <tr>
-              <th>Scheme Name</th>
-              <th>Department</th>
-              <th>State</th>
-              <th>District</th>
-              <th class="text-right">Allocated (Cr)</th>
-              <th class="text-right">Spent (Cr)</th>
-              <th>Contractor</th>
-              <th>Status</th>
-              <th>Risk</th>
-            </tr>
-          </thead>
-          <tbody id="schemeTableBody">
-          </tbody>
-        </table>
+  <!-- TABLE -->
+  <div class="card">
+    <div class="ch">
+      <span class="ct">📋 Scheme Registry</span>
+      <span class="badge bx" id="tbl-badge">—</span>
+    </div>
+    <div class="cb" style="padding-bottom:0">
+      <div class="fb">
+        <input type="text" id="srch" placeholder="🔍 Search schemes...">
+        <select id="sec-fil"><option value="">All Sectors</option></select>
+        <select id="risk-fil">
+          <option value="">All Risk Levels</option>
+          <option value="low">🟢 Low</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="high">🔴 High</option>
+          <option value="critical">🟣 Critical</option>
+        </select>
+        <button class="btn bghost" onclick="resetFilters()" style="padding:7px 12px">✕ Reset</button>
       </div>
     </div>
-
-    <!-- 5. Scheme Detail Panel -->
-    <div class="panel" id="detailPanel">
-      <div class="panel-head">
-        <div class="panel-head-left">
-          <div class="panel-head-icon phi-green">
-            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          </div>
-          <div>
-            <h3>Scheme Detail</h3>
-            <p>Select a scheme to inspect</p>
-          </div>
-        </div>
-      </div>
-      <div id="detailContent">
-        <div class="detail-panel-placeholder">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-          <p>Click any scheme row<br>to view full details</p>
-        </div>
-      </div>
-    </div>
+    <div class="tw"><table><thead id="tbl-head"></thead><tbody id="tbl-body"></tbody></table></div>
+    <div class="tbb"><span id="tbl-count">—</span><a href="ai_assistant.html" class="btn bsaffron" style="font-size:12px">🤖 Ask AI About Schemes</a></div>
   </div>
-
-  <!-- 6. AI Anomaly Detection -->
-  <div class="panel" id="anomaly">
-    <div class="panel-head">
-      <div class="panel-head-left">
-        <div class="panel-head-icon phi-red">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        </div>
-        <div>
-          <h3>AI Anomaly Detection</h3>
-          <p>Suspicious financial activity flagged by AI engine</p>
-        </div>
-      </div>
-      <div class="panel-head-actions">
-        <span style="font-size:11px;background:#fee2e2;color:var(--red);padding:3px 9px;border-radius:10px;font-weight:700;">7 Active Alerts</span>
-        <button class="btn-xs btn-xs-red" onclick="showToast('Running full anomaly scan…', 'warn')">
-          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          Run Scan
-        </button>
-      </div>
-    </div>
-    <div class="data-table-wrap">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>District</th>
-            <th>Scheme</th>
-            <th>Issue Detected</th>
-            <th>Amount Involved</th>
-            <th>Detected On</th>
-            <th>Risk Level</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="anomaly-row-critical">
-            <td>Jodhpur, RJ</td>
-            <td>PMGSY Phase III</td>
-            <td>Duplicate invoice submission — ₹3.2 Cr overbilling</td>
-            <td class="text-mono">₹3.20 Cr</td>
-            <td>14 Jan 2025</td>
-            <td><span class="risk-badge rb-critical">Critical</span></td>
-            <td><button class="btn-xs btn-xs-red" onclick="showToast('Flagging PMGSY Jodhpur for investigation', 'warn')">Investigate</button></td>
-          </tr>
-          <tr class="anomaly-row-critical">
-            <td>Patna, BR</td>
-            <td>Mid-Day Meal Scheme</td>
-            <td>Expenditure 140% above approved budget ceiling</td>
-            <td class="text-mono">₹1.87 Cr</td>
-            <td>13 Jan 2025</td>
-            <td><span class="risk-badge rb-critical">Critical</span></td>
-            <td><button class="btn-xs btn-xs-red" onclick="showToast('Flagging MDM Patna for investigation', 'warn')">Investigate</button></td>
-          </tr>
-          <tr class="anomaly-row-high">
-            <td>Jaipur, RJ</td>
-            <td>Jal Jeevan Mission</td>
-            <td>Contractor blacklisted — re-awarded without approval</td>
-            <td class="text-mono">₹6.45 Cr</td>
-            <td>12 Jan 2025</td>
-            <td><span class="risk-badge rb-high">High</span></td>
-            <td><button class="btn-xs btn-xs-amber" onclick="showToast('Flagging JJM Jaipur for review', 'info')">Review</button></td>
-          </tr>
-          <tr class="anomaly-row-high">
-            <td>Lucknow, UP</td>
-            <td>MGNREGS</td>
-            <td>Ghost beneficiary payments — 1,240 inactive IDs</td>
-            <td class="text-mono">₹0.94 Cr</td>
-            <td>11 Jan 2025</td>
-            <td><span class="risk-badge rb-high">High</span></td>
-            <td><button class="btn-xs btn-xs-amber" onclick="showToast('Flagging MGNREGS Lucknow for review', 'info')">Review</button></td>
-          </tr>
-          <tr>
-            <td>Bhopal, MP</td>
-            <td>PM Awas Yojana</td>
-            <td>Material procurement 58% above market rate</td>
-            <td class="text-mono">₹2.10 Cr</td>
-            <td>10 Jan 2025</td>
-            <td><span class="risk-badge rb-medium">Medium</span></td>
-            <td><button class="btn-xs btn-xs-outline" onclick="showToast('Flagging PMAY Bhopal for audit', 'info')">Audit</button></td>
-          </tr>
-          <tr>
-            <td>Pune, MH</td>
-            <td>Smart Cities Mission</td>
-            <td>Delayed milestones with full advance disbursement</td>
-            <td class="text-mono">₹4.30 Cr</td>
-            <td>09 Jan 2025</td>
-            <td><span class="risk-badge rb-medium">Medium</span></td>
-            <td><button class="btn-xs btn-xs-outline" onclick="showToast('Flagging SCM Pune for audit', 'info')">Audit</button></td>
-          </tr>
-          <tr>
-            <td>Ahmedabad, GJ</td>
-            <td>Digital India</td>
-            <td>Vendor conflict of interest — family entity awarded</td>
-            <td class="text-mono">₹1.25 Cr</td>
-            <td>08 Jan 2025</td>
-            <td><span class="risk-badge rb-medium">Medium</span></td>
-            <td><button class="btn-xs btn-xs-outline" onclick="showToast('Flagging DI Ahmedabad for audit', 'info')">Audit</button></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Row: Budget Map + Risk Score + Reallocation Simulator -->
-  <div class="three-col">
-
-    <!-- 7. Budget Flow Map -->
-    <div class="panel" id="budget-map">
-      <div class="panel-head">
-        <div class="panel-head-left">
-          <div class="panel-head-icon phi-navy">
-            <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-          </div>
-          <div>
-            <h3>Budget Flow Map</h3>
-            <p>Geospatial distribution</p>
-          </div>
-        </div>
-      </div>
-      <div class="map-placeholder">
-        <div class="map-india-bg">
-          <svg viewBox="0 0 200 220" fill="none" stroke="#1F3A5F" stroke-width="0.5">
-            <path d="M100 10 L130 25 L150 20 L160 35 L170 30 L175 50 L165 65 L170 80 L160 95 L155 115 L140 130 L135 150 L120 165 L115 185 L100 200 L85 185 L80 165 L65 150 L60 130 L45 115 L40 95 L30 80 L35 65 L25 50 L30 30 L40 35 L50 20 L70 25 Z"/>
-            <path d="M100 10 L85 30 L70 25 L75 45 L60 50 L65 65 L50 70 L55 90 L45 115"/>
-            <path d="M100 10 L115 30 L130 25 L125 45 L140 50 L135 65 L150 70 L145 90 L155 115"/>
-          </svg>
-        </div>
-        <div class="map-placeholder-content">
-          <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-          <p>Interactive GeoMap</p>
-          <button class="btn-xs btn-xs-navy" onclick="showToast('Launching GeoMap visualization…', 'info')">
-            <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            View GeoMap
-          </button>
-        </div>
-      </div>
-      <div style="padding:0 16px 14px;display:flex;gap:16px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--gray-600);">
-          <span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;"></span>Low spend
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--gray-600);">
-          <span style="width:10px;height:10px;border-radius:50%;background:var(--amber);display:inline-block;"></span>Moderate
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--gray-600);">
-          <span style="width:10px;height:10px;border-radius:50%;background:var(--red);display:inline-block;"></span>Overspend
-        </div>
-      </div>
-    </div>
-
-    <!-- 8. Risk Score Panel -->
-    <div class="panel" id="risk">
-      <div class="panel-head">
-        <div class="panel-head-left">
-          <div class="panel-head-icon phi-red">
-            <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-          </div>
-          <div>
-            <h3>Risk Score Analysis</h3>
-            <p>District-level risk index</p>
-          </div>
-        </div>
-        <button class="btn-xs btn-xs-outline" onclick="showToast('Recalculating risk scores…', 'info')">Recalculate</button>
-      </div>
-      <div class="risk-list">
-        <div class="risk-row">
-          <div class="risk-row-header">
-            <span class="risk-district">Jodhpur, Rajasthan</span>
-            <span class="risk-pct" style="color:var(--red);">92</span>
-          </div>
-          <div class="risk-bar-outer"><div class="risk-bar-fill rb-fill-red" style="width:92%"></div></div>
-          <div class="risk-sub">3 critical anomalies · ₹9.6 Cr at risk</div>
-        </div>
-        <div class="risk-row">
-          <div class="risk-row-header">
-            <span class="risk-district">Patna, Bihar</span>
-            <span class="risk-pct" style="color:var(--red);">84</span>
-          </div>
-          <div class="risk-bar-outer"><div class="risk-bar-fill rb-fill-red" style="width:84%"></div></div>
-          <div class="risk-sub">2 critical anomalies · ₹4.2 Cr at risk</div>
-        </div>
-        <div class="risk-row">
-          <div class="risk-row-header">
-            <span class="risk-district">Jaipur, Rajasthan</span>
-            <span class="risk-pct" style="color:var(--amber);">71</span>
-          </div>
-          <div class="risk-bar-outer"><div class="risk-bar-fill rb-fill-amber" style="width:71%"></div></div>
-          <div class="risk-sub">1 high anomaly · Contractor issue</div>
-        </div>
-        <div class="risk-row">
-          <div class="risk-row-header">
-            <span class="risk-district">Lucknow, UP</span>
-            <span class="risk-pct" style="color:var(--amber);">65</span>
-          </div>
-          <div class="risk-bar-outer"><div class="risk-bar-fill rb-fill-amber" style="width:65%"></div></div>
-          <div class="risk-sub">Ghost beneficiary alerts</div>
-        </div>
-        <div class="risk-row">
-          <div class="risk-row-header">
-            <span class="risk-district">Bhopal, MP</span>
-            <span class="risk-pct" style="color:var(--amber);">52</span>
-          </div>
-          <div class="risk-bar-outer"><div class="risk-bar-fill rb-fill-amber" style="width:52%"></div></div>
-          <div class="risk-sub">Procurement irregularities</div>
-        </div>
-        <div class="risk-row">
-          <div class="risk-row-header">
-            <span class="risk-district">Pune, Maharashtra</span>
-            <span class="risk-pct" style="color:var(--green-dark);">28</span>
-          </div>
-          <div class="risk-bar-outer"><div class="risk-bar-fill rb-fill-green" style="width:28%"></div></div>
-          <div class="risk-sub">Minor delays — monitored</div>
-        </div>
-        <div class="risk-row">
-          <div class="risk-row-header">
-            <span class="risk-district">Chennai, Tamil Nadu</span>
-            <span class="risk-pct" style="color:var(--green-dark);">14</span>
-          </div>
-          <div class="risk-bar-outer"><div class="risk-bar-fill rb-fill-green" style="width:14%"></div></div>
-          <div class="risk-sub">On track — no anomalies</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 9. Reallocation Simulator -->
-    <div class="panel" id="simulator">
-      <div class="panel-head">
-        <div class="panel-head-left">
-          <div class="panel-head-icon phi-amber">
-            <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
-          </div>
-          <div>
-            <h3>Reallocation Simulator</h3>
-            <p>Simulate fund transfers</p>
-          </div>
-        </div>
-      </div>
-      <div class="sim-body">
-        <div class="sim-form-row">
-          <span class="sim-label">Source District</span>
-          <select class="sim-input" id="simSource">
-            <option value="">— Select Source —</option>
-            <option>Jodhpur, Rajasthan</option>
-            <option>Patna, Bihar</option>
-            <option>Jaipur, Rajasthan</option>
-            <option>Lucknow, Uttar Pradesh</option>
-            <option>Bhopal, Madhya Pradesh</option>
-            <option>Pune, Maharashtra</option>
-          </select>
-        </div>
-        <div class="sim-form-row">
-          <span class="sim-label">Destination District</span>
-          <select class="sim-input" id="simDest">
-            <option value="">— Select Destination —</option>
-            <option>Chennai, Tamil Nadu</option>
-            <option>Ahmedabad, Gujarat</option>
-            <option>Hyderabad, Telangana</option>
-            <option>Bengaluru, Karnataka</option>
-            <option>Kolkata, West Bengal</option>
-          </select>
-        </div>
-        <div class="sim-form-row">
-          <span class="sim-label">Amount (₹ Cr)</span>
-          <div class="sim-amount-wrap">
-            <span class="sim-rupee">₹</span>
-            <input type="number" class="sim-input sim-input-plain" id="simAmount" placeholder="e.g. 25.00" min="1" step="0.5" style="padding-left:28px;" />
-          </div>
-        </div>
-        <button class="btn-xs btn-xs-navy" style="width:100%;justify-content:center;padding:10px;" onclick="runSimulation()">
-          <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-          Simulate Reallocation
-        </button>
-        <div class="sim-result" id="simResult">
-          <div class="sim-result-label">Simulation Result</div>
-          <div class="sim-result-text" id="simResultText"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Row: AI Chat + Recently Updated -->
-  <div class="two-col-equal" id="ai-chat">
-
-    <!-- 10. AI Financial Assistant -->
-    <div class="panel">
-      <div class="panel-head">
-        <div class="panel-head-left">
-          <div class="panel-head-icon phi-navy">
-            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          </div>
-          <div>
-            <h3>AI Financial Assistant</h3>
-            <p>Powered by ArthRakshak Intelligence Engine</p>
-          </div>
-        </div>
-        <span style="font-size:10.5px;background:var(--green-bg);color:var(--green-dark);padding:3px 8px;border-radius:10px;font-weight:700;">● Online</span>
-      </div>
-      <div class="chat-body">
-        <div class="chat-messages" id="chatMessages">
-          <div class="chat-msg">
-            <div class="chat-avatar avatar-ai">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
-            </div>
-            <div class="chat-bubble bubble-ai">Namaste! I am the ArthRakshak AI. I can help you analyse budgets, identify risk patterns, summarise scheme performance, or answer financial governance queries. How may I assist you?</div>
-          </div>
-        </div>
-        <div class="chat-input-row">
-          <input class="chat-input" id="chatInput" type="text" placeholder="Ask about schemes, budgets, anomalies…" onkeydown="if(event.key==='Enter') sendChat()" />
-          <button class="chat-send" onclick="sendChat()">
-            <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 11. Recently Updated Schemes -->
-    <div class="panel">
-      <div class="panel-head">
-        <div class="panel-head-left">
-          <div class="panel-head-icon phi-green">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </div>
-          <div>
-            <h3>Recently Updated</h3>
-            <p>Last 24 hours activity</p>
-          </div>
-        </div>
-        <button class="btn-xs btn-xs-outline">View All</button>
-      </div>
-      <div class="recent-list">
-        <div class="recent-item" onclick="showToast('Opening PMGSY Phase III…', 'info')">
-          <div class="recent-dot rd-red"></div>
-          <div class="recent-info">
-            <div class="recent-name">PMGSY Phase III – Road Construction</div>
-            <div class="recent-dept">Rural Development · Jodhpur</div>
-          </div>
-          <div class="recent-time">2h ago</div>
-        </div>
-        <div class="recent-item" onclick="showToast('Opening Jal Jeevan Mission…', 'info')">
-          <div class="recent-dot rd-amber"></div>
-          <div class="recent-info">
-            <div class="recent-name">Jal Jeevan Mission – Water Supply</div>
-            <div class="recent-dept">Jal Shakti · Jaipur</div>
-          </div>
-          <div class="recent-time">4h ago</div>
-        </div>
-        <div class="recent-item" onclick="showToast('Opening PM Awas Yojana…', 'info')">
-          <div class="recent-dot rd-green"></div>
-          <div class="recent-info">
-            <div class="recent-name">PM Awas Yojana – Urban Housing</div>
-            <div class="recent-dept">Housing &amp; Urban Affairs · Pune</div>
-          </div>
-          <div class="recent-time">5h ago</div>
-        </div>
-        <div class="recent-item" onclick="showToast('Opening MGNREGS UP…', 'info')">
-          <div class="recent-dot rd-red"></div>
-          <div class="recent-info">
-            <div class="recent-name">MGNREGS – Rural Employment</div>
-            <div class="recent-dept">Rural Development · Lucknow</div>
-          </div>
-          <div class="recent-time">7h ago</div>
-        </div>
-        <div class="recent-item" onclick="showToast('Opening Smart Cities Mission…', 'info')">
-          <div class="recent-dot rd-green"></div>
-          <div class="recent-info">
-            <div class="recent-name">Smart Cities Mission – ICT Infra</div>
-            <div class="recent-dept">Urban Dev · Bengaluru</div>
-          </div>
-          <div class="recent-time">9h ago</div>
-        </div>
-        <div class="recent-item" onclick="showToast('Opening Digital India…', 'info')">
-          <div class="recent-dot rd-amber"></div>
-          <div class="recent-info">
-            <div class="recent-name">Digital India – Village Connectivity</div>
-            <div class="recent-dept">MeitY · Ahmedabad</div>
-          </div>
-          <div class="recent-time">11h ago</div>
-        </div>
-        <div class="recent-item" onclick="showToast('Opening Mid-Day Meal Scheme…', 'info')">
-          <div class="recent-dot rd-red"></div>
-          <div class="recent-info">
-            <div class="recent-name">Mid-Day Meal Scheme</div>
-            <div class="recent-dept">Education · Patna</div>
-          </div>
-          <div class="recent-time">14h ago</div>
-        </div>
-        <div class="recent-item" onclick="showToast('Opening Saubhagya Scheme…', 'info')">
-          <div class="recent-dot rd-green"></div>
-          <div class="recent-info">
-            <div class="recent-name">Saubhagya – Rural Electrification</div>
-            <div class="recent-dept">Power Ministry · Bhopal</div>
-          </div>
-          <div class="recent-time">18h ago</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
 </main>
 
-<!-- Dashboard Toast -->
-<div class="dash-toast dt-info" id="dashToast">
-  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-  <span id="dashToastMsg"></span>
+<!-- MODAL -->
+<div class="moverlay" id="modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal">
+    <div class="mh">
+      <div><h2 id="m-name">—</h2><p>ArthRakshak — Scheme Intelligence</p></div>
+      <button class="mclose" onclick="document.getElementById('modal').classList.remove('open')">×</button>
+    </div>
+    <div class="mb" id="m-body"></div>
+    <div style="padding:14px 22px;border-top:1px solid #e2e8f0;display:flex;gap:8px;justify-content:flex-end">
+      <a href="risk_score.html" class="btn boutline" style="font-size:12px">🛡️ Risk Details</a>
+      <a href="ai_assistant.html" class="btn bsaffron" style="font-size:12px">🤖 Ask AI</a>
+      <button class="btn bghost" style="font-size:12px" onclick="document.getElementById('modal').classList.remove('open')">Close</button>
+    </div>
+  </div>
 </div>
 
+<script src="data.js"></script>
 <script>
-const schemes = [
-  { id:'SCH-001', name:'PMGSY Phase III – Road Construction', dept:'Rural Development', state:'Rajasthan', district:'Jodhpur', allocated:120.5, spent:98.2, contractor:'Bharat Roads Pvt. Ltd.', addr:'Plot 12, Industrial Area, Jodhpur, RJ 342001', status:'Active', risk:'Critical' },
-  { id:'SCH-002', name:'Jal Jeevan Mission – Water Supply', dept:'Jal Shakti', state:'Rajasthan', district:'Jaipur', allocated:85.0, spent:61.3, contractor:'AquaTech Infrastructure', addr:'Sector 9, Malviya Nagar, Jaipur, RJ 302017', status:'Active', risk:'High' },
-  { id:'SCH-003', name:'PM Awas Yojana – Urban Housing', dept:'Housing & Urban Affairs', state:'Maharashtra', district:'Pune', allocated:200.0, spent:132.5, contractor:'Sunrise Constructions Ltd.', addr:'Hinjewadi Phase 2, Pune, MH 411057', status:'Active', risk:'Medium' },
-  { id:'SCH-004', name:'MGNREGS – Rural Employment', dept:'Rural Development', state:'Uttar Pradesh', district:'Lucknow', allocated:45.0, spent:38.7, contractor:'State Implementation Cell', addr:'Vidhan Sabha Marg, Lucknow, UP 226001', status:'Under Review', risk:'High' },
-  { id:'SCH-005', name:'Mid-Day Meal Scheme', dept:'Education Department', state:'Bihar', district:'Patna', allocated:30.0, spent:42.1, contractor:'Bihar State Food Corp.', addr:'Gandhi Maidan, Patna, BR 800001', status:'Suspended', risk:'Critical' },
-  { id:'SCH-006', name:'Smart Cities Mission – ICT', dept:'Urban Development', state:'Karnataka', district:'Bengaluru', allocated:150.0, spent:89.0, contractor:'TechCity Solutions Ltd.', addr:'Koramangala, Bengaluru, KA 560034', status:'Active', risk:'Low' },
-  { id:'SCH-007', name:'Digital India – Village Connectivity', dept:'MeitY', state:'Gujarat', district:'Ahmedabad', allocated:60.0, spent:34.2, contractor:'Reliance Jio Infocomm', addr:'Naroda, Ahmedabad, GJ 382330', status:'Active', risk:'Medium' },
-  { id:'SCH-008', name:'Saubhagya – Rural Electrification', dept:'Power Ministry', state:'Madhya Pradesh', district:'Bhopal', allocated:95.0, spent:77.4, contractor:'MP Power Generating Co.', addr:'Shakti Bhawan, Bhopal, MP 462004', status:'Active', risk:'Medium' },
-  { id:'SCH-009', name:'Ayushman Bharat – Health Infra', dept:'Health Ministry', state:'Tamil Nadu', district:'Chennai', allocated:180.0, spent:112.0, contractor:'Apollo Healthcare Infra', addr:'Greams Road, Chennai, TN 600006', status:'Active', risk:'Low' },
-  { id:'SCH-010', name:'National Highway Expansion NH-48', dept:'Road Transport', state:'Maharashtra', district:'Pune', allocated:340.0, spent:198.5, contractor:'L&T Infrastructure Ltd.', addr:'Baner, Pune, MH 411045', status:'Active', risk:'Low' },
-];
+const user=getUser();if(!user){window.location.href='login.html';throw new Error('unauth');}
+setTopbar(user);
 
-const riskClass = { 'Critical':'rb-critical', 'High':'rb-high', 'Medium':'rb-medium', 'Low':'rb-low' };
-const statusClass = { 'Active':'sp-green', 'Under Review':'sp-amber', 'Suspended':'sp-red', 'Completed':'sp-navy' };
+const schemes=getSchemes(user);
+const level=levelLabel(user);
+const isNat=user.dept==='Finance Ministry'||user.dept==='Chief Economic Advisory';
 
-function renderTable(data) {
-  const tbody = document.getElementById('schemeTableBody');
-  tbody.innerHTML = '';
-  document.getElementById('schemeCount').textContent = data.length;
-  data.forEach((s, i) => {
-    const pct = Math.round(s.spent / s.allocated * 100);
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="scheme-name-cell" title="${s.name}">${s.name}</td>
-      <td>${s.dept}</td>
-      <td>${s.state}</td>
-      <td>${s.district}</td>
-      <td class="text-right text-mono">₹${s.allocated.toFixed(1)}</td>
-      <td class="text-right text-mono">₹${s.spent.toFixed(1)}</td>
-      <td>${s.contractor.split(' ').slice(0,2).join(' ')}…</td>
-      <td><span class="status-pill ${statusClass[s.status]||'sp-gray'}">${s.status}</span></td>
-      <td><span class="risk-badge ${riskClass[s.risk]||'rb-low'}">${s.risk}</span></td>
-    `;
-    tr.onclick = () => openDetail(s, tr);
-    tbody.appendChild(tr);
-  });
+// Stats
+document.getElementById('dash-sub').textContent=`Showing ${schemes.length} schemes for ${user.dept} — ${level}`;
+document.getElementById('s-count').textContent=schemes.length;
+document.getElementById('s-level').textContent='↑ '+level+' level';
+const avgUtil=Math.round(schemes.reduce((a,s)=>a+s.utilization,0)/schemes.length);
+document.getElementById('s-util').textContent=avgUtil+'%';
+document.getElementById('s-risk').textContent=schemes.filter(s=>s.riskScore>=55).length;
+const budgets={'Finance Ministry':'₹7.2 Lakh Cr+','Chief Economic Advisory':'₹7.2 Lakh Cr+','State Department':'₹73,698 Cr','District Administration':'₹205 Cr','Rural Administration':'₹205 Cr'};
+document.getElementById('s-budget').textContent=budgets[user.dept]||'—';
+document.getElementById('tbl-badge').textContent=schemes.length+' schemes';
+
+// Table header
+const thead=document.getElementById('tbl-head');
+if(isNat){
+  thead.innerHTML='<tr><th>Scheme Name</th><th>Budget</th><th>Distributed</th><th>Utilization</th><th>Year</th><th>Sector</th><th>Risk</th><th>Status</th></tr>';
+}else{
+  thead.innerHTML='<tr><th>Scheme Name</th><th>Budget</th><th>Utilized</th><th>Remaining</th><th>Utilization</th><th>Sector</th><th>Risk</th></tr>';
 }
 
-function openDetail(s, row) {
-  document.querySelectorAll('#schemeTableBody tr').forEach(r => r.classList.remove('selected'));
-  row.classList.add('selected');
-  const pct = Math.round(s.spent / s.allocated * 100);
-  const barColor = pct > 100 ? 'var(--red)' : pct > 80 ? 'var(--amber)' : 'var(--green)';
-  const barW = Math.min(pct, 100);
-  document.getElementById('detailContent').innerHTML = `
-    <div class="detail-body">
-      <div>
-        <div class="detail-scheme-title">${s.name}</div>
-        <span class="detail-id-tag">${s.id}</span>
-      </div>
-      <div class="detail-meta-grid">
-        <div><div class="detail-meta-label">Department</div><div class="detail-meta-value">${s.dept}</div></div>
-        <div><div class="detail-meta-label">Status</div><div class="detail-meta-value"><span class="status-pill ${statusClass[s.status]||'sp-gray'}">${s.status}</span></div></div>
-        <div><div class="detail-meta-label">State</div><div class="detail-meta-value">${s.state}</div></div>
-        <div><div class="detail-meta-label">District</div><div class="detail-meta-value">${s.district}</div></div>
-      </div>
-      <div class="budget-vis">
-        <div class="budget-vis-row">
-          <span class="budget-vis-label">Budget Utilization</span>
-          <span class="budget-vis-pct" style="color:${barColor}">${pct}%</span>
-        </div>
-        <div class="budget-bar-outer">
-          <div class="budget-bar-inner" style="width:${barW}%;background:linear-gradient(90deg,${barColor},${barColor}cc)"></div>
-        </div>
-        <div class="budget-numbers">
-          <span>Spent: ₹${s.spent.toFixed(2)} Cr</span>
-          <span>Allocated: ₹${s.allocated.toFixed(2)} Cr</span>
-        </div>
-      </div>
-      <div class="contractor-box">
-        <div class="contractor-box-label">Assigned Contractor</div>
-        <div class="contractor-box-name">${s.contractor}</div>
-        <div class="contractor-box-addr">${s.addr}</div>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:11.5px;color:var(--gray-500);font-weight:600;">Risk Level:</span>
-        <span class="risk-badge ${riskClass[s.risk]||'rb-low'}" style="font-size:12px;">${s.risk}</span>
-      </div>
-      <div class="detail-actions">
-        <button class="detail-btn db-navy" onclick="showToast('Opening map for ${s.district}…','info')">
-          <svg viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg>View on Map
-        </button>
-        <button class="detail-btn db-red" onclick="showToast('Running anomaly scan on ${s.id}…','warn')">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Detect Anomaly
-        </button>
-        <button class="detail-btn db-amber" onclick="showToast('Calculating risk for ${s.id}…','warn')">
-          <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>Risk Score
-        </button>
-        <button class="detail-btn db-green" onclick="showToast('Generating report for ${s.id}…','info')">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Report
-        </button>
-        <button class="detail-btn db-outline" style="grid-column:1/-1;" onclick="showToast('Opening reallocation simulator for ${s.id}…','info')">
-          <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/></svg>Simulate Reallocation
-        </button>
-      </div>
-    </div>
-  `;
-}
-
-function applyFilters() {
-  const state = document.getElementById('filterState').value;
-  const dist = document.getElementById('filterDistrict').value;
-  const dept = document.getElementById('filterDept').value;
-  const risk = document.getElementById('filterRisk').value;
-  const filtered = schemes.filter(s =>
-    (!state || s.state === state) &&
-    (!dist || s.district === dist) &&
-    (!dept || s.dept === dept) &&
-    (!risk || s.risk === risk)
-  );
-  renderTable(filtered);
-}
-
-function resetFilters() {
-  ['filterState','filterDistrict','filterDept','filterRisk'].forEach(id => document.getElementById(id).value = '');
-  renderTable(schemes);
-}
-
-function scrollToSection(id) {
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-}
-
-function runSimulation() {
-  const src = document.getElementById('simSource').value;
-  const dst = document.getElementById('simDest').value;
-  const amt = parseFloat(document.getElementById('simAmount').value);
-  const res = document.getElementById('simResult');
-  const txt = document.getElementById('simResultText');
-  if (!src || !dst || !amt || amt <= 0) {
-    showToast('Please fill all simulator fields.', 'warn'); return;
+function rowHtml(s){
+  const rc=riskClass(s.riskScore);
+  const bar=`<div style="display:flex;align-items:center;gap:7px"><div class="pb" style="width:75px"><div class="pf" style="width:${s.utilization}%;background:${progressColor(s.utilization)}"></div></div><span style="font-size:12px">${s.utilization}%</span></div>`;
+  if(s.id.startsWith('n')){
+    return`<td style="font-weight:600;color:#002147;max-width:220px">${s.name}</td><td>${s.budget}</td><td>${s.distributed}</td><td>${bar}</td><td>${s.year}</td><td><span class="badge bn">${s.sector}</span></td><td><span class="rb r${rc}">${riskLabel(s.riskScore)}</span></td><td><span class="badge bg">Active</span></td>`;
   }
-  const saving = (Math.random() * 8 + 4).toFixed(1);
-  const newRisk = Math.floor(Math.random() * 20 + 60);
-  txt.innerHTML = `
-    Transferring <strong>₹${amt.toFixed(2)} Cr</strong> from <strong>${src.split(',')[0]}</strong> to <strong>${dst.split(',')[0]}</strong>.<br>
-    Projected efficiency gain: <strong>${saving}%</strong>.<br>
-    Source district risk post-transfer: <strong>${newRisk}/100</strong>.<br>
-    <span style="font-size:11px;color:var(--green-dark);margin-top:4px;display:block;">✓ Reallocation viable — Ministry approval required.</span>
-  `;
-  res.classList.add('show');
-  showToast('Simulation complete. Review the results below.', 'success');
+  return`<td style="font-weight:600;color:#002147;max-width:200px">${s.name}</td><td>${s.budget}</td><td>${s.utilized}</td><td>${s.remaining}</td><td>${bar}</td><td><span class="badge bn">${s.sector}</span></td><td><span class="rb r${rc}">${riskLabel(s.riskScore)}</span></td>`;
 }
 
-const aiResponses = {
-  default: [
-    'Based on the current financial data, I can see budget utilization across 248 schemes stands at 68.4%. Rajasthan districts show the highest anomaly concentration.',
-    'The PMGSY scheme in Jodhpur has a critical risk score of 92/100 due to duplicate invoice submissions worth ₹3.2 Cr. Immediate investigation is recommended.',
-    'Budget reallocation from high-risk districts to under-served regions could improve efficiency by an estimated 12–18% based on historical patterns.',
-    'Mid-Day Meal expenditure in Patna has exceeded its approved ceiling by 40%. This has triggered an automatic suspension flag pending audit clearance.',
-    'Across all active schemes, the average contractor performance index is 72/100. Rural Development contractors show the lowest performance at 58/100.',
-    'Pattern analysis indicates Q3 of FY2024-25 shows a 23% spike in anomaly reports — consistent with pre-election fiscal irregularity trends from previous cycles.',
-  ]
-};
-
-let responseIndex = 0;
-
-function sendChat() {
-  const input = document.getElementById('chatInput');
-  const msg = input.value.trim();
-  if (!msg) return;
-  const container = document.getElementById('chatMessages');
-
-  const userMsg = document.createElement('div');
-  userMsg.className = 'chat-msg user';
-  userMsg.innerHTML = `<div class="chat-avatar avatar-user">RK</div><div class="chat-bubble bubble-user">${msg}</div>`;
-  container.appendChild(userMsg);
-  input.value = '';
-  container.scrollTop = container.scrollHeight;
-
-  const typingMsg = document.createElement('div');
-  typingMsg.className = 'chat-msg';
-  typingMsg.innerHTML = `<div class="chat-avatar avatar-ai"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div><div class="chat-bubble bubble-ai"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
-  container.appendChild(typingMsg);
-  container.scrollTop = container.scrollHeight;
-
-  setTimeout(() => {
-    container.removeChild(typingMsg);
-    const reply = aiResponses.default[responseIndex % aiResponses.default.length];
-    responseIndex++;
-    const aiMsg = document.createElement('div');
-    aiMsg.className = 'chat-msg';
-    aiMsg.innerHTML = `<div class="chat-avatar avatar-ai"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div><div class="chat-bubble bubble-ai">${reply}</div>`;
-    container.appendChild(aiMsg);
-    container.scrollTop = container.scrollHeight;
-  }, 1400);
+function renderTable(data){
+  const tbody=document.getElementById('tbl-body');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="99" style="text-align:center;padding:32px;color:#64748b">No schemes found.</td></tr>';return;}
+  tbody.innerHTML=data.map(s=>`<tr onclick="openModal(${JSON.stringify(s).replace(/"/g,'&quot;')})">${rowHtml(s)}</tr>`).join('');
+  document.getElementById('tbl-count').textContent=`Showing ${data.length} of ${schemes.length} schemes`;
 }
-
-let toastTimer;
-function showToast(msg, type = 'info') {
-  const toast = document.getElementById('dashToast');
-  const icons = {
-    info: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
-    success: '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>',
-    warn: '<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
-  };
-  toast.className = `dash-toast dt-${type === 'warn' ? 'warn' : type === 'success' ? 'success' : 'info'}`;
-  toast.innerHTML = `${icons[type]||icons.info}<span>${msg}</span>`;
-  toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 3800);
-}
-
-document.getElementById('globalSearch').addEventListener('input', function() {
-  const q = this.value.toLowerCase();
-  if (!q) { renderTable(schemes); return; }
-  const filtered = schemes.filter(s =>
-    s.name.toLowerCase().includes(q) ||
-    s.contractor.toLowerCase().includes(q) ||
-    s.district.toLowerCase().includes(q) ||
-    s.state.toLowerCase().includes(q) ||
-    s.dept.toLowerCase().includes(q)
-  );
-  renderTable(filtered);
-});
-
-document.getElementById('dateDisplay').textContent = new Date().toLocaleDateString('en-IN', { weekday:'long', day:'2-digit', month:'long', year:'numeric' });
-
 renderTable(schemes);
-</script>
 
+// Sector filter
+const sectors=[...new Set(schemes.map(s=>s.sector))].sort();
+const sf=document.getElementById('sec-fil');
+sectors.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;sf.appendChild(o);});
+
+function applyFilters(){
+  const q=document.getElementById('srch').value.toLowerCase();
+  const sec=sf.value;
+  const rsk=document.getElementById('risk-fil').value;
+  const filtered=schemes.filter(s=>{
+    if(q&&!s.name.toLowerCase().includes(q)&&!s.sector.toLowerCase().includes(q))return false;
+    if(sec&&s.sector!==sec)return false;
+    if(rsk){
+      if(rsk==='low'&&s.riskScore>=30)return false;
+      if(rsk==='medium'&&(s.riskScore<30||s.riskScore>=55))return false;
+      if(rsk==='high'&&(s.riskScore<55||s.riskScore>=75))return false;
+      if(rsk==='critical'&&s.riskScore<75)return false;
+    }
+    return true;
+  });
+  renderTable(filtered);
+}
+
+document.getElementById('srch').addEventListener('input',applyFilters);
+sf.addEventListener('change',applyFilters);
+document.getElementById('risk-fil').addEventListener('change',applyFilters);
+function resetFilters(){document.getElementById('srch').value='';sf.value='';document.getElementById('risk-fil').value='';renderTable(schemes);}
+
+// Modal
+function openModal(s){
+  document.getElementById('m-name').textContent=s.name;
+  const rc=riskClass(s.riskScore);
+  let html=`<div class="dg">
+    <div class="di"><label>Total Budget</label><p>${s.budget}</p></div>
+    <div class="di"><label>Sector</label><p><span class="badge bn">${s.sector}</span></p></div>
+    <div class="di"><label>Status</label><p><span class="badge bg">Active</span></p></div>
+    <div class="di"><label>Risk Score</label><p><span class="rb r${rc}">${s.riskScore}/100 — ${riskLabel(s.riskScore)}</span></p></div>
+  </div><div class="divider">`;
+  if(s.id&&s.id.startsWith('n')){
+    html+=`</div><div class="dg"><div class="di"><label>Distributed</label><p>${s.distributed}</p></div><div class="di"><label>Launch Year</label><p>${s.year}</p></div><div class="di"><label>Ministry</label><p style="font-size:12px">${s.ministry}</p></div><div class="di"><label>Beneficiaries</label><p>${s.beneficiaries}</p></div></div><div class="divider"></div><div class="di"><label>About This Scheme</label><p style="font-size:13px;line-height:1.7;margin-top:4px;color:#334155">${s.desc}</p></div>`;
+  }else{
+    html+=`</div><div class="dg"><div class="di"><label>Utilized</label><p>${s.utilized}</p></div><div class="di"><label>Remaining</label><p>${s.remaining}</p></div><div class="di"><label>Utilization %</label><p>${s.utilization}%</p></div></div><div class="divider"></div><div class="di"><label>Purpose</label><p style="margin-top:4px">${s.purpose}</p></div>`;
+  }
+  html+=`<div class="divider"></div><div style="margin-top:4px"><div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:6px"><span>Budget Utilization</span><span>${s.utilization}%</span></div><div class="pb" style="width:100%;height:10px"><div class="pf" style="width:${s.utilization}%;background:${progressColor(s.utilization)}"></div></div></div>`;
+  document.getElementById('m-body').innerHTML=html;
+  document.getElementById('modal').classList.add('open');
+}
+
+// Charts
+if(typeof Chart!=='undefined'){
+  new Chart(document.getElementById('chart-util'),{
+    type:'bar',
+    data:{labels:schemes.map(s=>s.name.length>18?s.name.substring(0,18)+'…':s.name),datasets:[{label:'Utilization %',data:schemes.map(s=>s.utilization),backgroundColor:schemes.map(s=>progressColor(s.utilization)),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:10}},grid:{display:false}},y:{max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0f3f8'}}}}
+  });
+  const sc={};schemes.forEach(s=>{sc[s.sector]=(sc[s.sector]||0)+1;});
+  new Chart(document.getElementById('chart-sector'),{
+    type:'doughnut',
+    data:{labels:Object.keys(sc),datasets:[{data:Object.values(sc),backgroundColor:['#002147','#003580','#e85d00','#1a7a4a','#c0392b','#f59e0b','#6366f1','#14b8a6','#ec4899','#8b5cf6'],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'right',labels:{font:{size:11},padding:10}}},cutout:'58%'}
+  });
+}else{
+  document.getElementById('chart-util').parentElement.innerHTML='<p style="padding:20px;color:#64748b;text-align:center">Chart.js not loaded — check internet connection.</p>';
+}
+</script>
 </body>
 </html>

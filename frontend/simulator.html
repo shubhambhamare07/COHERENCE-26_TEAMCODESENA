@@ -1,406 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Budget Impact Simulator — ArthRakshak AI</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ArthRakshak — Simulator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f7f9fc;color:#0f172a;font-size:14px}
+.topbar{background:#002147;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:3px solid #e85d00;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.tb-brand{display:flex;align-items:center;gap:10px}.tb-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.tb-title{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#fff}.tb-title span{display:block;font-size:10px;font-family:-apple-system,sans-serif;font-weight:400;opacity:.6;letter-spacing:1.2px;text-transform:uppercase}
+.tb-nav{display:flex;gap:2px}.tb-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:12px;padding:6px 9px;border-radius:5px;transition:.15s;white-space:nowrap}.tb-nav a:hover,.tb-nav a.active{background:rgba(255,255,255,.14);color:#fff}
+.tb-right{display:flex;align-items:center;gap:10px}.uavatar{width:30px;height:30px;background:#e85d00;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.uinfo{text-align:right}.un{font-size:12px;font-weight:600;color:#fff}.ud{font-size:11px;opacity:.6;color:#fff}
+.nb{position:relative;background:none;border:none;color:rgba(255,255,255,.8);font-size:18px;cursor:pointer;padding:4px}.nb-badge{position:absolute;top:0;right:0;width:15px;height:15px;background:#e85d00;border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+.sidebar{width:210px;background:#001530;position:fixed;top:58px;left:0;bottom:0;overflow-y:auto;z-index:900;padding:12px 0}
+.sb-sec{padding:10px 16px 4px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.sidebar a{display:flex;align-items:center;gap:9px;padding:9px 17px;color:rgba(255,255,255,.65);text-decoration:none;font-size:13px;transition:.15s;border-left:3px solid transparent}
+.sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:rgba(232,93,0,.5)}.sidebar a.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#e85d00}
+.main{margin-left:210px;margin-top:58px;padding:24px 28px}
+.ph{margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #e2e8f0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.ph h1{font-family:Georgia,serif;font-size:20px;font-weight:700;color:#002147}.ph p{color:#64748b;font-size:13px;margin-top:3px}
+.bc{display:flex;align-items:center;gap:6px;font-size:12px;color:#64748b;margin-bottom:4px}.bc a{color:#003580;text-decoration:none}
+.grid{display:grid;grid-template-columns:1fr 2fr;gap:20px}
+.card{background:#fff;border:1px solid #d0dae8;border-radius:10px;box-shadow:0 1px 4px rgba(0,33,71,.08);overflow:hidden}
+.card-hdr{padding:13px 17px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:Georgia,serif;font-size:14px;font-weight:700;color:#002147}.card-body{padding:18px}
+.form-group{margin-bottom:14px}
+label{display:block;font-size:11.5px;font-weight:700;color:#334155;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+select{width:100%;padding:8px 11px;border:1.5px solid #d0dae8;border-radius:6px;font-family:inherit;font-size:13px;color:#0f172a;background:#fff;outline:none}
+select:focus{border-color:#002147}
+.sl-grp{margin-bottom:18px}
+.sl-hdr{display:flex;justify-content:space-between;margin-bottom:7px;align-items:center}
+.sl-hdr label{margin:0;font-size:11.5px;font-weight:700;color:#334155;text-transform:uppercase;letter-spacing:.5px}
+.sl-val{font-weight:700;color:#002147;font-size:14px}
+input[type=range]{-webkit-appearance:none;width:100%;height:5px;border-radius:3px;background:#e2e8f0;outline:none;padding:0;border:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;height:17px;border-radius:50%;background:#002147;cursor:pointer;box-shadow:0 0 0 3px #ddeeff}
+.sl-range{display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;margin-top:3px}
+.divider{height:1px;background:#e2e8f0;margin:14px 0}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.sc{background:#fff;border:1px solid #d0dae8;border-radius:10px;padding:15px;position:relative;overflow:hidden;box-shadow:0 1px 4px rgba(0,33,71,.08)}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sc.navy::before{background:#002147}.sc.orange::before{background:#e85d00}.sc.green::before{background:#1a7a4a}.sc.red::before{background:#c0392b}
+.sc-icon{width:34px;height:34px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:9px}
+.sc-icon.navy{background:#ddeeff}.sc-icon.orange{background:#fff0e6}.sc-icon.green{background:#e0f5ea}.sc-icon.red{background:#fde8e6}
+.sc-val{font-family:Georgia,serif;font-size:19px;font-weight:700;color:#0f172a;line-height:1.1}
+.sc-lbl{font-size:11px;color:#64748b;margin-top:3px;font-weight:500}
+.preset-btns{display:flex;flex-direction:column;gap:7px}
+.empty{text-align:center;padding:36px;color:#64748b}
+.empty .ico{font-size:40px;margin-bottom:10px}
+.empty h3{font-size:15px;color:#334155;margin-bottom:5px}
+.alert-box{background:#ddeeff;border-left:4px solid #002147;padding:11px 15px;border-radius:6px;font-size:13px;margin-bottom:12px}
+.result-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.result-item{padding:11px;border-radius:6px;background:#f7f9fc;border:1px solid #e2e8f0}
+.result-item .label{font-size:10.5px;color:#64748b;text-transform:uppercase;letter-spacing:.6px}
+.result-item .val{font-size:14px;font-weight:700;color:#002147;margin-top:3px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:.15s;text-decoration:none;white-space:nowrap}
+.btn-orange{background:#e85d00;color:#fff;width:100%;justify-content:center}.btn-orange:hover{background:#c94e00}
+.btn-ghost{background:#f0f3f8;color:#334155;justify-content:flex-start}.btn-ghost:hover{background:#e2e8f0}
+.btn-ghost.full{width:100%}
+.btn-sm{padding:5px 10px;font-size:12px}
+@media(max-width:1100px){.tb-nav{display:none}.grid{grid-template-columns:1fr}}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}}
+</style>
 </head>
 <body>
-
-<!-- HEADER -->
-<header>
-  <div class="container">
-    <div class="header-inner">
-      <div>
-        <div class="logo-badge">ArthRakshak AI</div>
+<header class="topbar">
+  <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<span>National Budget Intelligence Platform</span></div></div>
+  <nav class="tb-nav"><a href="index.html">🏠</a><a href="dashboard.html">📊</a><a href="budget-flow.html">💸</a><a href="risk_score.html">🛡️</a><a href="anomaly.html">⚠️</a><a href="reports.html">📄</a><a href="simulator.html" class="active">🔬 Simulator</a><a href="ai_assistant.html">🤖</a></nav>
+  <div class="tb-right">
+    <button class="nb">🔔<span class="nb-badge">3</span></button>
+    <div style="display:flex;align-items:center;gap:8px"><div class="uinfo"><div class="un" id="uname">—</div><div class="ud" id="udept">—</div></div><div class="uavatar" id="uavatar">?</div></div>
+    <button onclick="logout()" class="btn btn-ghost btn-sm">🚪 Logout</button>
+  </div>
+</header>
+<aside class="sidebar">
+  <div class="sb-sec">Main</div><a href="index.html">🏠 Home</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html">💸 Flow</a>
+  <div class="sb-sec">Intelligence</div><a href="risk_score.html">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomaly Detection</a><a href="reports.html">📄 Reports</a>
+  <div class="sb-sec">Tools</div><a href="simulator.html" class="active">🔬 Budget Simulator</a><a href="ai_assistant.html">🤖 AI Assistant</a>
+</aside>
+<main class="main">
+  <div class="ph">
+    <div><div class="bc"><a href="index.html">Home</a> › Simulator</div><h1>🔬 Budget Allocation Simulator</h1><p>Model budget reallocation scenarios and simulate impact on scheme outcomes.</p></div>
+    <div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" onclick="resetSim()">↺ Reset</button><button class="btn btn-orange btn-sm" onclick="runSim()">▶ Run Simulation</button></div>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-hdr"><span class="card-title">⚙️ Simulation Parameters</span></div>
+        <div class="card-body">
+          <div class="form-group"><label>Base Scheme</label><select id="sim-scheme"><option value="">Select Scheme…</option></select></div>
+          <div class="form-group"><label>Fiscal Year</label><select><option>2025–26</option><option>2026–27 (Projection)</option><option>2027–28 (Projection)</option></select></div>
+          <div class="divider"></div>
+          <div class="sl-grp"><div class="sl-hdr"><label>Budget Change</label><span class="sl-val" id="v-budget">0%</span></div><input type="range" id="sl-budget" min="-50" max="100" value="0" step="5" oninput="updateSim()"><div class="sl-range"><span>-50%</span><span>+100%</span></div></div>
+          <div class="sl-grp"><div class="sl-hdr"><label>Admin Efficiency</label><span class="sl-val" id="v-eff">70%</span></div><input type="range" id="sl-eff" min="30" max="100" value="70" step="5" oninput="updateSim()"><div class="sl-range"><span>30%</span><span>100%</span></div></div>
+          <div class="sl-grp"><div class="sl-hdr"><label>Leakage Reduction</label><span class="sl-val" id="v-leak">20%</span></div><input type="range" id="sl-leak" min="0" max="80" value="20" step="5" oninput="updateSim()"><div class="sl-range"><span>0%</span><span>80%</span></div></div>
+          <div class="sl-grp"><div class="sl-hdr"><label>DBT Coverage</label><span class="sl-val" id="v-dbt">60%</span></div><input type="range" id="sl-dbt" min="0" max="100" value="60" step="5" oninput="updateSim()"><div class="sl-range"><span>0%</span><span>100%</span></div></div>
+          <button class="btn btn-orange" onclick="runSim()">▶ Run Simulation</button>
+        </div>
       </div>
-      <div class="header-text">
-        <h1>Budget Impact Simulator</h1>
-        <p>Test different budget allocations and analyze outcomes using AI predictions.</p>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">📦 Scenario Presets</span></div>
+        <div class="card-body">
+          <div class="preset-btns">
+            <button class="btn btn-ghost btn-ghost.full" onclick="preset(90,90,70,95)">🟢 Optimal — Best case</button>
+            <button class="btn btn-ghost" onclick="preset(10,75,40,70)">🟡 Conservative — Moderate</button>
+            <button class="btn btn-ghost" onclick="preset(-20,65,20,50)">🔴 Austerity — Budget cuts</button>
+            <button class="btn btn-ghost" onclick="preset(20,85,60,100)">💻 Digital First — Max DBT</button>
+          </div>
+        </div>
       </div>
-      <div class="status-pill">
-        <div class="status-dot"></div>
-        MODEL ACTIVE
+    </div>
+    <div>
+      <div class="stats">
+        <div class="sc navy"><div class="sc-icon navy">💰</div><div class="sc-val" id="r-budget">₹10,000 Cr</div><div class="sc-lbl">Effective Budget</div></div>
+        <div class="sc green"><div class="sc-icon green">👥</div><div class="sc-val" id="r-ben">70%</div><div class="sc-lbl">Beneficiaries Reached</div></div>
+        <div class="sc orange"><div class="sc-icon orange">📉</div><div class="sc-val" id="r-leak">15%</div><div class="sc-lbl">Estimated Leakage</div></div>
+        <div class="sc red"><div class="sc-icon red">🎯</div><div class="sc-val" id="r-impact">68%</div><div class="sc-lbl">Projected Impact</div></div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-hdr"><span class="card-title">📊 Scenario Comparison</span></div>
+        <div class="card-body"><canvas id="simChart" height="200"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr"><span class="card-title">📋 Simulation Results</span></div>
+        <div class="card-body" id="sim-results"><div class="empty"><div class="ico">🔬</div><h3>Configure &amp; Run Simulation</h3><p>Adjust the sliders and click Run Simulation to see projected outcomes.</p></div></div>
       </div>
     </div>
   </div>
-</header>
-
-<!-- MAIN -->
-<div class="container">
-  <main>
-
-    <!-- LEFT: FORM -->
-    <div class="card" style="animation-delay:0.05s">
-      <div class="card-header">
-        <div class="card-icon green">⚙</div>
-        <div class="card-title">Simulation Inputs</div>
-        <div class="card-tag">Section 01</div>
-      </div>
-      <div class="card-body">
-        <div class="form-group">
-          <label>Department</label>
-          <select id="dept">
-            <option value="roads">Road Maintenance</option>
-            <option value="health">Public Health</option>
-            <option value="education">Education</option>
-            <option value="defense">Defense & Security</option>
-            <option value="agriculture">Agriculture</option>
-            <option value="urban">Urban Development</option>
-            <option value="energy">Energy & Power</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Budget Allocation (₹ Crore)</label>
-          <input type="number" id="allocation" placeholder="e.g. 5000" min="0" value="" />
-          <div class="input-hint">Enter total allocated budget in crores</div>
-        </div>
-
-        <div class="form-group">
-          <label>Expected Spending (₹ Crore)</label>
-          <input type="number" id="spending" placeholder="e.g. 4200" min="0" value="" />
-          <div class="input-hint">Projected expenditure for the period</div>
-        </div>
-
-        <div class="form-group">
-          <label>Time Period — <span id="period-val">12</span> months</label>
-          <div class="range-wrap">
-            <input type="range" id="period" min="1" max="36" value="12" />
-            <div class="range-labels"><span>1 mo</span><span>18 mo</span><span>36 mo</span></div>
-          </div>
-        </div>
-
-        <button class="btn-run" id="runBtn" onclick="runSimulation()">
-          <span class="btn-shimmer"></span>
-          ▶ Run Simulation
-        </button>
-      </div>
-    </div>
-
-    <!-- RIGHT COLUMN -->
-    <div class="right-col">
-
-      <!-- SECTION 2: RESULTS -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon blue">📊</div>
-          <div class="card-title">Simulation Results</div>
-          <div class="card-tag">Section 02</div>
-        </div>
-        <div class="card-body" id="results-body">
-          <div class="empty-state">
-            <div class="empty-icon">⏳</div>
-            <p>Configure inputs and run a simulation<br/>to see projected financial outcomes.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- SECTION 3: CHART -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon green">📈</div>
-          <div class="card-title">Prediction Chart</div>
-          <div class="card-tag">Section 03</div>
-        </div>
-        <div class="card-body">
-          <div class="chart-wrap">
-            <canvas id="simChart"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- SECTION 4: AI RECOMMENDATION -->
-      <div class="card">
-        <div class="card-header">
-          <div class="card-icon warn">🤖</div>
-          <div class="card-title">AI Recommendation</div>
-          <div class="card-tag">Section 04</div>
-        </div>
-        <div class="card-body">
-          <div class="ai-rec-box" id="aiBox">
-            <div class="ai-avatar">🧠</div>
-            <div class="ai-rec-content">
-              <div class="ai-rec-label">ArthRakshak Intelligence</div>
-              <div class="ai-rec-text placeholder" id="aiText">
-                Run a simulation to receive an AI-powered recommendation tailored to your budget inputs.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </main>
-</div>
-
-<!-- FOOTER -->
-<div class="container">
-  <footer>
-    <div class="footer-text">
-      ◈ <span>AI-driven financial simulation</span> — ArthRakshak AI Platform
-    </div>
-    <div class="footer-ver">v2.4.1 · Fiscal Model</div>
-  </footer>
-</div>
-
+</main>
+<script src="script.js"></script>
 <script>
-  // ── Period slider label
-  document.getElementById('period').addEventListener('input', function() {
-    document.getElementById('period-val').textContent = this.value;
-  });
-
-  // ── Chart instance
-  let chartInstance = null;
-
-  // ── AI recommendation database
-  const recommendations = {
-    roads: {
-      surplus: "Road Maintenance shows a healthy surplus. Consider reallocating 8–12% toward preventive maintenance contracts to extend infrastructure life and reduce future emergency repair costs.",
-      deficit: "Reducing road maintenance allocation by 10% may increase infrastructure risk. Deferred maintenance historically leads to 3× higher remediation costs within 2–3 years. Recommend restoring budget or sourcing auxiliary funding.",
-      neutral: "Road Maintenance budget is balanced. Monitor quarterly spending velocity — seasonal demand spikes in Q3 may require a contingency reserve of ₹50–100 Cr."
-    },
-    health: {
-      surplus: "Public Health surplus indicates underspending. Review procurement pipelines — delayed drug/equipment procurement in Q1 often signals systemic delays. Consider frontloading spending on preventive care programs.",
-      deficit: "Public Health overspending alert. Audit high-cost treatment centers and generic drug procurement ratios. A 15% shift to preventive interventions could reduce curative spending by up to 22%.",
-      neutral: "Health budget is on track. Ensure buffer allocation for epidemic response (recommended: 5% of total budget) remains accessible in liquid funds."
-    },
-    education: {
-      surplus: "Education surplus detected. Accelerate infrastructure investment in digital learning labs and teacher training — ROI on these programs typically materializes within 18–24 months.",
-      deficit: "Education deficit may impact enrollment quality. Prioritize teacher salary disbursements and textbook procurement before infrastructure projects. Consider public-private partnerships for school construction.",
-      neutral: "Education allocation is balanced. Monitor mid-year enrollment figures — a 5%+ deviation triggers automatic rebalancing recommendations."
-    },
-    defense: {
-      surplus: "Defense surplus available. Recommend channeling excess funds into cybersecurity modernization and equipment lifecycle maintenance rather than holding idle capital.",
-      deficit: "Defense overspending detected. Conduct audit of operational vs. capital expenditure split. Operational costs exceeding 70% of budget signal structural inefficiency.",
-      neutral: "Defense budget is stable. Maintain emergency operational reserve at ≥8% of total allocation to handle unforeseen deployments."
-    },
-    agriculture: {
-      surplus: "Agriculture surplus present. Invest in cold chain infrastructure and crop insurance expansion — these have the highest multiplier effect on rural income stability.",
-      deficit: "Agriculture deficit risks subsidy shortfalls. Verify fertilizer subsidy disbursements are current. Delayed payments compound into next-season input cost inflation.",
-      neutral: "Agriculture spending is aligned with allocation. Watch for monsoon forecast adjustments — a 10% rainfall deviation warrants immediate budget revision."
-    },
-    urban: {
-      surplus: "Urban Development surplus identified. Accelerate smart city projects with high implementation readiness scores. Idle urban development funds attract audit scrutiny after 6 months.",
-      deficit: "Urban Development overspend is concerning. Audit contractor billing cycles and project milestone payments. Scope creep is the primary driver in 68% of urban deficit cases.",
-      neutral: "Urban Development is on budget. Maintain quarterly project completion reviews to prevent end-of-year expenditure bunching."
-    },
-    energy: {
-      surplus: "Energy & Power surplus available. Prioritize grid modernization and renewable integration projects — these reduce long-term subsidy obligations by 18–25% over 5 years.",
-      deficit: "Energy sector deficit detected. Review power purchase agreements for renegotiation opportunities. Transitioning 15% of procurement to competitive bidding could reduce costs significantly.",
-      neutral: "Energy budget is balanced. Track fuel cost indices monthly — a 12% fuel price increase triggers automatic budget revision protocols."
-    }
-  };
-
-  // ── Run Simulation
-  function runSimulation() {
-    const dept       = document.getElementById('dept').value;
-    const allocation = parseFloat(document.getElementById('allocation').value);
-    const spending   = parseFloat(document.getElementById('spending').value);
-    const period     = parseInt(document.getElementById('period').value);
-
-    if (!allocation || !spending || allocation <= 0 || spending <= 0) {
-      alert('Please enter valid Budget Allocation and Expected Spending values.');
-      return;
-    }
-
-    const btn = document.getElementById('runBtn');
-    btn.classList.add('loading');
-    btn.textContent = 'Analyzing…';
-
-    setTimeout(() => {
-      btn.classList.remove('loading');
-      btn.innerHTML = '<span class="btn-shimmer"></span>▶ Run Simulation';
-
-      // Compute
-      const volatility       = 0.92 + Math.random() * 0.16;           // ±8% noise
-      const projectedSpend   = spending * volatility;
-      const surplusDeficit   = allocation - projectedSpend;
-      const surplusRatio     = surplusDeficit / allocation;
-
-      let riskLevel, riskClass, riskBadge;
-      if (surplusRatio > 0.15)      { riskLevel = 'Low';    riskClass = 'low';  riskBadge = '🟢'; }
-      else if (surplusRatio > 0)    { riskLevel = 'Medium'; riskClass = 'med';  riskBadge = '🟡'; }
-      else if (surplusRatio > -0.1) { riskLevel = 'High';   riskClass = 'high'; riskBadge = '🔴'; }
-      else                          { riskLevel = 'Critical';riskClass='high';  riskBadge = '🔴'; }
-
-      const isSurplus  = surplusDeficit >= 0;
-      const sdClass    = isSurplus ? 'positive' : 'negative';
-      const sdLabel    = isSurplus ? 'SURPLUS'  : 'DEFICIT';
-
-      // Render results
-      document.getElementById('results-body').innerHTML = `
-        <div class="results-grid" style="position:relative">
-          <div class="scan-effect"></div>
-
-          <div class="metric-card ${isSurplus ? 'active' : 'deficit'}">
-            <div class="metric-label">Projected Spending</div>
-            <div class="metric-value neutral">₹${fmt(projectedSpend)}<span style="font-size:14px"> Cr</span></div>
-            <div class="metric-sub">Over ${period} months</div>
-          </div>
-
-          <div class="metric-card ${isSurplus ? 'active' : 'deficit'}">
-            <div class="metric-label">Budget ${sdLabel}</div>
-            <div class="metric-value ${sdClass}">₹${fmt(Math.abs(surplusDeficit))}<span style="font-size:14px"> Cr</span></div>
-            <div class="metric-sub">${isSurplus ? '▲ Under budget' : '▼ Over budget'}</div>
-          </div>
-
-          <div class="metric-card ${riskClass === 'low' ? 'risk-low' : 'risk-high'}">
-            <div class="metric-label">Predicted Risk</div>
-            <div class="metric-value neutral" style="font-size:18px">${riskBadge}</div>
-            <div class="risk-badge ${riskClass}">${riskLevel} Risk</div>
-          </div>
-        </div>
-      `;
-
-      // Chart
-      buildChart(allocation, projectedSpend, period);
-
-      // AI Recommendation
-      const recKey = surplusRatio > 0.05 ? 'surplus' : surplusRatio < 0 ? 'deficit' : 'neutral';
-      const recText = recommendations[dept][recKey];
-      const aiBox   = document.getElementById('aiBox');
-      const aiText  = document.getElementById('aiText');
-
-      aiText.innerHTML = `<div class="ai-typing"><span></span><span></span><span></span></div>`;
-      aiBox.classList.add('visible');
-
-      setTimeout(() => {
-        aiText.classList.remove('placeholder');
-        aiText.textContent = recText;
-      }, 1200);
-
-    }, 1400);
-  }
-
-  // ── Format number
-  function fmt(n) {
-    return n >= 1000
-      ? (n / 1000).toFixed(2) + 'K'
-      : n.toFixed(0);
-  }
-
-  // ── Build Chart
-  function buildChart(allocated, predicted, period) {
-    const ctx = document.getElementById('simChart').getContext('2d');
-    if (chartInstance) chartInstance.destroy();
-
-    // Generate month-by-month data
-    const labels = [];
-    const allocData = [];
-    const predictData = [];
-
-    for (let m = 1; m <= period; m++) {
-      labels.push(`M${m}`);
-      const frac = m / period;
-      allocData.push(+(allocated * frac).toFixed(0));
-      const jitter = 1 + (Math.random() - 0.5) * 0.06;
-      predictData.push(+(predicted * frac * jitter).toFixed(0));
-    }
-
-    chartInstance = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Allocated Budget',
-            data: allocData,
-            borderColor: '#00e5a0',
-            backgroundColor: 'rgba(0,229,160,0.08)',
-            borderWidth: 2,
-            pointRadius: period <= 12 ? 4 : 2,
-            pointBackgroundColor: '#00e5a0',
-            tension: 0.35,
-            fill: true,
-          },
-          {
-            label: 'Predicted Spending',
-            data: predictData,
-            borderColor: '#0099ff',
-            backgroundColor: 'rgba(0,153,255,0.06)',
-            borderWidth: 2,
-            borderDash: [5, 4],
-            pointRadius: period <= 12 ? 4 : 2,
-            pointBackgroundColor: '#0099ff',
-            tension: 0.35,
-            fill: true,
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: {
-            labels: {
-              color: '#718096',
-              font: { family: "'IBM Plex Mono', monospace", size: 11 },
-              boxWidth: 12,
-              padding: 16,
-            }
-          },
-          tooltip: {
-            backgroundColor: '#161c2d',
-            borderColor: '#1e2a42',
-            borderWidth: 1,
-            titleColor: '#e2e8f0',
-            bodyColor: '#718096',
-            titleFont: { family: "'Syne', sans-serif", size: 13, weight: '700' },
-            bodyFont: { family: "'IBM Plex Mono', monospace", size: 12 },
-            callbacks: {
-              label: ctx => ` ₹${ctx.parsed.y.toLocaleString()} Cr`
-            }
-          }
-        },
-        scales: {
-          x: {
-            ticks: { color: '#4a5568', font: { family: "'IBM Plex Mono', monospace", size: 10 }, maxTicksLimit: 12 },
-            grid: { color: '#1e2a42' }
-          },
-          y: {
-            ticks: {
-              color: '#4a5568',
-              font: { family: "'IBM Plex Mono', monospace", size: 10 },
-              callback: v => `₹${(v/1000).toFixed(1)}K`
-            },
-            grid: { color: '#1e2a42' }
-          }
-        }
-      }
-    });
-  }
-
-  // ── Init empty chart
-  (function initChart() {
-    const ctx = document.getElementById('simChart').getContext('2d');
-    chartInstance = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: ['M1','M2','M3','M4','M5','M6','M7','M8','M9','M10','M11','M12'],
-        datasets: [
-          { label: 'Allocated Budget', data: [], borderColor: '#00e5a0', borderWidth: 2, tension: 0.35 },
-          { label: 'Predicted Spending', data: [], borderColor: '#0099ff', borderWidth: 2, borderDash: [5,4], tension: 0.35 }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            labels: { color: '#718096', font: { family: "'IBM Plex Mono', monospace", size: 11 }, boxWidth: 12 }
-          }
-        },
-        scales: {
-          x: { ticks: { color: '#4a5568' }, grid: { color: '#1e2a42' } },
-          y: { ticks: { color: '#4a5568' }, grid: { color: '#1e2a42' } }
-        }
-      }
-    });
-  })();
+requireAuth();var user=getUser();initTopbar(user);
+var schemes=getSchemes(user);
+var sel=document.getElementById('sim-scheme');
+schemes.forEach(function(s){var o=document.createElement('option');o.value=s.id;o.textContent=s.name.substring(0,40);sel.appendChild(o);});
+var simChart=null;
+function updateSim(){
+  var b=parseInt(document.getElementById('sl-budget').value);
+  var e=parseInt(document.getElementById('sl-eff').value);
+  var l=parseInt(document.getElementById('sl-leak').value);
+  var d=parseInt(document.getElementById('sl-dbt').value);
+  document.getElementById('v-budget').textContent=(b>=0?'+':'')+b+'%';
+  document.getElementById('v-eff').textContent=e+'%';
+  document.getElementById('v-leak').textContent=l+'%';
+  document.getElementById('v-dbt').textContent=d+'%';
+  var eff=Math.round(10000*(1+b/100));
+  var leak=Math.max(0,(25-l*0.3-d*0.1)).toFixed(1);
+  var ben=Math.round((eff/10000)*100*(e/100));
+  var impact=Math.min(99,Math.round(e*0.4+d*0.3+(100-leak)*0.3));
+  document.getElementById('r-budget').textContent='₹'+eff.toLocaleString()+' Cr';
+  document.getElementById('r-ben').textContent=ben+'%';
+  document.getElementById('r-leak').textContent=leak+'%';
+  document.getElementById('r-impact').textContent=impact+'%';
+}
+updateSim();
+window.addEventListener('load',function(){
+  simChart=new Chart(document.getElementById('simChart').getContext('2d'),{type:'bar',data:{labels:['Baseline','Conservative','Moderate','Optimal','Your Scenario'],datasets:[{label:'Budget Index',data:[100,95,110,150,100],backgroundColor:'rgba(0,33,71,.7)',borderRadius:3},{label:'Impact Score',data:[55,60,72,92,68],backgroundColor:'rgba(232,93,0,.7)',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{y:{beginAtZero:true,grid:{color:'#f0f3f8'}},x:{grid:{display:false}}}}});
+});
+function runSim(){
+  var b=parseInt(document.getElementById('sl-budget').value);
+  var e=parseInt(document.getElementById('sl-eff').value);
+  var l=parseInt(document.getElementById('sl-leak').value);
+  var d=parseInt(document.getElementById('sl-dbt').value);
+  var leak=Math.max(0,(25-l*0.3-d*0.1));
+  var impact=Math.min(99,Math.round(e*0.4+d*0.3+(100-leak)*0.3));
+  var recs=[];
+  if(b<0)recs.push('⚠️ Budget reduction may reduce beneficiary coverage.');
+  if(e<60)recs.push('🔴 Low efficiency. Invest in capacity building.');
+  if(d<50)recs.push('📱 Low DBT coverage increases leakage risk.');
+  if(impact>80)recs.push('✅ Strong impact projected. Parameters are optimal.');
+  var html='<div class="alert-box"><strong>Simulation Complete — Impact Score: '+impact+'/100</strong></div>';
+  if(recs.length)html+='<div style="margin-bottom:12px">'+recs.map(function(r){return'<div style="padding:7px 0;border-bottom:1px solid #f0f3f8;font-size:13px">'+r+'</div>';}).join('')+'</div>';
+  html+='<div class="result-row"><div class="result-item"><div class="label">Budget Effect</div><div class="val">'+(b>=0?'+':'')+b+'% → '+(b>=0?'More':'Fewer')+' beneficiaries</div></div><div class="result-item"><div class="label">Leakage After Reforms</div><div class="val" style="color:#1a7a4a">'+leak.toFixed(1)+'% (reduced from 25%)</div></div></div>';
+  document.getElementById('sim-results').innerHTML=html;
+  if(simChart){simChart.data.datasets[0].data[4]=100+b;simChart.data.datasets[1].data[4]=impact;simChart.update();}
+}
+function preset(b,e,l,d){
+  document.getElementById('sl-budget').value=b;
+  document.getElementById('sl-eff').value=e;
+  document.getElementById('sl-leak').value=l;
+  document.getElementById('sl-dbt').value=d;
+  updateSim();
+}
+function resetSim(){preset(0,70,20,60);document.getElementById('sim-results').innerHTML='<div class="empty"><div class="ico">🔬</div><h3>Configure &amp; Run Simulation</h3><p>Adjust the sliders and click Run Simulation.</p></div>';}
 </script>
-
 </body>
 </html>

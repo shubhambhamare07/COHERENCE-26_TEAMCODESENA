@@ -1,226 +1,160 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ArthRakshak – Login | National Budget Intelligence Platform</title>
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ArthRakshak — Login</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#002147;min-height:100vh;display:flex}
+.left{flex:1;padding:60px 52px;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(150deg,#001228 0%,#002147 55%,#003070 100%);color:#fff;position:relative;overflow:hidden}
+.left::before{content:'';position:absolute;top:-80px;right:-80px;width:360px;height:360px;border:60px solid rgba(232,93,0,.12);border-radius:50%;pointer-events:none}
+.left::after{content:'';position:absolute;bottom:-60px;left:-60px;width:260px;height:260px;border:50px solid rgba(255,255,255,.05);border-radius:50%;pointer-events:none}
+.emblem{width:68px;height:68px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,.3);position:relative;z-index:1}
+.left h1{font-family:Georgia,serif;font-size:32px;font-weight:700;margin-bottom:5px;position:relative;z-index:1}
+.tagline{font-size:11px;opacity:.6;letter-spacing:2px;text-transform:uppercase;margin-bottom:32px;position:relative;z-index:1}
+.desc{font-size:14px;opacity:.75;line-height:1.8;max-width:380px;margin-bottom:36px;position:relative;z-index:1}
+.features{display:flex;flex-direction:column;gap:14px;position:relative;z-index:1}
+.feat{display:flex;align-items:center;gap:12px;font-size:13.5px;opacity:.85}
+.feat .dot{width:8px;height:8px;background:#e85d00;border-radius:50%;flex-shrink:0}
+.govt-note{margin-top:48px;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);font-size:10px;opacity:.35;letter-spacing:.8px;position:relative;z-index:1}
+
+.right{width:440px;background:#fff;padding:56px 44px;display:flex;flex-direction:column;justify-content:center;overflow-y:auto}
+.secure-tag{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#64748b;margin-bottom:18px;display:flex;align-items:center;gap:5px}
+.form-title{font-family:Georgia,serif;font-size:22px;font-weight:700;color:#002147;margin-bottom:5px}
+.form-sub{font-size:13px;color:#64748b;margin-bottom:28px}
+
+.error-box{display:none;padding:11px 14px;background:#fde8e6;border:1px solid #f5c6c2;border-left:4px solid #c0392b;border-radius:6px;font-size:13px;color:#8b1a1a;margin-bottom:18px}
+
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:11px;font-weight:700;color:#334155;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px}
+.ig{position:relative}
+.ig .ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;color:#94a3b8}
+.ig input{width:100%;padding:10px 12px 10px 36px;border:1.5px solid #d0dae8;border-radius:6px;font-family:inherit;font-size:13px;color:#0f172a;background:#fff;outline:none;transition:.15s}
+.ig input:focus{border-color:#002147;box-shadow:0 0 0 3px rgba(0,33,71,.09)}
+.ig input::placeholder{color:#cbd5e1}
+
+.btn-login{width:100%;padding:12px;background:#002147;color:#fff;border:none;border-radius:6px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;margin-top:10px;transition:.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-login:hover{background:#003580}
+
+.demo-box{margin-top:24px;padding:16px;background:#f7f9fc;border-radius:8px;border:1px solid #e2e8f0}
+.demo-label{font-size:10.5px;font-weight:700;color:#64748b;letter-spacing:.8px;text-transform:uppercase;margin-bottom:10px}
+.demo-btns{display:flex;flex-wrap:wrap;gap:7px}
+.demo-btn{padding:5px 11px;background:#fff;color:#334155;border:1.5px solid #d0dae8;border-radius:6px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.demo-btn:hover{border-color:#002147;color:#002147;background:#ddeeff}
+.demo-note{font-size:11px;color:#94a3b8;margin-top:9px}
+code{background:#e2e8f0;padding:1px 6px;border-radius:3px;font-size:12px;font-weight:700;color:#002147}
+
+.footer-note{margin-top:22px;font-size:11px;color:#94a3b8;text-align:center;line-height:1.7}
+
+@media(max-width:800px){.left{display:none}.right{width:100%}}
+</style>
 </head>
 <body>
 
-  <div class="top-bar">
-    <span class="status">
-      <span class="dot"></span>
-      System Operational &nbsp;|&nbsp; TLS 1.3 Encrypted &nbsp;|&nbsp; NIC Secured
-    </span>
-    <span id="clockDisplay"></span>
+<div class="left">
+  <div class="emblem">🏛️</div>
+  <h1>ArthRakshak</h1>
+  <p class="tagline">National Budget Intelligence Platform</p>
+  <p class="desc">Empowering government officials with real-time budget analytics, risk intelligence, and AI-driven insights to safeguard public funds across India's welfare ecosystem.</p>
+  <div class="features">
+    <div class="feat"><span class="dot"></span>Role-based scheme access by department</div>
+    <div class="feat"><span class="dot"></span>Real-time budget utilization tracking</div>
+    <div class="feat"><span class="dot"></span>AI-powered anomaly &amp; risk detection</div>
+    <div class="feat"><span class="dot"></span>End-to-end budget flow visualization</div>
+    <div class="feat"><span class="dot"></span>Secure OTP-based 2FA authentication</div>
+  </div>
+  <div class="govt-note">GOVERNMENT OF INDIA — MINISTRY OF FINANCE<br>CLASSIFIED SYSTEM — AUTHORIZED ACCESS ONLY</div>
+</div>
+
+<div class="right">
+  <div class="secure-tag">🔒 Secure Login</div>
+  <div class="form-title">Sign In to ArthRakshak</div>
+  <p class="form-sub">Enter your government credentials to access the platform.</p>
+
+  <div class="error-box" id="err">Invalid credentials. Please check Government ID, username, and password.</div>
+
+  <form id="login-form" autocomplete="off">
+    <div class="fg">
+      <label for="gov-id">Government ID</label>
+      <div class="ig"><span class="ico">🏷️</span><input type="text" id="gov-id" placeholder="e.g. FIN001, MH001, DIST001" required></div>
+    </div>
+    <div class="fg">
+      <label for="username">Username</label>
+      <div class="ig"><span class="ico">👤</span><input type="text" id="username" placeholder="Enter username" required></div>
+    </div>
+    <div class="fg">
+      <label for="password">Password</label>
+      <div class="ig"><span class="ico">🔑</span><input type="password" id="password" placeholder="Enter password" required></div>
+    </div>
+    <button type="submit" class="btn-login">🔐 Login &amp; Send OTP</button>
+  </form>
+
+  <div class="demo-box">
+    <div class="demo-label">Demo Access — Click to Fill</div>
+    <div class="demo-btns">
+      <button class="demo-btn" onclick="fill('FIN001','anil.kumar')">Finance Ministry</button>
+      <button class="demo-btn" onclick="fill('CEA001','priya.shah')">Chief Economic</button>
+      <button class="demo-btn" onclick="fill('MH001','rahul.patil')">State Dept (MH)</button>
+      <button class="demo-btn" onclick="fill('DIST001','suresh.desai')">District Admin</button>
+      <button class="demo-btn" onclick="fill('RUR001','kavita.more')">Rural Admin</button>
+    </div>
+    <div class="demo-note">All demo accounts use password: <code>Pass@123</code></div>
   </div>
 
-  <header>
-    <div class="header-title">
-      <h1>ArthRakshak – <em>National Budget Intelligence Platform</em></h1>
-      <p>Ministry of Finance, Government of India · Secure Access Portal</p>
-    </div>
-
-    <div class="header-badges">
-      <span class="badge badge-navy">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        RESTRICTED
-      </span>
-      <span class="badge badge-green">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        VERIFIED PORTAL
-      </span>
-    </div>
-  </header>
-
-  <main>
-    <div class="card-wrapper">
-
-      <div class="page-heading">
-        <h2>Official Login Portal</h2>
-        <p class="subtitle">Secure Access for Authorized Government Officials</p>
-      </div>
-
-      <div class="step-bar">
-        <div class="step active">
-          <div class="step-circle">1</div>
-          <div class="step-label">Identity</div>
-        </div>
-        <div class="step-connector"></div>
-        <div class="step">
-          <div class="step-circle">2</div>
-          <div class="step-label">OTP</div>
-        </div>
-        <div class="step-connector"></div>
-        <div class="step">
-          <div class="step-circle">3</div>
-          <div class="step-label">Dashboard</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-head">
-          <div class="card-head-icon">
-            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          </div>
-          <div>
-            <h3>Identity Verification</h3>
-            <p>All fields are mandatory for authentication</p>
-          </div>
-        </div>
-
-        <div class="card-body">
-
-          <div class="notice">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Unauthorized access is a punishable offence under the IT Act, 2000. All sessions are monitored, logged, and auditable.
-          </div>
-
-          <div class="form-grid-2">
-            <div class="form-row">
-              <label>Officer ID <span class="req">*</span></label>
-              <input type="text" id="officerId" placeholder="e.g. GOI-2024-XXXX" autocomplete="off" />
-            </div>
-            <div class="form-row">
-              <label>Date of Birth <span class="req">*</span></label>
-              <input type="date" id="dob" />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <label>Full Name <span class="req">*</span></label>
-            <input type="text" id="fullName" placeholder="As per government records" autocomplete="off" />
-          </div>
-
-          <div class="form-row">
-            <label>Department <span class="req">*</span></label>
-            <select id="department">
-              <option value="">— Select Your Department —</option>
-              <option value="finance">Finance Ministry</option>
-              <option value="rural">Rural Development</option>
-              <option value="health">Health Ministry</option>
-              <option value="education">Education Department</option>
-              <option value="district">District Administration</option>
-            </select>
-          </div>
-
-          <div class="form-row">
-            <label>Password <span class="req">*</span></label>
-            <input type="password" id="password" placeholder="Enter your secure password" autocomplete="off" />
-            <div class="input-hint">Use the password issued during official onboarding</div>
-          </div>
-
-          <div class="divider-label">Security Confirmation</div>
-
-          <div class="captcha-box" id="captchaBox" onclick="toggleCaptcha()">
-            <input type="checkbox" id="captchaCheck" onclick="event.stopPropagation(); syncCaptcha()" />
-            <div class="cap-label">
-              <strong>I confirm this is an authorized government access request</strong>
-              I acknowledge this system is for official use only and my credentials are strictly non-transferable.
-            </div>
-          </div>
-
-          <button class="btn btn-primary" onclick="handleLogin()">
-            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            Send OTP for Verification
-          </button>
-
-        </div>
-
-        <div class="card-foot">
-          <p>Secure platform for financial governance monitoring</p>
-          <div class="ssl-badge">
-            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            256-bit SSL
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </main>
-
-  <footer>
-    &copy; 2024 <span>Ministry of Finance, Government of India</span> &nbsp;·&nbsp; ArthRakshak v3.2 &nbsp;·&nbsp; Hosted by NIC &nbsp;·&nbsp; Best viewed in Chrome / Edge
-  </footer>
-
-  <div class="toast toast-error" id="toast">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <span id="toastMsg"></span>
+  <div class="footer-note">
+    By logging in, you agree to the Government of India's<br>
+    IT Security Policy &amp; Official Secrets Act obligations.<br>
+    🔒 This session is encrypted and monitored for security.
   </div>
+</div>
 
-  <script>
-    function updateClock() {
-      const now = new Date();
-      document.getElementById('clockDisplay').textContent =
-        now.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }) +
-        '  ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    }
-    updateClock();
-    setInterval(updateClock, 1000);
+<script>
+const USERS=[
+  {govId:'FIN001',username:'anil.kumar',password:'Pass@123',name:'Anil Kumar',dept:'Finance Ministry',state:'National',district:'National',town:'National'},
+  {govId:'CEA001',username:'priya.shah',password:'Pass@123',name:'Priya Shah',dept:'Chief Economic Advisory',state:'National',district:'National',town:'National'},
+  {govId:'MH001',username:'rahul.patil',password:'Pass@123',name:'Rahul Patil',dept:'State Department',state:'Maharashtra',district:'Pune',town:'Shivajinagar'},
+  {govId:'DIST001',username:'suresh.desai',password:'Pass@123',name:'Suresh Desai',dept:'District Administration',state:'Maharashtra',district:'Pune',town:'Shivajinagar'},
+  {govId:'RUR001',username:'kavita.more',password:'Pass@123',name:'Kavita More',dept:'Rural Administration',state:'Maharashtra',district:'Pune',town:'Shivajinagar'}
+];
 
-    function toggleCaptcha() {
-      const cb = document.getElementById('captchaCheck');
-      cb.checked = !cb.checked;
-      document.getElementById('captchaBox').classList.toggle('checked', cb.checked);
-    }
+function fill(id,uname){
+  document.getElementById('gov-id').value=id;
+  document.getElementById('username').value=uname;
+  document.getElementById('password').value='Pass@123';
+}
 
-    function syncCaptcha() {
-      const cb = document.getElementById('captchaCheck');
-      document.getElementById('captchaBox').classList.toggle('checked', cb.checked);
-    }
+// ── Guard: if already logged in, skip to dashboard ──
+(function(){
+  try {
+    if(sessionStorage.getItem('ar_user')) window.location.href='dashboard.html';
+  } catch(e){}
+})();
 
-    let toastTimer;
-    function showToast(msg, type = 'error') {
-      const toast = document.getElementById('toast');
-      document.getElementById('toastMsg').textContent = msg;
-      toast.className = `toast toast-${type}`;
-      toast.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
-    }
-
-    function markError(id) {
-      const el = document.getElementById(id);
-      el.classList.add('error');
-      el.addEventListener('input', () => el.classList.remove('error'), { once: true });
-      el.addEventListener('change', () => el.classList.remove('error'), { once: true });
-    }
-
-    function handleLogin() {
-      const fields = [
-        { id: 'officerId', label: 'Officer ID' },
-        { id: 'fullName',  label: 'Full Name' },
-        { id: 'dob',       label: 'Date of Birth' },
-        { id: 'department',label: 'Department' },
-        { id: 'password',  label: 'Password' },
-      ];
-
-      let firstError = null;
-      for (const f of fields) {
-        const el = document.getElementById(f.id);
-        if (!el.value.trim()) {
-          markError(f.id);
-          if (!firstError) firstError = f.label;
-        }
-      }
-
-      if (firstError) {
-        showToast(`Please complete: ${firstError} and all required fields.`);
-        return;
-      }
-
-      if (!document.getElementById('captchaCheck').checked) {
-        const box = document.getElementById('captchaBox');
-        box.style.borderColor = '#c0392b';
-        setTimeout(() => box.style.borderColor = '', 2500);
-        showToast('Please confirm the authorized access declaration.');
-        return;
-      }
-
-      window.location.href = 'otp.html';
-    }
-  </script>
-
+document.getElementById('login-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  const g=document.getElementById('gov-id').value.trim().toUpperCase();
+  const u=document.getElementById('username').value.trim().toLowerCase();
+  const p=document.getElementById('password').value;
+  const user=USERS.find(x=>x.govId===g&&x.username===u&&x.password===p);
+  const err=document.getElementById('err');
+  if(!user){
+    err.textContent='❌ Invalid credentials. Check your Government ID, username and password.';
+    err.style.display='block';
+    document.getElementById('password').value='';
+    document.getElementById('password').focus();
+    return;
+  }
+  err.style.display='none';
+  // Show loading state
+  const btn=document.querySelector('.btn-login');
+  btn.textContent='⏳ Sending OTP...';
+  btn.disabled=true;
+  // Store pending session
+  sessionStorage.setItem('ar_pending',JSON.stringify(user));
+  sessionStorage.setItem('ar_otp','123456');
+  setTimeout(()=>{ window.location.href='otp.html'; }, 500);
+});
+</script>
 </body>
 </html>

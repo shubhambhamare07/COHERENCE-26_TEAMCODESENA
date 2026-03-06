@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ArthRakshak — Reports</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f7f9fc;color:#0f172a;font-size:14px}
+.topbar{background:#002147;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:3px solid #e85d00;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.tb-brand{display:flex;align-items:center;gap:10px}.tb-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.tb-title{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#fff}.tb-title span{display:block;font-size:10px;font-family:-apple-system,sans-serif;font-weight:400;opacity:.6;letter-spacing:1.2px;text-transform:uppercase}
+.tb-nav{display:flex;gap:2px}.tb-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:12px;padding:6px 9px;border-radius:5px;transition:.15s;white-space:nowrap}.tb-nav a:hover,.tb-nav a.active{background:rgba(255,255,255,.14);color:#fff}
+.tb-right{display:flex;align-items:center;gap:10px}.uavatar{width:30px;height:30px;background:#e85d00;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.uinfo{text-align:right}.un{font-size:12px;font-weight:600;color:#fff}.ud{font-size:11px;opacity:.6;color:#fff}
+.nb{position:relative;background:none;border:none;color:rgba(255,255,255,.8);font-size:18px;cursor:pointer;padding:4px}.nb-badge{position:absolute;top:0;right:0;width:15px;height:15px;background:#e85d00;border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+.sidebar{width:210px;background:#001530;position:fixed;top:58px;left:0;bottom:0;overflow-y:auto;z-index:900;padding:12px 0}
+.sb-sec{padding:10px 16px 4px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.sidebar a{display:flex;align-items:center;gap:9px;padding:9px 17px;color:rgba(255,255,255,.65);text-decoration:none;font-size:13px;transition:.15s;border-left:3px solid transparent}
+.sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:rgba(232,93,0,.5)}.sidebar a.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#e85d00}
+.main{margin-left:210px;margin-top:58px;padding:24px 28px}
+.ph{margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #e2e8f0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.ph h1{font-family:Georgia,serif;font-size:20px;font-weight:700;color:#002147}.ph p{color:#64748b;font-size:13px;margin-top:3px}
+.bc{display:flex;align-items:center;gap:6px;font-size:12px;color:#64748b;margin-bottom:4px}.bc a{color:#003580;text-decoration:none}
+.tabs{display:flex;border-bottom:2px solid #e2e8f0;margin-bottom:16px}
+.tab{padding:9px 16px;font-size:13px;font-weight:500;color:#64748b;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab:hover{color:#002147}.tab.active{color:#002147;border-bottom-color:#002147;font-weight:700}
+.tc{display:none}.tc.active{display:block}
+.card{background:#fff;border:1px solid #d0dae8;border-radius:10px;box-shadow:0 1px 4px rgba(0,33,71,.08);overflow:hidden;padding:20px}
+.rc{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border:1px solid #d0dae8;border-radius:7px;background:#fff;margin-bottom:10px;transition:.15s}
+.rc:hover{border-color:#002147;box-shadow:0 1px 4px rgba(0,33,71,.1)}
+.ri{font-size:24px;margin-right:13px;flex-shrink:0}
+.rinfo h4{font-size:13.5px;font-weight:700;color:#002147}.rinfo p{font-size:12px;color:#64748b;margin-top:2px}
+.rmeta{font-size:12px;color:#64748b;text-align:right;flex-shrink:0;margin-left:16px}
+.rbtns{display:flex;align-items:center;gap:8px;margin-left:12px;flex-shrink:0}
+.bdg{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.bdg-green{background:#e0f5ea;color:#1a7a4a}.bdg-red{background:#fde8e6;color:#c0392b}.bdg-navy{background:#ddeeff;color:#002147}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:.15s;text-decoration:none;white-space:nowrap}
+.btn-orange{background:#e85d00;color:#fff}.btn-orange:hover{background:#c94e00}
+.btn-outline{background:transparent;color:#002147;border:1.5px solid #002147}.btn-outline:hover{background:#ddeeff}
+.btn-ghost{background:#f0f3f8;color:#334155}.btn-ghost:hover{background:#e2e8f0}
+.btn-sm{padding:5px 10px;font-size:12px}
+.form-group{margin-bottom:14px}
+label{display:block;font-size:11.5px;font-weight:700;color:#334155;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+select,input[type=text]{width:100%;padding:8px 11px;border:1.5px solid #d0dae8;border-radius:6px;font-family:inherit;font-size:13px;color:#0f172a;background:#fff;outline:none}
+select:focus,input[type=text]:focus{border-color:#002147}
+.cust-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:1100px){.tb-nav{display:none}}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}.cust-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<span>National Budget Intelligence Platform</span></div></div>
+  <nav class="tb-nav"><a href="index.html">🏠</a><a href="dashboard.html">📊</a><a href="budget-flow.html">💸</a><a href="risk_score.html">🛡️</a><a href="anomaly.html">⚠️</a><a href="reports.html" class="active">📄 Reports</a><a href="simulator.html">🔬</a><a href="ai_assistant.html">🤖</a></nav>
+  <div class="tb-right">
+    <button class="nb">🔔<span class="nb-badge">3</span></button>
+    <div style="display:flex;align-items:center;gap:8px"><div class="uinfo"><div class="un" id="uname">—</div><div class="ud" id="udept">—</div></div><div class="uavatar" id="uavatar">?</div></div>
+    <button onclick="logout()" class="btn btn-ghost btn-sm">🚪 Logout</button>
+  </div>
+</header>
+<aside class="sidebar">
+  <div class="sb-sec">Main</div><a href="index.html">🏠 Home</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html">💸 Flow</a>
+  <div class="sb-sec">Intelligence</div><a href="risk_score.html">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomaly Detection</a><a href="reports.html" class="active">📄 Reports</a>
+  <div class="sb-sec">Tools</div><a href="simulator.html">🔬 Simulator</a><a href="ai_assistant.html">🤖 AI Assistant</a>
+</aside>
+<main class="main">
+  <div class="ph">
+    <div><div class="bc"><a href="index.html">Home</a> › Reports</div><h1>📄 Reports &amp; Compliance Documents</h1><p>Official government reports, audit summaries, and compliance documentation.</p></div>
+    <button class="btn btn-orange" onclick="genReport(this)">⚡ Generate Custom Report</button>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'t1')">📋 Official Reports</button>
+    <button class="tab" onclick="switchTab(this,'t2')">🔍 Audit Reports</button>
+    <button class="tab" onclick="switchTab(this,'t3')">✅ Compliance</button>
+    <button class="tab" onclick="switchTab(this,'t4')">⚙️ Custom Reports</button>
+  </div>
+  <div class="tc active" id="t1"><div class="card" id="off-list"></div></div>
+  <div class="tc" id="t2"><div class="card" id="aud-list"></div></div>
+  <div class="tc" id="t3"><div class="card" id="com-list"></div></div>
+  <div class="tc" id="t4">
+    <div class="card">
+      <div class="cust-grid">
+        <div><div class="form-group"><label>Report Type</label><select id="rtype"><option>Budget Utilization Summary</option><option>Scheme Performance Report</option><option>Risk Assessment Report</option><option>Anomaly Detection Report</option><option>Beneficiary Impact Report</option></select></div>
+        <div class="form-group"><label>Time Period</label><select><option>FY 2025-26 (Full Year)</option><option>Q1 2025-26</option><option>Q2 2025-26</option><option>Q3 2025-26</option><option>Q4 2025-26</option></select></div></div>
+        <div><div class="form-group"><label>Format</label><select><option>PDF (Official)</option><option>Excel (.xlsx)</option><option>CSV</option><option>Word (.docx)</option></select></div>
+        <div class="form-group"><label>Schemes (leave blank for all)</label><input type="text" placeholder="e.g. PM-KISAN, PMAY"></div></div>
+      </div>
+      <button class="btn btn-orange" onclick="genReport(this)" style="margin-top:8px">📥 Generate &amp; Download</button>
+    </div>
+  </div>
+</main>
+<script src="script.js"></script>
+<script>
+requireAuth();var user=getUser();initTopbar(user);
+var OFF=[
+  {ico:'📊',title:'Q3 Budget Utilization Report 2025-26',desc:'Comprehensive utilization analysis across all centrally sponsored schemes Oct–Dec quarter.',date:'15 Jan 2026',type:'PDF',size:'2.4 MB',st:'Published'},
+  {ico:'📋',title:'Annual Scheme Performance Review 2024-25',desc:'End-of-year assessment of all flagship schemes with outcome metrics and targets.',date:'31 Mar 2025',type:'PDF',size:'8.7 MB',st:'Published'},
+  {ico:'💰',title:'Budget Allocation Statement — FY 2025-26',desc:'Detailed breakup of scheme-wise budget allocations as presented in Union Budget.',date:'01 Apr 2025',type:'PDF',size:'1.2 MB',st:'Published'},
+  {ico:'👥',title:'Beneficiary Verification Report — PM-KISAN',desc:'Beneficiary list verification and deduplication exercise results.',date:'28 Nov 2025',type:'PDF',size:'4.1 MB',st:'Published'},
+  {ico:'🌾',title:'Agriculture Scheme Impact Assessment',desc:'Impact assessment of PM-KISAN, PM Fasal Bima on farmer income.',date:'15 Dec 2025',type:'PDF',size:'3.6 MB',st:'Published'}
+];
+var AUD=[
+  {ico:'🔍',title:'CAG Performance Audit — MGNREGA 2024-25',desc:'Comptroller and Auditor General performance audit findings.',date:'30 Sep 2025',type:'PDF',size:'12.3 MB',st:'Tabled'},
+  {ico:'⚠️',title:'Internal Audit — PM Ujjwala Irregularities',desc:'Internal audit on irregularities in LPG connection beneficiary verification.',date:'12 Oct 2025',type:'PDF',size:'3.8 MB',st:'Confidential'},
+  {ico:'🏗️',title:'PMAY Urban Construction Progress Audit',desc:'Physical and financial progress audit of housing units under PMAY.',date:'28 Aug 2025',type:'PDF',size:'6.2 MB',st:'Published'},
+  {ico:'💻',title:'Digital India DBT Implementation Review',desc:'Review of Direct Benefit Transfer implementation.',date:'15 Jul 2025',type:'PDF',size:'4.9 MB',st:'Published'}
+];
+var COM=[
+  {ico:'📜',title:'GFR Compliance Certificate — Q3 2025-26',desc:'Compliance with General Financial Rules for fund management.',date:'31 Dec 2025',type:'PDF',size:'0.8 MB',st:'Submitted'},
+  {ico:'✅',title:'Utilization Certificate — PMAY Urban',desc:'Statutory utilization certificate for central grant release.',date:'30 Nov 2025',type:'PDF',size:'0.4 MB',st:'Submitted'},
+  {ico:'🔏',title:'RTI Disclosure Statement — Budget Data',desc:'Proactive disclosure under RTI Act for budget utilization.',date:'01 Apr 2025',type:'PDF',size:'1.1 MB',st:'Published'},
+  {ico:'📊',title:'PFMS Integration Compliance Report',desc:'Compliance for Public Financial Management System integration.',date:'15 Jan 2026',type:'PDF',size:'2.2 MB',st:'Submitted'}
+];
+function stCls(s){return s==='Published'||s==='Submitted'?'bdg-green':s==='Confidential'?'bdg-red':'bdg-navy';}
+function makeCards(arr){return arr.map(function(r){return'<div class="rc"><div style="display:flex;align-items:center;flex:1"><div class="ri">'+r.ico+'</div><div class="rinfo"><h4>'+r.title+'</h4><p>'+r.desc+'</p></div></div><div class="rbtns"><div class="rmeta"><div>'+r.date+'</div><div>'+r.type+' · '+r.size+'</div></div><span class="bdg '+stCls(r.st)+'">'+r.st+'</span><button class="btn btn-outline btn-sm" onclick="dl(\''+r.title+'\')">📥 Download</button></div></div>';}).join('');}
+document.getElementById('off-list').innerHTML=makeCards(OFF);
+document.getElementById('aud-list').innerHTML=makeCards(AUD);
+document.getElementById('com-list').innerHTML=makeCards(COM);
+function switchTab(btn,id){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.tc').forEach(function(t){t.classList.remove('active');});
+  btn.classList.add('active');document.getElementById(id).classList.add('active');
+}
+function dl(t){alert('Downloading: "'+t+'"\n(Demo mode)');}
+function genReport(btn){var orig=btn.textContent;btn.textContent='⏳ Generating…';btn.disabled=true;setTimeout(function(){btn.textContent=orig;btn.disabled=false;alert('✅ Report generated! (Demo mode)');},1800);}
+</script>
+</body>
+</html>
