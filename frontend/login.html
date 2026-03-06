@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ArthRakshak – Login | National Budget Intelligence Platform</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="top-bar">
+    <span class="status">
+      <span class="dot"></span>
+      System Operational &nbsp;|&nbsp; TLS 1.3 Encrypted &nbsp;|&nbsp; NIC Secured
+    </span>
+    <span id="clockDisplay"></span>
+  </div>
+
+  <header>
+    <div class="header-title">
+      <h1>ArthRakshak – <em>National Budget Intelligence Platform</em></h1>
+      <p>Ministry of Finance, Government of India · Secure Access Portal</p>
+    </div>
+
+    <div class="header-badges">
+      <span class="badge badge-navy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        RESTRICTED
+      </span>
+      <span class="badge badge-green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        VERIFIED PORTAL
+      </span>
+    </div>
+  </header>
+
+  <main>
+    <div class="card-wrapper">
+
+      <div class="page-heading">
+        <h2>Official Login Portal</h2>
+        <p class="subtitle">Secure Access for Authorized Government Officials</p>
+      </div>
+
+      <div class="step-bar">
+        <div class="step active">
+          <div class="step-circle">1</div>
+          <div class="step-label">Identity</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+          <div class="step-circle">2</div>
+          <div class="step-label">OTP</div>
+        </div>
+        <div class="step-connector"></div>
+        <div class="step">
+          <div class="step-circle">3</div>
+          <div class="step-label">Dashboard</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div>
+            <h3>Identity Verification</h3>
+            <p>All fields are mandatory for authentication</p>
+          </div>
+        </div>
+
+        <div class="card-body">
+
+          <div class="notice">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Unauthorized access is a punishable offence under the IT Act, 2000. All sessions are monitored, logged, and auditable.
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label>Officer ID <span class="req">*</span></label>
+              <input type="text" id="officerId" placeholder="e.g. GOI-2024-XXXX" autocomplete="off" />
+            </div>
+            <div class="form-row">
+              <label>Date of Birth <span class="req">*</span></label>
+              <input type="date" id="dob" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <label>Full Name <span class="req">*</span></label>
+            <input type="text" id="fullName" placeholder="As per government records" autocomplete="off" />
+          </div>
+
+          <div class="form-row">
+            <label>Department <span class="req">*</span></label>
+            <select id="department">
+              <option value="">— Select Your Department —</option>
+              <option value="finance">Finance Ministry</option>
+              <option value="rural">Rural Development</option>
+              <option value="health">Health Ministry</option>
+              <option value="education">Education Department</option>
+              <option value="district">District Administration</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label>Password <span class="req">*</span></label>
+            <input type="password" id="password" placeholder="Enter your secure password" autocomplete="off" />
+            <div class="input-hint">Use the password issued during official onboarding</div>
+          </div>
+
+          <div class="divider-label">Security Confirmation</div>
+
+          <div class="captcha-box" id="captchaBox" onclick="toggleCaptcha()">
+            <input type="checkbox" id="captchaCheck" onclick="event.stopPropagation(); syncCaptcha()" />
+            <div class="cap-label">
+              <strong>I confirm this is an authorized government access request</strong>
+              I acknowledge this system is for official use only and my credentials are strictly non-transferable.
+            </div>
+          </div>
+
+          <button class="btn btn-primary" onclick="handleLogin()">
+            <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.41 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6.29 6.29l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            Send OTP for Verification
+          </button>
+
+        </div>
+
+        <div class="card-foot">
+          <p>Secure platform for financial governance monitoring</p>
+          <div class="ssl-badge">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            256-bit SSL
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2024 <span>Ministry of Finance, Government of India</span> &nbsp;·&nbsp; ArthRakshak v3.2 &nbsp;·&nbsp; Hosted by NIC &nbsp;·&nbsp; Best viewed in Chrome / Edge
+  </footer>
+
+  <div class="toast toast-error" id="toast">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span id="toastMsg"></span>
+  </div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clockDisplay').textContent =
+        now.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }) +
+        '  ' + now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+    updateClock();
+    setInterval(updateClock, 1000);
+
+    function toggleCaptcha() {
+      const cb = document.getElementById('captchaCheck');
+      cb.checked = !cb.checked;
+      document.getElementById('captchaBox').classList.toggle('checked', cb.checked);
+    }
+
+    function syncCaptcha() {
+      const cb = document.getElementById('captchaCheck');
+      document.getElementById('captchaBox').classList.toggle('checked', cb.checked);
+    }
+
+    let toastTimer;
+    function showToast(msg, type = 'error') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.className = `toast toast-${type}`;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    function markError(id) {
+      const el = document.getElementById(id);
+      el.classList.add('error');
+      el.addEventListener('input', () => el.classList.remove('error'), { once: true });
+      el.addEventListener('change', () => el.classList.remove('error'), { once: true });
+    }
+
+    function handleLogin() {
+      const fields = [
+        { id: 'officerId', label: 'Officer ID' },
+        { id: 'fullName',  label: 'Full Name' },
+        { id: 'dob',       label: 'Date of Birth' },
+        { id: 'department',label: 'Department' },
+        { id: 'password',  label: 'Password' },
+      ];
+
+      let firstError = null;
+      for (const f of fields) {
+        const el = document.getElementById(f.id);
+        if (!el.value.trim()) {
+          markError(f.id);
+          if (!firstError) firstError = f.label;
+        }
+      }
+
+      if (firstError) {
+        showToast(`Please complete: ${firstError} and all required fields.`);
+        return;
+      }
+
+      if (!document.getElementById('captchaCheck').checked) {
+        const box = document.getElementById('captchaBox');
+        box.style.borderColor = '#c0392b';
+        setTimeout(() => box.style.borderColor = '', 2500);
+        showToast('Please confirm the authorized access declaration.');
+        return;
+      }
+
+      window.location.href = 'otp.html';
+    }
+  </script>
+
+</body>
+</html>
