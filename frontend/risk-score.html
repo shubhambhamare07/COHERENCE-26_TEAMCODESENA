@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Department Risk Score – ArthRakshak AI</title>
+  <link rel="stylesheet" href="risk-styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <span class="logo-hex">⬡</span>
+      <span class="logo-text">ArthRakshak <em>AI</em></span>
+    </div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#">Dashboard</a></li>
+      <li><a href="#">Anomaly Detection</a></li>
+      <li><a href="#">AI Assistant</a></li>
+      <li><a href="#" class="active">Risk Score</a></li>
+      <li><a href="#" class="nav-logout">Logout →</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- PAGE HEADER -->
+  <header class="page-header">
+    <div class="header-inner">
+      <div class="badge-row">
+        <span class="badge">FINANCIAL RISK INTELLIGENCE</span>
+        <span class="live-pill"><span class="live-dot"></span>Live Assessment</span>
+      </div>
+      <h1>Department Risk Score</h1>
+      <p>AI-generated financial risk assessment across municipal departments</p>
+    </div>
+    <div class="header-bg-grid"></div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="page-main">
+
+    <!-- SUMMARY BAR -->
+    <div class="summary-bar">
+      <div class="summary-item">
+        <span class="s-value high">2</span>
+        <span class="s-label">High Risk</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <span class="s-value medium">2</span>
+        <span class="s-label">Medium Risk</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <span class="s-value low">1</span>
+        <span class="s-label">Low Risk</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <span class="s-value neutral">5</span>
+        <span class="s-label">Depts. Assessed</span>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-item">
+        <span class="s-value neutral">Oct 2025</span>
+        <span class="s-label">Assessment Period</span>
+      </div>
+    </div>
+
+    <!-- SECTION 1: RISK SCORE CARDS -->
+    <section class="section" id="section-cards">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="section-num">01</span>
+          <h2>Risk Score Overview</h2>
+        </div>
+        <p class="section-desc">Financial risk index per department (0 = no risk, 100 = critical)</p>
+      </div>
+
+      <div class="risk-cards-grid">
+
+        <!-- Road Infrastructure — HIGH -->
+        <div class="risk-card high" style="--delay:0.05s" onclick="selectDept(this, 'road')">
+          <div class="card-top">
+            <div class="dept-icon">🛣️</div>
+            <div class="risk-badge high">HIGH</div>
+          </div>
+          <h3>Road Infrastructure</h3>
+          <div class="score-ring-wrap">
+            <svg class="score-ring" viewBox="0 0 80 80">
+              <circle class="ring-bg" cx="40" cy="40" r="34"/>
+              <circle class="ring-fill high" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="calc(213.6 - (213.6 * 82 / 100))" />
+            </svg>
+            <div class="score-center">
+              <span class="score-num">82</span>
+              <span class="score-slash">/100</span>
+            </div>
+          </div>
+          <div class="card-meta">
+            <span class="meta-tag">↑ 12pts from last month</span>
+          </div>
+        </div>
+
+        <!-- Water Supply — MEDIUM -->
+        <div class="risk-card medium" style="--delay:0.12s" onclick="selectDept(this, 'water')">
+          <div class="card-top">
+            <div class="dept-icon">💧</div>
+            <div class="risk-badge medium">MEDIUM</div>
+          </div>
+          <h3>Water Supply</h3>
+          <div class="score-ring-wrap">
+            <svg class="score-ring" viewBox="0 0 80 80">
+              <circle class="ring-bg" cx="40" cy="40" r="34"/>
+              <circle class="ring-fill medium" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="calc(213.6 - (213.6 * 56 / 100))" />
+            </svg>
+            <div class="score-center">
+              <span class="score-num">56</span>
+              <span class="score-slash">/100</span>
+            </div>
+          </div>
+          <div class="card-meta">
+            <span class="meta-tag neutral">→ Stable this month</span>
+          </div>
+        </div>
+
+        <!-- Education — LOW -->
+        <div class="risk-card low" style="--delay:0.19s" onclick="selectDept(this, 'education')">
+          <div class="card-top">
+            <div class="dept-icon">🎓</div>
+            <div class="risk-badge low">LOW</div>
+          </div>
+          <h3>Education</h3>
+          <div class="score-ring-wrap">
+            <svg class="score-ring" viewBox="0 0 80 80">
+              <circle class="ring-bg" cx="40" cy="40" r="34"/>
+              <circle class="ring-fill low" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="calc(213.6 - (213.6 * 21 / 100))" />
+            </svg>
+            <div class="score-center">
+              <span class="score-num">21</span>
+              <span class="score-slash">/100</span>
+            </div>
+          </div>
+          <div class="card-meta">
+            <span class="meta-tag low">↓ 4pts improved</span>
+          </div>
+        </div>
+
+        <!-- Healthcare — HIGH -->
+        <div class="risk-card high" style="--delay:0.26s" onclick="selectDept(this, 'healthcare')">
+          <div class="card-top">
+            <div class="dept-icon">🏥</div>
+            <div class="risk-badge high">HIGH</div>
+          </div>
+          <h3>Healthcare</h3>
+          <div class="score-ring-wrap">
+            <svg class="score-ring" viewBox="0 0 80 80">
+              <circle class="ring-bg" cx="40" cy="40" r="34"/>
+              <circle class="ring-fill high" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="calc(213.6 - (213.6 * 74 / 100))" />
+            </svg>
+            <div class="score-center">
+              <span class="score-num">74</span>
+              <span class="score-slash">/100</span>
+            </div>
+          </div>
+          <div class="card-meta">
+            <span class="meta-tag">↑ 8pts from last month</span>
+          </div>
+        </div>
+
+        <!-- Sanitation — MEDIUM -->
+        <div class="risk-card medium" style="--delay:0.33s" onclick="selectDept(this, 'sanitation')">
+          <div class="card-top">
+            <div class="dept-icon">♻️</div>
+            <div class="risk-badge medium">MEDIUM</div>
+          </div>
+          <h3>Sanitation</h3>
+          <div class="score-ring-wrap">
+            <svg class="score-ring" viewBox="0 0 80 80">
+              <circle class="ring-bg" cx="40" cy="40" r="34"/>
+              <circle class="ring-fill medium" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="calc(213.6 - (213.6 * 61 / 100))" />
+            </svg>
+            <div class="score-center">
+              <span class="score-num">61</span>
+              <span class="score-slash">/100</span>
+            </div>
+          </div>
+          <div class="card-meta">
+            <span class="meta-tag">↑ 3pts flagged</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 2: CHARTS -->
+    <section class="section" id="section-charts">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="section-num">02</span>
+          <h2>Risk Breakdown Analysis</h2>
+        </div>
+        <p class="section-desc">Factor-level contribution to overall department risk scores</p>
+      </div>
+
+      <div class="charts-grid">
+
+        <!-- Radar chart -->
+        <div class="chart-card wide">
+          <div class="chart-card-header">
+            <h4>Risk Factor Distribution</h4>
+            <span class="chart-badge">Multi-factor radar</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="radarChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Bar chart -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h4>Factor Intensity by Department</h4>
+            <span class="chart-badge">Grouped bars</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Horizontal bar -->
+        <div class="chart-card">
+          <div class="chart-card-header">
+            <h4>Overall Risk Score Comparison</h4>
+            <span class="chart-badge">Ranked</span>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="hbarChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 3: AI EXPLANATION PANEL -->
+    <section class="section" id="section-ai">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="section-num">03</span>
+          <h2>AI Risk Analysis</h2>
+        </div>
+        <p class="section-desc">Natural language explanations generated by ArthRakshak AI</p>
+      </div>
+
+      <div class="ai-panel">
+        <div class="ai-panel-sidebar">
+          <div class="ai-dept-list" id="aiDeptList">
+            <button class="ai-dept-btn active high" data-key="road" onclick="switchAnalysis(this)">
+              <span>🛣️</span> Road Infrastructure
+            </button>
+            <button class="ai-dept-btn medium" data-key="water" onclick="switchAnalysis(this)">
+              <span>💧</span> Water Supply
+            </button>
+            <button class="ai-dept-btn low" data-key="education" onclick="switchAnalysis(this)">
+              <span>🎓</span> Education
+            </button>
+            <button class="ai-dept-btn high" data-key="healthcare" onclick="switchAnalysis(this)">
+              <span>🏥</span> Healthcare
+            </button>
+            <button class="ai-dept-btn medium" data-key="sanitation" onclick="switchAnalysis(this)">
+              <span>♻️</span> Sanitation
+            </button>
+          </div>
+        </div>
+
+        <div class="ai-panel-content" id="aiContent">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="page-footer">
+    <div class="footer-inner">
+      <span class="footer-logo">⬡ ArthRakshak AI</span>
+      <span class="footer-tag">AI-powered risk intelligence</span>
+      <span class="footer-copy">© 2025 Civic Intelligence Platform</span>
+    </div>
+  </footer>
+
+  <script src="risk-script.js"></script>
+</body>
+</html>
