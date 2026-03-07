@@ -50,12 +50,7 @@ function getSchemes(user){
   return[];
 }
 
-function riskClass(score){
-  if(score<30)return'risk-low';
-  if(score<55)return'risk-medium';
-  if(score<75)return'risk-high';
-  return'risk-critical';
-}
+function riskClass(score){if(score<30)return'low';if(score<55)return'medium';if(score<75)return'high';return'critical';}
 function riskLabel(score){
   if(score<30)return'Low';
   if(score<55)return'Medium';
@@ -73,4 +68,4 @@ function initTopbar(user){
   if(a&&user)a.textContent=user.name.charAt(0);
 }
 function setTopbar(user){initTopbar(user);}
-function logout(){sessionStorage.clear();window.location.href='login.html';}
+

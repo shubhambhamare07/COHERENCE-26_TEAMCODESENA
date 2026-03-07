@@ -79,3 +79,19 @@ function setTopbar(user){
 }
 
 function progressColor(pct){return pct>=70?'#1a7a4a':pct>=40?'#e85d00':'#c0392b';}
+
+// ── Google Maps URL helper ─────────────────────────────────────────
+// Works correctly for national / state / district / rural schemes
+// Filters out 'National' since it is not a real Google Maps location
+function schemeMapsUrl(s) {
+  if (!s) return 'https://www.google.com/maps/search/?api=1&query=India';
+  var loc = [s.town, s.district, s.state]
+    .filter(function(x){ return x && x !== 'National' && x !== 'Pan India'; })
+    .join(', ');
+  var query = loc ? (s.name + ', ' + loc) : s.name;
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(query);
+}
+
+function openSchemeMaps(s) {
+  window.open(schemeMapsUrl(s), '_blank');
+}

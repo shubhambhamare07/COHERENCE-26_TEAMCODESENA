@@ -76,13 +76,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
   <div class="tb-right">
     <button class="nb">🔔<span class="nb-badge">3</span></button>
     <div style="display:flex;align-items:center;gap:8px"><div class="uinfo"><div class="un" id="uname">—</div><div class="ud" id="udept">—</div></div><div class="uavatar" id="uavatar">?</div></div>
+    <span id="api-status" style="font-size:11px"></span>
     <button onclick="logout()" class="btn btn-ghost btn-sm">🚪 Logout</button>
   </div>
 </header>
 <aside class="sidebar">
-  <div class="sb-sec">Main</div><a href="index.html">🏠 Home</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html">💸 Flow</a>
-  <div class="sb-sec">Intelligence</div><a href="risk_score.html">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomaly Detection</a><a href="reports.html">📄 Reports</a>
-  <div class="sb-sec">Tools</div><a href="simulator.html">🔬 Simulator</a><a href="ai_assistant.html" class="active">🤖 AI Assistant</a>
+  <div class="sb-sec">Analytics</div>
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="budget-flow.html">💸 Budget Flow</a>
+  <div class="sb-sec">Intelligence</div>
+  <a href="risk_score.html">🛡️ Risk Scores</a>
+  <a href="anomaly.html">⚠️ Anomalies</a>
+  <a href="reports.html">📄 Reports</a>
+  <div class="sb-sec">Tools</div>
+  <a href="simulator.html">🔬 Simulator</a>
+  <a href="ai_assistant.html" class="act">🤖 AI Assistant</a>
 </aside>
 <main class="main">
   <div class="ph">
@@ -121,18 +129,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
   </div>
 </main>
 <script src="script.js"></script>
+<script src="api.js"></script>
 <script>
-requireAuth();var user=getUser();initTopbar(user);
+const user=getUser();if(!user){window.location.href='login.html';throw new Error('unauth');}setTopbar(user);
+if(typeof AR!=="undefined") AR.renderStatusBadge("api-status");
 var schemes=getSchemes(user);
 var lvl={'Finance Ministry':'National','Chief Economic Advisory':'National','State Department':user.state,'District Administration':user.district+' District','Rural Administration':user.town}[user.dept]||'';
 document.getElementById('ai-sub').textContent='Scoped to '+schemes.length+' schemes for '+user.dept+' ('+lvl+')';
 // Scope panel
 document.getElementById('scope-panel').innerHTML='<div class="scope-row"><span class="scope-lbl">Department</span><span class="scope-val">'+user.dept+'</span></div><div class="scope-row"><span class="scope-lbl">Access Level</span><span class="scope-val">'+lvl+'</span></div><div class="scope-row"><span class="scope-lbl">Schemes</span><span class="scope-val" style="color:#002147">'+schemes.length+'</span></div><div class="scope-row"><span class="scope-lbl">High Risk</span><span class="scope-val" style="color:#c0392b">'+schemes.filter(function(s){return s.riskScore>=55;}).length+'</span></div>';
 // Topics
-var TOPICS=[{ico:'💰',t:'Budget Status',q:'What is the overall budget utilization?'},{ico:'⚠️',t:'Risk Overview',q:'Which schemes have high risk scores?'},{ico:'📊',t:'Performance',q:'Which schemes are performing well?'},{ico:'🔍',t:'Anomalies',q:'Are there any budget anomalies?'}];
+var TOPICS=[{ico:'💰',t:'Budget Status',q:'What is the overall budget utilization?'},{ico:'⚠️',t:'Risk Overview',q:'Which schemes have high risk scores?'},{ico:'📊',t:'Performance',q:'Which schemes are performing well?'},{ico:'🗺️',t:'View on Maps',q:'Show schemes on Google Maps'},{ico:'🔍',t:'Anomalies',q:'Are there any budget anomalies?'}];
 document.getElementById('topics-panel').innerHTML=TOPICS.map(function(t){return'<div class="topic-card" onclick="ask(\''+t.q+'\')"><div class="topic-icon">'+t.ico+'</div><div><div class="topic-title">'+t.t+'</div><div class="topic-sub">'+t.q.substring(0,34)+'…</div></div></div>';}).join('');
 // Quick btns
-var QS=['How many schemes do I have access to?','Which schemes have high risk?','What is the average utilization?','List all sectors covered'];
+var QS=['How many schemes do I have access to?','Which schemes have high risk?','What is the average utilization?','Show schemes on Google Maps','List all sectors covered'];
 document.getElementById('qbtns').innerHTML=QS.map(function(q){return'<button class="qbtn" onclick="ask(\''+q+'\')">'+q+'</button>';}).join('');
 // Chat
 var msgs=document.getElementById('msgs');
@@ -159,6 +169,15 @@ function genReply(msg){
     return'No schemes currently have 70%+ utilization. Consider reviewing disbursement targets.';
   }
   if(m.includes('anomal')||m.includes('fraud'))return'🔍 Anomaly detection has flagged irregular patterns in '+schemes.filter(function(s){return s.riskScore>45;}).length+' schemes. Visit the Anomaly Detection page for detailed analysis.';
+  // Google Maps
+  if(m.includes('map')||m.includes('location')||m.includes('google')||m.includes('where')||m.includes('infrastructure')){
+    var infra=schemes.filter(function(s){return['Roads','Infrastructure','Transport','Water'].includes(s.sector);});
+    var target=infra.length?infra[0]:schemes[0];
+    var mapUrl=schemeMapsUrl(target);
+    var btn='<a href="'+mapUrl+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:#ddeeff;color:#002147;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;border:1px solid #b8d0ee;margin-top:6px">📍 Open on Google Maps</a>';
+    if(!infra.length)return'🗺️ No infrastructure schemes in scope, but you can view <strong>'+target.name+'</strong> on the map:<br><br>'+btn;
+    return'🗺️ Found <strong>'+infra.length+'</strong> infrastructure project(s):<br><br>'+infra.map(function(s){return'• <strong>'+s.name+'</strong> — '+s.sector;}).join('<br>')+'<br><br>'+btn;
+  }
   return'I can help with:\n\n• Budget utilization analysis\n• Risk assessments\n• Scheme performance\n• Anomaly summaries\n• Sector breakdowns\n\nTry asking: "Which schemes have high risk?" or "What is the average utilization?"';
 }
 function ask(q){

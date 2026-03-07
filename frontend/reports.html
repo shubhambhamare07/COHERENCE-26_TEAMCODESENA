@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ArthRakshak — Reports</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f7f9fc;color:#0f172a;font-size:14px}
+.topbar{background:#002147;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:3px solid #e85d00}
+.tb-brand{display:flex;align-items:center;gap:10px}.tb-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px}
+.tb-title{font-family:Georgia,serif;font-size:16px;font-weight:700}.tb-title span{display:block;font-size:10px;font-family:sans-serif;font-weight:400;opacity:.6;letter-spacing:1.2px;text-transform:uppercase}
+.tb-right{display:flex;align-items:center;gap:10px}
+.uavatar{width:30px;height:30px;background:#e85d00;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.uinfo{text-align:right}.un{font-size:12px;font-weight:600;color:#fff}.ud{font-size:11px;opacity:.6;color:#fff}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:.15s}
+.btn-orange{background:#e85d00;color:#fff}.btn-orange:hover{background:#c94e00}
+.btn-outline{background:transparent;color:#002147;border:1.5px solid #002147}.btn-outline:hover{background:#ddeeff}
+.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2)}.btn-ghost:hover{background:rgba(255,255,255,.22)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.sidebar{width:210px;background:#001530;position:fixed;top:58px;left:0;bottom:0;overflow-y:auto;z-index:900;padding:12px 0}
+.sb-sec{padding:10px 16px 4px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.sidebar a{display:flex;align-items:center;gap:9px;padding:9px 17px;color:rgba(255,255,255,.65);text-decoration:none;font-size:13px;transition:.15s;border-left:3px solid transparent}
+.sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:rgba(232,93,0,.5)}
+.sidebar a.act{background:rgba(255,255,255,.1);color:#fff;border-left-color:#e85d00}
+.main{margin-left:210px;margin-top:58px;padding:24px 28px}
+.ph{margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid #e2e8f0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.ph h1{font-family:Georgia,serif;font-size:20px;font-weight:700;color:#002147}.ph p{color:#64748b;font-size:13px;margin-top:3px}
+.bc{display:flex;align-items:center;gap:6px;font-size:12px;color:#64748b;margin-bottom:4px}.bc a{color:#003580;text-decoration:none}
+.tabs{display:flex;border-bottom:2px solid #e2e8f0;margin-bottom:16px;flex-wrap:wrap;gap:0}
+.tab{padding:9px 16px;font-size:13px;font-weight:500;color:#64748b;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab:hover{color:#002147}.tab.active{color:#002147;border-bottom-color:#002147;font-weight:700}
+.tc{display:none}.tc.active{display:block}
+.card{background:#fff;border:1px solid #d0dae8;border-radius:10px;box-shadow:0 1px 4px rgba(0,33,71,.08);overflow:hidden;padding:20px}
+.rc{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;border:1px solid #d0dae8;border-radius:7px;background:#fff;margin-bottom:10px;transition:.15s;flex-wrap:wrap;gap:10px}
+.rc:hover{border-color:#002147;box-shadow:0 1px 4px rgba(0,33,71,.1)}
+.ri{font-size:24px;margin-right:13px;flex-shrink:0}
+.rinfo h4{font-size:13.5px;font-weight:700;color:#002147}.rinfo p{font-size:12px;color:#64748b;margin-top:2px}
+.rmeta{font-size:12px;color:#64748b;text-align:right;flex-shrink:0;margin-left:10px}
+.rbtns{display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
+.bdg{display:inline-block;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.bdg-green{background:#e0f5ea;color:#1a7a4a}.bdg-red{background:#fde8e6;color:#c0392b}.bdg-navy{background:#ddeeff;color:#002147}
+label{display:block;font-size:11.5px;font-weight:700;color:#334155;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.form-group{margin-bottom:14px}
+select,input[type=text]{width:100%;padding:8px 11px;border:1.5px solid #d0dae8;border-radius:6px;font-family:inherit;font-size:13px;color:#0f172a;background:#fff;outline:none}
+select:focus,input[type=text]:focus{border-color:#002147}
+.cust-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+/* PDF Preview Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:12px;width:720px;max-width:95vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.modal-hdr{padding:18px 22px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:1}
+.modal-hdr h3{font-family:Georgia,serif;font-size:17px;font-weight:700;color:#002147}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:#64748b;line-height:1;padding:0 4px}
+.modal-body{padding:22px}
+/* PDF Content styling */
+#pdf-preview{font-family:Georgia,serif;color:#0f172a}
+.pdf-cover{text-align:center;padding:30px 0;border-bottom:3px solid #002147;margin-bottom:24px}
+.pdf-cover h1{font-size:22px;font-weight:700;color:#002147;margin-bottom:6px}
+.pdf-cover p{font-size:13px;color:#64748b}
+.pdf-section{margin-bottom:22px}
+.pdf-section h2{font-size:15px;font-weight:700;color:#002147;border-left:4px solid #e85d00;padding-left:10px;margin-bottom:12px}
+.pdf-table{width:100%;border-collapse:collapse;font-size:12px}
+.pdf-table th{background:#002147;color:#fff;padding:8px 10px;text-align:left;font-size:11px}
+.pdf-table td{padding:7px 10px;border-bottom:1px solid #f0f3f8}
+.pdf-table tr:nth-child(even) td{background:#f7f9fc}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat-box{background:#f7f9fc;border:1px solid #d0dae8;border-radius:8px;padding:12px;text-align:center}
+.stat-box .val{font-size:20px;font-weight:700;color:#002147}
+.stat-box .lbl{font-size:11px;color:#64748b;margin-top:3px}
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0}.cust-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<span>National Budget Intelligence</span></div></div>
+  <div class="tb-right">
+    <div style="display:flex;align-items:center;gap:8px"><div class="uinfo"><div class="un" id="uname">—</div><div class="ud" id="udept">—</div></div><div class="uavatar" id="uavatar">?</div></div>
+    <button onclick="logout()" class="btn btn-ghost btn-sm">🚪 Logout</button>
+  </div>
+</header>
+<aside class="sidebar">
+  <div class="sb-sec">Analytics</div>
+  <a href="dashboard.html">📊 Dashboard</a>
+  <a href="budget-flow.html">💸 Budget Flow</a>
+  <div class="sb-sec">Intelligence</div>
+  <a href="risk_score.html">🛡️ Risk Scores</a>
+  <a href="anomaly.html">⚠️ Anomalies</a>
+  <a href="reports.html" class="act">📄 Reports</a>
+  <div class="sb-sec">Tools</div>
+  <a href="simulator.html">🔬 Simulator</a>
+  <a href="ai_assistant.html">🤖 AI Assistant</a>
+</aside>
+<main class="main">
+  <div class="ph">
+    <div><div class="bc"><a href="dashboard.html">Home</a> › Reports</div><h1>📄 Reports &amp; Compliance Documents</h1><p id="rep-sub">Official government reports, audit summaries, and PDF documentation.</p></div>
+    <button class="btn btn-orange" onclick="openCustom()">⚡ Generate PDF Report</button>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab(this,'t1')">📋 Official Reports</button>
+    <button class="tab" onclick="switchTab(this,'t2')">🔍 Audit Reports</button>
+    <button class="tab" onclick="switchTab(this,'t3')">✅ Compliance</button>
+    <button class="tab" onclick="switchTab(this,'t4')">⚙️ Custom PDF</button>
+  </div>
+  <div class="tc active" id="t1"><div class="card" id="off-list"></div></div>
+  <div class="tc" id="t2"><div class="card" id="aud-list"></div></div>
+  <div class="tc" id="t3"><div class="card" id="com-list"></div></div>
+  <div class="tc" id="t4">
+    <div class="card">
+      <h3 style="font-family:Georgia,serif;font-size:16px;color:#002147;margin-bottom:18px">⚙️ Generate Custom PDF Report</h3>
+      <div class="cust-grid">
+        <div>
+          <div class="form-group"><label>Report Type</label>
+            <select id="rtype">
+              <option value="utilization">Budget Utilization Summary</option>
+              <option value="performance">Scheme Performance Report</option>
+              <option value="risk">Risk Assessment Report</option>
+              <option value="anomaly">Anomaly Detection Report</option>
+              <option value="full">Full Department Overview</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Time Period</label>
+            <select id="rperiod">
+              <option>FY 2025-26 (Full Year)</option>
+              <option>Q3 2025-26 (Oct–Dec)</option>
+              <option>Q2 2025-26 (Jul–Sep)</option>
+              <option>Q1 2025-26 (Apr–Jun)</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="form-group"><label>Include Sections</label>
+            <div style="display:flex;flex-direction:column;gap:8px;padding:8px 0">
+              <label style="display:flex;gap:8px;align-items:center;text-transform:none;font-size:13px"><input type="checkbox" id="inc-stats" checked> Executive Summary &amp; Stats</label>
+              <label style="display:flex;gap:8px;align-items:center;text-transform:none;font-size:13px"><input type="checkbox" id="inc-table" checked> Scheme-wise Data Table</label>
+              <label style="display:flex;gap:8px;align-items:center;text-transform:none;font-size:13px"><input type="checkbox" id="inc-risk" checked> Risk Scores</label>
+              <label style="display:flex;gap:8px;align-items:center;text-transform:none;font-size:13px"><input type="checkbox" id="inc-rec" checked> Recommendations</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
+        <button class="btn btn-orange" onclick="generatePDF()">📥 Generate &amp; Download PDF</button>
+        <button class="btn btn-outline" onclick="previewPDF()">👁️ Preview Report</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- PDF Preview Modal -->
+<div class="modal-overlay" id="pdf-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3>📄 Report Preview</h3>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-orange btn-sm" onclick="generatePDF()">📥 Download PDF</button>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" id="pdf-preview"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+<script>
+const user = getUser();
+if (!user) { window.location.href = 'login.html'; throw new Error('unauth'); }
+setTopbar(user);
+const schemes = getSchemes(user);
+document.getElementById('rep-sub').textContent = `Reports for ${user.dept} — ${schemes.length} schemes in scope`;
+
+var OFF = [
+  {ico:'📊',title:'Q3 Budget Utilization Report 2025-26',desc:'Comprehensive utilization analysis across all centrally sponsored schemes Oct–Dec quarter.',date:'15 Jan 2026',type:'PDF',size:'2.4 MB',st:'Published'},
+  {ico:'📋',title:'Annual Scheme Performance Review 2024-25',desc:'End-of-year assessment of all flagship schemes with outcome metrics and targets.',date:'31 Mar 2025',type:'PDF',size:'8.7 MB',st:'Published'},
+  {ico:'💰',title:'Budget Allocation Statement — FY 2025-26',desc:'Detailed breakup of scheme-wise budget allocations as presented in Union Budget.',date:'01 Apr 2025',type:'PDF',size:'1.2 MB',st:'Published'},
+  {ico:'👥',title:'Beneficiary Verification Report — PM-KISAN',desc:'Beneficiary list verification and deduplication exercise results.',date:'28 Nov 2025',type:'PDF',size:'4.1 MB',st:'Published'},
+  {ico:'🌾',title:'Agriculture Scheme Impact Assessment',desc:'Impact assessment of PM-KISAN, PM Fasal Bima on farmer income levels.',date:'15 Dec 2025',type:'PDF',size:'3.6 MB',st:'Published'}
+];
+var AUD = [
+  {ico:'🔍',title:'CAG Performance Audit — MGNREGA 2024-25',desc:'Comptroller and Auditor General performance audit findings and observations.',date:'30 Sep 2025',type:'PDF',size:'12.3 MB',st:'Tabled'},
+  {ico:'⚠️',title:'Internal Audit — PM Ujjwala Irregularities',desc:'Internal audit on irregularities in LPG connection beneficiary verification.',date:'12 Oct 2025',type:'PDF',size:'3.8 MB',st:'Confidential'},
+  {ico:'🏗️',title:'PMAY Urban Construction Progress Audit',desc:'Physical and financial progress audit of housing units under PMAY.',date:'28 Aug 2025',type:'PDF',size:'6.2 MB',st:'Published'},
+  {ico:'💻',title:'Digital India DBT Implementation Review',desc:'Review of Direct Benefit Transfer implementation across all platforms.',date:'15 Jul 2025',type:'PDF',size:'4.9 MB',st:'Published'}
+];
+var COM = [
+  {ico:'📜',title:'GFR Compliance Certificate — Q3 2025-26',desc:'Compliance with General Financial Rules for fund management and utilization.',date:'31 Dec 2025',type:'PDF',size:'0.8 MB',st:'Submitted'},
+  {ico:'✅',title:'Utilization Certificate — PMAY Urban',desc:'Statutory utilization certificate for central grant release.',date:'30 Nov 2025',type:'PDF',size:'0.4 MB',st:'Submitted'},
+  {ico:'🔏',title:'RTI Disclosure Statement — Budget Data',desc:'Proactive disclosure under RTI Act for budget utilization data.',date:'01 Apr 2025',type:'PDF',size:'1.1 MB',st:'Published'},
+  {ico:'📊',title:'PFMS Integration Compliance Report',desc:'Compliance for Public Financial Management System integration.',date:'15 Jan 2026',type:'PDF',size:'2.2 MB',st:'Submitted'}
+];
+
+function stCls(s){ return s==='Published'||s==='Submitted'?'bdg-green':s==='Confidential'?'bdg-red':'bdg-navy'; }
+function makeCards(arr){
+  return arr.map(r => `
+  <div class="rc">
+    <div style="display:flex;align-items:center;flex:1;min-width:0">
+      <div class="ri">${r.ico}</div>
+      <div class="rinfo"><h4>${r.title}</h4><p>${r.desc}</p></div>
+    </div>
+    <div class="rbtns">
+      <div class="rmeta"><div>${r.date}</div><div>${r.type} · ${r.size}</div></div>
+      <span class="bdg ${stCls(r.st)}">${r.st}</span>
+      <button class="btn btn-outline btn-sm" onclick="dlReport('${r.title.replace(/'/g,'&apos;')}')">📥 Download</button>
+      <button class="btn btn-sm" style="background:#f0f3f8;color:#334155" onclick="dlPDF('${r.title.replace(/'/g,'&apos;')}')">📄 PDF</button>
+    </div>
+  </div>`).join('');
+}
+document.getElementById('off-list').innerHTML = makeCards(OFF);
+document.getElementById('aud-list').innerHTML = makeCards(AUD);
+document.getElementById('com-list').innerHTML = makeCards(COM);
+
+function switchTab(btn, id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tc').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+function openCustom() {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tc').forEach(t => t.classList.remove('active'));
+  document.querySelector('[onclick*="t4"]').classList.add('active');
+  document.getElementById('t4').classList.add('active');
+}
+function dlReport(t){ alert('Demo mode: "' + t + '"\nIn production, this would download from the backend.'); }
+
+// ── PDF Generation ─────────────────────────────────────────────────────
+function buildReportHTML() {
+  const type = document.getElementById('rtype').value;
+  const period = document.getElementById('rperiod').value;
+  const incStats = document.getElementById('inc-stats').checked;
+  const incTable = document.getElementById('inc-table').checked;
+  const incRisk = document.getElementById('inc-risk').checked;
+  const incRec = document.getElementById('inc-rec').checked;
+  const typeLabels = {utilization:'Budget Utilization Summary',performance:'Scheme Performance Report',risk:'Risk Assessment Report',anomaly:'Anomaly Detection Report',full:'Full Department Overview'};
+  const avgUtil = schemes.length ? Math.round(schemes.reduce((a,s)=>a+s.utilization,0)/schemes.length) : 0;
+  const avgRisk = schemes.length ? Math.round(schemes.reduce((a,s)=>a+s.riskScore,0)/schemes.length) : 0;
+  const highRisk = schemes.filter(s=>s.riskScore>=55).length;
+
+  let html = `<div id="pdf-preview">
+  <div class="pdf-cover">
+    <div style="font-size:36px;margin-bottom:10px">🏛️</div>
+    <h1>ArthRakshak — ${typeLabels[type]}</h1>
+    <p>Government of India | ${user.dept} | ${period}</p>
+    <p style="margin-top:6px;font-size:12px;color:#94a3b8">Generated: ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'})} | Official Use Only</p>
+  </div>`;
+
+  if (incStats) html += `
+  <div class="pdf-section">
+    <h2>Executive Summary</h2>
+    <div class="stat-row">
+      <div class="stat-box"><div class="val">${schemes.length}</div><div class="lbl">Total Schemes</div></div>
+      <div class="stat-box"><div class="val">${avgUtil}%</div><div class="lbl">Avg Utilization</div></div>
+      <div class="stat-box"><div class="val">${avgRisk}</div><div class="lbl">Avg Risk Score</div></div>
+      <div class="stat-box"><div class="val">${highRisk}</div><div class="lbl">High Risk Schemes</div></div>
+    </div>
+    <p style="font-size:13px;line-height:1.8;color:#334155">This report covers <strong>${schemes.length} schemes</strong> under <strong>${user.dept}</strong> for <strong>${period}</strong>. Average budget utilization stands at <strong>${avgUtil}%</strong>. ${highRisk > 0 ? `<strong style="color:#c0392b">${highRisk} scheme(s) show elevated risk</strong> requiring immediate attention.` : 'All schemes are within acceptable risk parameters.'}</p>
+  </div>`;
+
+  if (incTable) html += `
+  <div class="pdf-section">
+    <h2>Scheme-wise Data</h2>
+    <table class="pdf-table">
+      <thead><tr><th>#</th><th>Scheme Name</th><th>Sector</th><th>Budget</th><th>Utilization</th><th>Risk</th></tr></thead>
+      <tbody>${schemes.map((s,i) => `<tr><td>${i+1}</td><td><strong>${s.name}</strong></td><td>${s.sector}</td><td>${s.budget||s.utilized||'—'}</td><td>${s.utilization}%</td><td>${s.riskScore}/100</td></tr>`).join('')}</tbody>
+    </table>
+  </div>`;
+
+  if (incRisk) {
+    const sorted = [...schemes].sort((a,b)=>b.riskScore-a.riskScore).slice(0,5);
+    html += `
+  <div class="pdf-section">
+    <h2>Risk Analysis — Top Concerns</h2>
+    <table class="pdf-table">
+      <thead><tr><th>Scheme</th><th>Risk Score</th><th>Level</th><th>Recommended Action</th></tr></thead>
+      <tbody>${sorted.map(s => {
+        const lv = s.riskScore<30?'Low':s.riskScore<55?'Medium':s.riskScore<75?'High':'Critical';
+        const act = s.riskScore<30?'Routine Monitor':s.riskScore<55?'Quarterly Audit':s.riskScore<75?'Investigate Now':'Freeze & Escalate';
+        return `<tr><td>${s.name}</td><td><strong>${s.riskScore}</strong>/100</td><td>${lv}</td><td>${act}</td></tr>`;
+      }).join('')}</tbody>
+    </table>
+  </div>`;
+  }
+
+  if (incRec) html += `
+  <div class="pdf-section">
+    <h2>Recommendations</h2>
+    <ol style="padding-left:18px;font-size:13px;line-height:2;color:#334155">
+      ${highRisk > 0 ? `<li>Initiate investigation into <strong>${highRisk} high-risk scheme(s)</strong> with risk scores above 55.</li>` : ''}
+      ${avgUtil < 50 ? `<li>Average utilization of ${avgUtil}% is below target. Review disbursement bottlenecks across all schemes.</li>` : ''}
+      <li>Conduct quarterly beneficiary verification to prevent duplicate entries.</li>
+      <li>Implement real-time fund tracking through PFMS for all schemes above ₹100 Cr.</li>
+      <li>Submit Utilization Certificates within 30 days of quarter close as per GFR guidelines.</li>
+    </ol>
+  </div>`;
+
+  html += `
+  <div style="margin-top:30px;padding-top:16px;border-top:2px solid #e2e8f0;font-size:11px;color:#94a3b8;text-align:center">
+    ArthRakshak National Budget Intelligence Platform | Confidential — Government Use Only<br>
+    Report ID: AR-${Date.now().toString(36).toUpperCase()} | Generated by: ${user.name}
+  </div></div>`;
+  return html;
+}
+
+function previewPDF() {
+  document.getElementById('pdf-preview').innerHTML = buildReportHTML();
+  document.getElementById('pdf-modal').classList.add('open');
+}
+function closeModal() { document.getElementById('pdf-modal').classList.remove('open'); }
+
+function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const type = document.getElementById('rtype').value;
+  const period = document.getElementById('rperiod').value;
+  const typeLabels = {utilization:'Budget_Utilization',performance:'Scheme_Performance',risk:'Risk_Assessment',anomaly:'Anomaly_Detection',full:'Full_Overview'};
+  const avgUtil = schemes.length ? Math.round(schemes.reduce((a,s)=>a+s.utilization,0)/schemes.length) : 0;
+  const avgRisk = schemes.length ? Math.round(schemes.reduce((a,s)=>a+s.riskScore,0)/schemes.length) : 0;
+  const highRisk = schemes.filter(s=>s.riskScore>=55).length;
+
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  const W = 210, margin = 18, cw = W - margin*2;
+  let y = 0;
+
+  const nl = (h=5) => { y += h; if (y > 270) { doc.addPage(); y = 20; } };
+  const line = (color='#e2e8f0') => { doc.setDrawColor(color); doc.line(margin, y, W-margin, y); nl(4); };
+
+  // ── Cover ──
+  doc.setFillColor(0,33,71); doc.rect(0,0,W,50,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(22);
+  doc.text('ArthRakshak', W/2, 18, {align:'center'});
+  doc.setFontSize(11); doc.setFont('helvetica','normal');
+  doc.text('National Budget Intelligence Platform', W/2, 26, {align:'center'});
+  doc.setFillColor(232,93,0); doc.rect(0,50,W,3,'F');
+  y = 62;
+  doc.setTextColor(0,33,71); doc.setFont('helvetica','bold'); doc.setFontSize(16);
+  doc.text(typeLabels[type].replace(/_/g,' '), W/2, y, {align:'center'}); nl(7);
+  doc.setFont('helvetica','normal'); doc.setFontSize(10); doc.setTextColor(100,116,139);
+  doc.text(`${user.dept}  |  ${period}  |  ${new Date().toLocaleDateString('en-IN')}`, W/2, y, {align:'center'}); nl(10);
+  line('#002147');
+
+  // ── Stats row ──
+  doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(0,33,71);
+  doc.text('Executive Summary', margin, y); nl(6);
+  const boxes = [{v:schemes.length,l:'Total Schemes'},{v:avgUtil+'%',l:'Avg Utilization'},{v:avgRisk,l:'Avg Risk Score'},{v:highRisk,l:'High Risk'}];
+  boxes.forEach((b,i) => {
+    const bx = margin + i*(cw/4+2), bw = cw/4-1;
+    doc.setFillColor(247,249,252); doc.setDrawColor(209,218,232);
+    doc.roundedRect(bx, y, bw, 18, 2, 2, 'FD');
+    doc.setFont('helvetica','bold'); doc.setFontSize(14); doc.setTextColor(0,33,71);
+    doc.text(String(b.v), bx+bw/2, y+8, {align:'center'});
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(100,116,139);
+    doc.text(b.l, bx+bw/2, y+14, {align:'center'});
+  });
+  nl(24); line();
+
+  // ── Scheme table ──
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(0,33,71);
+  doc.text('Scheme-wise Data', margin, y); nl(7);
+  const cols = ['#','Scheme Name','Sector','Utilization','Risk Score','Level'];
+  const cws  = [8, 72, 28, 22, 22, 20];
+  let cx = margin;
+  doc.setFillColor(0,33,71); doc.rect(margin, y-4, cw, 8, 'F');
+  doc.setTextColor(255,255,255); doc.setFontSize(8); doc.setFont('helvetica','bold');
+  cols.forEach((c,i) => { doc.text(c, cx+2, y+0.5); cx += cws[i]; });
+  nl(6);
+  schemes.forEach((s,idx) => {
+    if (idx%2===0) { doc.setFillColor(247,249,252); doc.rect(margin, y-4, cw, 7, 'F'); }
+    cx = margin;
+    doc.setTextColor(51,65,85); doc.setFont('helvetica','normal'); doc.setFontSize(8);
+    const row = [String(idx+1), s.name.substring(0,30)+(s.name.length>30?'…':''), s.sector, s.utilization+'%', s.riskScore+'/100', s.riskScore<30?'Low':s.riskScore<55?'Medium':s.riskScore<75?'High':'Critical'];
+    row.forEach((v,i) => { doc.text(v, cx+2, y+0.5); cx += cws[i]; });
+    nl(7); if (y > 265) { doc.addPage(); y=20; }
+  });
+  nl(4); line();
+
+  // ── Risk top 5 ──
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(0,33,71);
+  doc.text('Top Risk Concerns', margin, y); nl(7);
+  [...schemes].sort((a,b)=>b.riskScore-a.riskScore).slice(0,5).forEach((s,i) => {
+    doc.setFillColor(i%2===0?247:255,i%2===0?249:255,i%2===0?252:255);
+    doc.rect(margin, y-4, cw, 7, 'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(51,65,85);
+    doc.text(`${i+1}. ${s.name.substring(0,45)}`, margin+2, y+0.5);
+    const lv = s.riskScore<30?'Low':s.riskScore<55?'Medium':s.riskScore<75?'High':'Critical';
+    doc.text(`${s.riskScore}/100 — ${lv}`, W-margin-30, y+0.5);
+    nl(7);
+  });
+  nl(4); line();
+
+  // ── Recommendations ──
+  doc.setFont('helvetica','bold'); doc.setFontSize(12); doc.setTextColor(0,33,71);
+  doc.text('Recommendations', margin, y); nl(7);
+  const recs = [];
+  if (highRisk>0) recs.push(`Initiate investigation into ${highRisk} high-risk scheme(s) with risk scores above 55.`);
+  if (avgUtil<50) recs.push(`Avg utilization of ${avgUtil}% is below target. Review disbursement bottlenecks.`);
+  recs.push('Conduct quarterly beneficiary verification to prevent duplicate entries.');
+  recs.push('Implement real-time fund tracking through PFMS for schemes above ₹100 Cr.');
+  recs.push('Submit Utilization Certificates within 30 days of quarter close per GFR guidelines.');
+  recs.forEach((r,i) => {
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(51,65,85);
+    const lines = doc.splitTextToSize(`${i+1}. ${r}`, cw-5);
+    doc.text(lines, margin+3, y); nl(lines.length*5+2);
+  });
+
+  // ── Footer ──
+  const pages = doc.getNumberOfPages();
+  for (let p=1; p<=pages; p++) {
+    doc.setPage(p);
+    doc.setFillColor(0,33,71); doc.rect(0,287,W,10,'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(255,255,255);
+    doc.text('ArthRakshak — Confidential Government Document', margin, 293);
+    doc.text(`Page ${p} of ${pages}  |  Generated by: ${user.name}`, W-margin, 293, {align:'right'});
+  }
+
+  const fname = `ArthRakshak_${typeLabels[type]}_${new Date().toISOString().slice(0,10)}.pdf`;
+  doc.save(fname);
+}
+
+function dlPDF(title) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFillColor(0,33,71); doc.rect(0,0,210,40,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(18);
+  doc.text('ArthRakshak', 105, 18, {align:'center'});
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.text('National Budget Intelligence Platform', 105, 26, {align:'center'});
+  doc.setFillColor(232,93,0); doc.rect(0,40,210,2,'F');
+  doc.setTextColor(0,33,71); doc.setFont('helvetica','bold'); doc.setFontSize(13);
+  const lines = doc.splitTextToSize(title, 174);
+  doc.text(lines, 18, 56);
+  doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(100,116,139);
+  doc.text(`Requested by: ${user.name} | ${user.dept} | ${new Date().toLocaleDateString('en-IN')}`, 18, 72);
+  doc.setTextColor(51,65,85); doc.setFontSize(10);
+  doc.text('This document is an official ArthRakshak report. Full content is available', 18, 86);
+  doc.text('through the government document management system.', 18, 94);
+  doc.setFontSize(8); doc.setTextColor(150,150,150);
+  doc.text('CONFIDENTIAL — GOVERNMENT USE ONLY', 105, 280, {align:'center'});
+  doc.save(title.substring(0,40).replace(/[^a-zA-Z0-9]/g,'_') + '.pdf');
+}
+</script>
+</body>
+</html>

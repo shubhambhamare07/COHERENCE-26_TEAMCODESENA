@@ -243,9 +243,11 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
 </div>
 
 <script src="data.js"></script>
+<script src="api.js"></script>
 <script>
 const user=getUser();if(!user){window.location.href='login.html';throw new Error('unauth');}
 setTopbar(user);
+if(typeof AR!=="undefined") AR.renderStatusBadge("api-status");
 
 const schemes=getSchemes(user);
 const level=levelLabel(user);
@@ -331,6 +333,17 @@ function openModal(s){
     html+=`</div><div class="dg"><div class="di"><label>Utilized</label><p>${s.utilized}</p></div><div class="di"><label>Remaining</label><p>${s.remaining}</p></div><div class="di"><label>Utilization %</label><p>${s.utilization}%</p></div></div><div class="divider"></div><div class="di"><label>Purpose</label><p style="margin-top:4px">${s.purpose}</p></div>`;
   }
   html+=`<div class="divider"></div><div style="margin-top:4px"><div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:6px"><span>Budget Utilization</span><span>${s.utilization}%</span></div><div class="pb" style="width:100%;height:10px"><div class="pf" style="width:${s.utilization}%;background:${progressColor(s.utilization)}"></div></div></div>`;
+  // Google Maps button - uses schemeMapsUrl() from data.js (handles 'National' correctly)
+  html += `<div class="divider"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+    <a href="${schemeMapsUrl(s)}" target="_blank" rel="noopener"
+       style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#ddeeff;color:#002147;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;border:1px solid #b8d0ee">
+      🗺️ View on Google Maps</a>
+    <button onclick="dlSchemePDF(currentScheme)"
+       style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#e85d00;color:#fff;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit">
+      📄 Download PDF Report</button>
+  </div>`;
+  window.currentScheme = s;
   document.getElementById('m-body').innerHTML=html;
   document.getElementById('modal').classList.add('open');
 }
@@ -351,6 +364,76 @@ if(typeof Chart!=='undefined'){
 }else{
   document.getElementById('chart-util').parentElement.innerHTML='<p style="padding:20px;color:#64748b;text-align:center">Chart.js not loaded — check internet connection.</p>';
 }
+// ── PDF for single scheme (jsPDF, no backend needed) ─────────────
+function dlSchemePDF(s) {
+  if (!s) return;
+  var script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+  script.onload = function() {
+    var jsPDF = window.jspdf.jsPDF;
+    var doc = new jsPDF();
+    var W=210, m=18;
+    doc.setFillColor(0,33,71); doc.rect(0,0,W,42,'F');
+    doc.setFillColor(232,93,0); doc.rect(0,42,W,3,'F');
+    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(20);
+    doc.text('ArthRakshak',W/2,16,{align:'center'});
+    doc.setFontSize(10); doc.setFont('helvetica','normal');
+    doc.text('National Budget Intelligence Platform',W/2,27,{align:'center'});
+    var y=58;
+    doc.setTextColor(0,33,71); doc.setFont('helvetica','bold'); doc.setFontSize(15);
+    var nm=doc.splitTextToSize(s.name,W-m*2);
+    doc.text(nm,m,y); y+=nm.length*8+4;
+    doc.setFillColor(240,243,248); doc.rect(m,y,W-m*2,8,'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(100,116,139);
+    doc.text('Sector: '+s.sector+' | Risk: '+s.riskScore+'/100 | Utilization: '+s.utilization+'%',m+3,y+5.5);
+    y+=14;
+    var rows=[
+      ['Budget',s.budget||'—'],['Utilized',s.utilized||s.distributed||'—'],
+      ['Remaining',s.remaining||'—'],['Utilization',s.utilization+'%'],
+      ['Risk Score',s.riskScore+'/100'],
+      ['Risk Level',s.riskScore<30?'Low':s.riskScore<55?'Medium':s.riskScore<75?'High':'Critical'],
+      ['Sector',s.sector],['Ministry/Dept',s.ministry||user.dept],
+      ['Beneficiaries',s.beneficiaries||'—'],['Launch Year',s.year||'—']
+    ];
+    rows.forEach(function(r,i){
+      if(i%2===0){doc.setFillColor(247,249,252); doc.rect(m,y-4,W-m*2,8,'F');}
+      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(51,65,85);
+      doc.text(r[0],m+2,y+0.5);
+      doc.setFont('helvetica','normal'); doc.text(String(r[1]||'—'),m+55,y+0.5);
+      y+=8;
+    });
+    if(s.desc||s.purpose){
+      y+=4;
+      doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(0,33,71);
+      doc.text('About',m,y); y+=6;
+      doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(51,65,85);
+      var desc=doc.splitTextToSize(s.desc||s.purpose,W-m*2);
+      doc.text(desc,m,y); y+=desc.length*5+10;
+    }
+    // Utilization bar
+    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(0,33,71);
+    doc.text('Budget Utilization',m,y); y+=7;
+    doc.setFillColor(226,232,240); doc.roundedRect(m,y,W-m*2,8,2,2,'F');
+    var uc=s.utilization>70?[26,122,74]:s.utilization>40?[232,93,0]:[192,57,43];
+    doc.setFillColor(uc[0],uc[1],uc[2]);
+    doc.roundedRect(m,y,(W-m*2)*s.utilization/100,8,2,2,'F');
+    doc.setTextColor(255,255,255); doc.setFontSize(8);
+    doc.text(s.utilization+'%',m+4,y+5.5);
+    // Google Maps note
+    y+=16;
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(0,51,128);
+    doc.text('📍 Maps: '+schemeMapsUrl(s),m,y);
+    // Footer
+    doc.setFillColor(0,33,71); doc.rect(0,287,W,10,'F');
+    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(255,255,255);
+    doc.text('ArthRakshak — Confidential Government Document',m,293);
+    doc.text('Generated: '+user.name+' | '+user.dept,W-m,293,{align:'right'});
+    var fname='Scheme_'+s.name.replace(/[^a-zA-Z0-9]/g,'_').substring(0,30)+'.pdf';
+    doc.save(fname);
+  };
+  if(window.jspdf){script.onload();}else{document.head.appendChild(script);}
+}
+
 </script>
 </body>
 </html>
