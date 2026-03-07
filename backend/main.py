@@ -364,3 +364,7 @@ else:
         print(f"✅ PDF: {len(pdf)} bytes generated for {schemes[0]['name']}")
 
         print("\n✅ All backend modules working correctly!")
+        # In generate_pdf route, after creating PDF bytes:
+save_path = f"data/reports/{filename}"
+with open(save_path, 'wb') as f:
+    f.write(pdf_bytes)

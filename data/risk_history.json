@@ -1,1 +1,12 @@
-[]
+[
+    {
+      "scheme_id": "n8",
+      "scheme_name": "Beti Bachao Beti Padhao",
+      "snapshots": [
+        { "date": "2025-04-01", "score": 55 },
+        { "date": "2025-07-01", "score": 61 },
+        { "date": "2025-10-01", "score": 68 },
+        { "date": "2026-01-01", "score": 68 }
+      ]
+    }
+  ]

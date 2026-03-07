@@ -1,1 +1,15 @@
-[]
+[
+    {
+      "id": "ANO-N4-001",
+      "scheme_id": "n4",
+      "scheme_name": "MGNREGA",
+      "severity": "high",
+      "type": "Ghost Beneficiary",
+      "amount_cr": 12.5,
+      "status": "Escalated to CAG",
+      "detected_at": "2025-10-15T09:30:00",
+      "resolved_at": null,
+      "resolved_by": null,
+      "note": "Pending CAG review"
+    }
+  ]
