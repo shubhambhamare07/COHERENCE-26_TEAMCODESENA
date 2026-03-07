@@ -1,0 +1,8 @@
+[
+    {"govId":"FIN001","username":"anil.kumar","password":"Pass@123","name":"Anil Kumar","dept":"Finance Ministry","state":"National","district":"National","town":"National"},
+    {"govId":"CEA001","username":"priya.shah","password":"Pass@123","name":"Priya Shah","dept":"Chief Economic Advisory","state":"National","district":"National","town":"National"},
+    {"govId":"MH001","username":"rahul.patil","password":"Pass@123","name":"Rahul Patil","dept":"State Department","state":"Maharashtra","district":"Pune","town":"Shivajinagar"},
+    {"govId":"DIST001","username":"suresh.desai","password":"Pass@123","name":"Suresh Desai","dept":"District Administration","state":"Maharashtra","district":"Pune","town":"Shivajinagar"},
+    {"govId":"RUR001","username":"kavita.more","password":"Pass@123","name":"Kavita More","dept":"Rural Administration","state":"Maharashtra","district":"Pune","town":"Shivajinagar"}
+  ]
+  

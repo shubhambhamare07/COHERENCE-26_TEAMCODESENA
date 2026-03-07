@@ -23,6 +23,7 @@ import sys
 import json
 from functools import wraps
 from datetime import datetime
+from typing import Optional
 
 # ── Try to import Flask ───────────────────────────────────────────────
 try:
@@ -88,21 +89,38 @@ DISTRICT_SCHEMES = [
 
 RURAL_SCHEMES = [{**s, "id": s["id"].replace("d","r"), "level":"rural"} for s in DISTRICT_SCHEMES]
 
-ALL_SCHEMES = {
-    "Finance Ministry": NATIONWIDE,
-    "Chief Economic Advisory": NATIONWIDE,
-    "State Department": STATE_SCHEMES,
-    "District Administration": DISTRICT_SCHEMES,
-    "Rural Administration": RURAL_SCHEMES,
-}
+def get_schemes_for_user(dept: str, user: Optional[dict] = None) -> list:
+    """Hierarchical access: Finance/CEA = all; State = state+district+rural; District = district+rural; Rural = rural only."""
+    u = user or {}
+    state = u.get("state", "Maharashtra")
+    district = u.get("district", "Pune")
+    town = u.get("town", "Shivajinagar")
+    if dept in ("Finance Ministry", "Chief Economic Advisory"):
+        return NATIONWIDE + STATE_SCHEMES + DISTRICT_SCHEMES + RURAL_SCHEMES
+    if dept == "State Department":
+        return (
+            [s for s in STATE_SCHEMES if s.get("state") == state]
+            + [s for s in DISTRICT_SCHEMES if s.get("district") == district and s.get("state") == state]
+            + [s for s in RURAL_SCHEMES if s.get("town") == town and s.get("district") == district]
+        )
+    if dept == "District Administration":
+        return (
+            [s for s in DISTRICT_SCHEMES if s.get("district") == district]
+            + [s for s in RURAL_SCHEMES if s.get("town") == town and s.get("district") == district]
+        )
+    if dept == "Rural Administration":
+        return [s for s in RURAL_SCHEMES if s.get("town") == town]
+    return NATIONWIDE
 
-def get_schemes_for_user(dept: str) -> list:
-    return ALL_SCHEMES.get(dept, NATIONWIDE)
 
+# ── Paths ─────────────────────────────────────────────────────────────
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+FRONTEND_DIR = os.path.join(SCRIPT_DIR, "..", "frontend")
+DATA_DIR = os.path.join(SCRIPT_DIR, "..", "data")
 
 # ── Flask App ─────────────────────────────────────────────────────────
 if FLASK_OK:
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
     CORS(app, origins=["*"])  # Allow all origins for local dev
 
     def require_dept(f):
@@ -126,7 +144,7 @@ if FLASK_OK:
         user    = data.get("user", {"name":"User","dept":"Finance Ministry"})
         if not message:
             return jsonify({"error": "message is required"}), 400
-        schemes = get_schemes_for_user(user.get("dept","Finance Ministry"))
+        schemes = get_schemes_for_user(user.get("dept","Finance Ministry"), user)
         response = generate_response(message, user, schemes)
         return jsonify({"success": True, "response": response})
 
@@ -274,6 +292,23 @@ if FLASK_OK:
             }
         })
 
+    # ── Serve frontend (must be last — fallback for non-API routes) ───
+    @app.route("/")
+    def index_page():
+        return send_file(os.path.join(FRONTEND_DIR, "login.html"))
+
+    @app.route("/<path:path>")
+    def serve_frontend(path):
+        """Serve frontend HTML, JS, CSS. Skip /api/ paths."""
+        if path.startswith("api/"):
+            return jsonify({"error": "Not found"}), 404
+        fp = os.path.join(FRONTEND_DIR, path)
+        if os.path.isfile(fp):
+            return send_file(fp)
+        if os.path.isfile(fp + ".html"):
+            return send_file(fp + ".html")
+        return jsonify({"error": "Not found"}), 404
+
     # ── Run Server ────────────────────────────────────────────────────
     if __name__ == "__main__":
         print("=" * 60)
@@ -290,7 +325,9 @@ if FLASK_OK:
         print("  POST /api/pdf/scheme")
         print("  POST /api/pdf/report")
         print("  GET  /api/stats?dept=Finance+Ministry")
-        print("\n  Frontend: open frontend/login.html in browser")
+        print("\n  Frontend: http://localhost:5050/ or open frontend/login.html in browser")
+        print("  Risk Scores: http://localhost:5050/risk-score.html")
+        print("  AI Assistant: http://localhost:5050/assistant.html")
         print("=" * 60)
         app.run(debug=True, port=5050, host="0.0.0.0")
 

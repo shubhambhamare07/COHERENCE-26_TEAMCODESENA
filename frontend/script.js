@@ -43,10 +43,11 @@ function logout(){sessionStorage.clear();window.location.href='login.html';}
 
 function getSchemes(user){
   if(!user)return[];
-  if(user.dept==='Finance Ministry'||user.dept==='Chief Economic Advisory')return NATIONWIDE;
-  if(user.dept==='State Department')return STATE.filter(function(s){return s.state===user.state;});
-  if(user.dept==='District Administration')return DISTRICT.filter(function(s){return s.district===user.district;});
-  if(user.dept==='Rural Administration')return RURAL.filter(function(s){return s.town===user.town;});
+  var d=user.dept;
+  if(d==='Finance Ministry'||d==='Chief Economic Advisory')return NATIONWIDE.concat(STATE).concat(DISTRICT).concat(RURAL);
+  if(d==='State Department')return STATE.filter(function(s){return s.state===user.state;}).concat(DISTRICT.filter(function(s){return s.district===user.district&&s.state===user.state;})).concat(RURAL.filter(function(s){return s.town===user.town&&s.district===user.district;}));
+  if(d==='District Administration')return DISTRICT.filter(function(s){return s.district===user.district;}).concat(RURAL.filter(function(s){return s.town===user.town&&s.district===user.district;}));
+  if(d==='Rural Administration')return RURAL.filter(function(s){return s.town===user.town;});
   return[];
 }
 
@@ -68,4 +69,5 @@ function initTopbar(user){
   if(a&&user)a.textContent=user.name.charAt(0);
 }
 function setTopbar(user){initTopbar(user);}
-
+function schemeMapsUrl(s){var q=encodeURIComponent((s.district||s.state||'India')+' '+s.name);return 'https://www.google.com/maps/search/?api=1&query='+q;}
+function downloadSchemePdf(schemeId,schemeName){var u=getUser();if(!u)return;var api=(!window.location.origin||window.location.origin==='null')?'http://localhost:5050':window.location.origin;fetch(api+'/api/pdf/scheme',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scheme_id:schemeId,user:u})}).then(function(r){return r.blob();}).then(function(blob){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(schemeName||'Scheme').substring(0,50).replace(/[^a-zA-Z0-9]/g,'_')+'.pdf';a.click();URL.revokeObjectURL(a.href);}).catch(function(){alert('PDF download failed. Ensure backend is running.');});}

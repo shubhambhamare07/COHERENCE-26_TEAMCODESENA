@@ -67,7 +67,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;heigh
 <body>
 <header class="topbar">
   <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<span>National Budget Intelligence Platform</span></div></div>
-  <nav class="tb-nav"><a href="index.html">🏠</a><a href="dashboard.html">📊</a><a href="budget-flow.html">💸</a><a href="risk_score.html">🛡️</a><a href="anomaly.html">⚠️</a><a href="reports.html">📄</a><a href="simulator.html" class="active">🔬 Simulator</a><a href="ai_assistant.html">🤖</a></nav>
+  <nav class="tb-nav"><a href="index.html">🏠</a><a href="dashboard.html">📊</a><a href="budget-flow.html">💸</a><a href="risk-score.html">🛡️</a><a href="anomaly.html">⚠️</a><a href="reports.html">📄</a><a href="simulator.html" class="active">🔬 Simulator</a><a href="assistant.html">🤖</a></nav>
   <div class="tb-right">
     <button class="nb">🔔<span class="nb-badge">3</span></button>
     <div style="display:flex;align-items:center;gap:8px"><div class="uinfo"><div class="un" id="uname">—</div><div class="ud" id="udept">—</div></div><div class="uavatar" id="uavatar">?</div></div>
@@ -76,8 +76,8 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;heigh
 </header>
 <aside class="sidebar">
   <div class="sb-sec">Main</div><a href="index.html">🏠 Home</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html">💸 Flow</a>
-  <div class="sb-sec">Intelligence</div><a href="risk_score.html">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomaly Detection</a><a href="reports.html">📄 Reports</a>
-  <div class="sb-sec">Tools</div><a href="simulator.html" class="active">🔬 Budget Simulator</a><a href="ai_assistant.html">🤖 AI Assistant</a>
+  <div class="sb-sec">Intelligence</div><a href="risk-score.html">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomaly Detection</a><a href="reports.html">📄 Reports</a>
+  <div class="sb-sec">Tools</div><a href="simulator.html" class="active">🔬 Budget Simulator</a><a href="assistant.html">🤖 AI Assistant</a>
 </aside>
 <main class="main">
   <div class="ph">
@@ -90,6 +90,13 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:17px;heigh
         <div class="card-hdr"><span class="card-title">⚙️ Simulation Parameters</span></div>
         <div class="card-body">
           <div class="form-group"><label>Base Scheme</label><select id="sim-scheme"><option value="">Select Scheme…</option></select></div>
+          <div id="scheme-actions" style="display:none;margin-top:8px;padding:8px;background:#f7f9fc;border-radius:6px;border:1px solid #e2e8f0">
+            <span style="font-size:11px;color:#64748b">Selected: </span><span id="sel-scheme-name" style="font-weight:600"></span>
+            <div style="margin-top:6px;display:flex;gap:6px">
+              <a href="#" id="sim-maps" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none">📍 View on Google Maps</a>
+              <button type="button" id="sim-pdf" class="btn btn-ghost btn-sm">📥 Download PDF Report</button>
+            </div>
+          </div>
           <div class="form-group"><label>Fiscal Year</label><select><option>2025–26</option><option>2026–27 (Projection)</option><option>2027–28 (Projection)</option></select></div>
           <div class="divider"></div>
           <div class="sl-grp"><div class="sl-hdr"><label>Budget Change</label><span class="sl-val" id="v-budget">0%</span></div><input type="range" id="sl-budget" min="-50" max="100" value="0" step="5" oninput="updateSim()"><div class="sl-range"><span>-50%</span><span>+100%</span></div></div>
@@ -135,6 +142,14 @@ requireAuth();var user=getUser();initTopbar(user);
 var schemes=getSchemes(user);
 var sel=document.getElementById('sim-scheme');
 schemes.forEach(function(s){var o=document.createElement('option');o.value=s.id;o.textContent=s.name.substring(0,40);sel.appendChild(o);});
+sel.addEventListener('change',function(){
+  var v=this.value;var sa=document.getElementById('scheme-actions');
+  if(!v){sa.style.display='none';return;}
+  var s=schemes.find(function(x){return x.id===v;});
+  if(s){sa.style.display='block';document.getElementById('sel-scheme-name').textContent=s.name;
+    document.getElementById('sim-maps').href=schemeMapsUrl(s);
+    document.getElementById('sim-pdf').onclick=function(){downloadSchemePdf(s.id,s.name);};}
+});
 var simChart=null;
 function updateSim(){
   var b=parseInt(document.getElementById('sl-budget').value);

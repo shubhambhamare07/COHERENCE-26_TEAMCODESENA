@@ -77,7 +77,7 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
   <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<small>National Budget Intelligence Platform</small></div></div>
   <nav class="tb-nav">
     <a href="index.html">🏠</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html">💸 Flow</a>
-    <a href="risk_score.html">🛡️ Risk</a><a href="anomaly.html" class="act">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a><a href="ai_assistant.html">🤖 AI</a>
+    <a href="risk-score.html">🛡️ Risk</a><a href="anomaly.html" class="act">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a><a href="assistant.html">🤖 AI</a>
   </nav>
   <div class="tb-right">
     <button class="notif">🔔<span class="nbadge">3</span></button>
@@ -86,16 +86,9 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
   </div>
 </header>
 <aside class="sidebar">
-  <div class="sb-sec">Analytics</div>
-  <a href="dashboard.html">📊 Dashboard</a>
-  <a href="budget-flow.html">💸 Budget Flow</a>
-  <div class="sb-sec">Intelligence</div>
-  <a href="risk_score.html">🛡️ Risk Scores</a>
-  <a href="anomaly.html" class="act">⚠️ Anomalies</a>
-  <a href="reports.html">📄 Reports</a>
-  <div class="sb-sec">Tools</div>
-  <a href="simulator.html">🔬 Simulator</a>
-  <a href="ai_assistant.html">🤖 AI Assistant</a>
+  <div class="sb-sec">Main</div><a href="index.html">🏠 Portal Home</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html">💸 Budget Flow</a>
+  <div class="sb-sec">Intelligence</div><a href="risk-score.html">🛡️ Risk Scores</a><a href="anomaly.html" class="act">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a>
+  <div class="sb-sec">Tools</div><a href="simulator.html">🔬 Simulator</a><a href="assistant.html">🤖 AI Assistant</a>
 </aside>
 <main class="main">
   <div class="ph">
@@ -116,15 +109,13 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
         <select id="asev"><option value="">All Severity</option><option value="Critical">Critical</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option></select>
       </div>
     </div>
-    <div class="tw"><table><thead><tr><th>#</th><th>Anomaly ID</th><th>Scheme</th><th>Type</th><th>Severity</th><th>Amount at Risk</th><th>Date</th><th>Status</th><th>Map</th></tr></thead><tbody id="a-tbody"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>#</th><th>Anomaly ID</th><th>Scheme</th><th>Type</th><th>Severity</th><th>Amount at Risk</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody id="a-tbody"></tbody></table></div>
   </div>
 </main>
 <script src="data.js"></script>
-<script src="api.js"></script>
 <script>
-const user=getUser();if(!user){window.location.href='login.html';throw new Error('unauth');}
+const user=getUser();if(!user)window.location.href='login.html';
 setTopbar(user);
-if(typeof AR!=="undefined") AR.renderStatusBadge("api-status");
 const schemes=getSchemes(user);
 const TYPES=['Overpayment','Ghost Beneficiary','Underutilization','Duplicate Entry','Disbursement Delay','Unauthorized Transfer'];
 const STATUSES=['Under Investigation','Flagged','Resolved','Escalated to CAG'];
@@ -152,8 +143,13 @@ document.getElementById('a-total').textContent=all.length+' anomalies';
 
 function renderA(data){
   const tb=document.getElementById('a-tbody');
-  if(!data.length){tb.innerHTML='<tr><td colspan="8" style="text-align:center;padding:28px;color:#64748b">No anomalies found.</td></tr>';return;}
-  tb.innerHTML=data.map((a,i)=>`<tr><td>${i+1}</td><td><code style="background:#f0f3f8;padding:2px 5px;border-radius:3px;font-size:11px">${a.id}</code></td><td style="font-weight:600;max-width:190px">${a.scheme}</td><td><span class="badge bn">${a.type}</span></td><td><span class="rb ${a.severity==='Critical'?'rcrit':a.severity==='High'?'rhigh':a.severity==='Medium'?'rmed':'rlow'}">${a.severity}</span></td><td style="color:#c0392b;font-weight:600">${a.amount}</td><td style="font-size:12px;color:#64748b">${a.date}</td><td><span class="badge ${a.status==='Resolved'?'bg':a.status==='Escalated to CAG'?'br':'bo'}">${a.status}</span></td><td>${mapIconForAnomaly(a)}</td></tr>`).join('');
+  if(!data.length){tb.innerHTML='<tr><td colspan="9" style="text-align:center;padding:28px;color:#64748b">No anomalies found.</td></tr>';return;}
+  tb.innerHTML=data.map((a,i)=>{
+    const sch=schemes.find(s=>s.name===a.scheme);
+    const mapsUrl=sch?schemeMapsUrl(sch):'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(a.scheme+' India');
+    const pdfBtn=sch?`<button onclick="downloadSchemePdf('${sch.id}','${String(sch.name).replace(/'/g,"\\'")}')" class="btn bsaffron" style="padding:4px 8px;font-size:11px">📥 PDF</button>`:'';
+    return`<tr><td>${i+1}</td><td><code style="background:#f0f3f8;padding:2px 5px;border-radius:3px;font-size:11px">${a.id}</code></td><td style="font-weight:600;max-width:190px">${a.scheme}</td><td><span class="badge bn">${a.type}</span></td><td><span class="rb ${a.severity==='Critical'?'rcrit':a.severity==='High'?'rhigh':a.severity==='Medium'?'rmed':'rlow'}">${a.severity}</span></td><td style="color:#c0392b;font-weight:600">${a.amount}</td><td style="font-size:12px;color:#64748b">${a.date}</td><td><span class="badge ${a.status==='Resolved'?'bg':a.status==='Escalated to CAG'?'br':'bo'}">${a.status}</span></td><td style="white-space:nowrap"><a href="${mapsUrl}" target="_blank" class="btn boutline" style="padding:4px 8px;font-size:11px;text-decoration:none;margin-right:4px">📍 Maps</a>${pdfBtn}</td></tr>`;
+  }).join('');
 }
 renderA(all);
 document.getElementById('asrch').addEventListener('input',function(){const q=this.value.toLowerCase();renderA(all.filter(a=>a.scheme.toLowerCase().includes(q)||a.id.toLowerCase().includes(q)));});
@@ -167,13 +163,6 @@ if(typeof Chart!=='undefined'){
   const tc={};all.forEach(a=>{tc[a.type]=(tc[a.type]||0)+1;});
   new Chart(document.getElementById('typeChart'),{type:'doughnut',data:{labels:Object.keys(tc),datasets:[{data:Object.values(tc),backgroundColor:['#c0392b','#f59e0b','#002147','#1a7a4a','#6366f1','#14b8a6'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'right',labels:{font:{size:11}}}},cutout:'55%'}});
 }
-// Maps icon for anomaly rows - finds scheme in current schemes list
-function mapIconForAnomaly(a) {
-  var s = schemes.find(function(sc){ return sc.name === a.scheme; });
-  if (!s) return '<span style="color:#94a3b8;font-size:12px">—</span>';
-  return '<a href="' + schemeMapsUrl(s) + '" target="_blank" rel="noopener" title="View ' + a.scheme + ' on Google Maps" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:#ddeeff;border-radius:5px;color:#002147;font-size:14px;text-decoration:none;border:1px solid #b8d0ee">📍</a>';
-}
-
 </script>
 </body>
 </html>

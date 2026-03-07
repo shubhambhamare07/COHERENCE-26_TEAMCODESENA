@@ -65,7 +65,7 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
   <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<small>National Budget Intelligence Platform</small></div></div>
   <nav class="tb-nav">
     <a href="index.html">🏠</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html" class="act">💸 Flow</a>
-    <a href="risk_score.html">🛡️ Risk</a><a href="anomaly.html">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a><a href="ai_assistant.html">🤖 AI</a>
+    <a href="risk-score.html">🛡️ Risk</a><a href="anomaly.html">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a><a href="assistant.html">🤖 AI</a>
   </nav>
   <div class="tb-right">
     <button class="notif">🔔<span class="nbadge">3</span></button>
@@ -75,8 +75,8 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
 </header>
 <aside class="sidebar">
   <div class="sb-sec">Main</div><a href="index.html">🏠 Portal Home</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html" class="act">💸 Budget Flow</a>
-  <div class="sb-sec">Intelligence</div><a href="risk_score.html">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a>
-  <div class="sb-sec">Tools</div><a href="simulator.html">🔬 Simulator</a><a href="ai_assistant.html">🤖 AI Assistant</a>
+  <div class="sb-sec">Intelligence</div><a href="risk-score.html">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a>
+  <div class="sb-sec">Tools</div><a href="simulator.html">🔬 Simulator</a><a href="assistant.html">🤖 AI Assistant</a>
 </aside>
 <main class="main">
   <div class="ph">
@@ -94,7 +94,7 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
   </div>
   <div class="card" style="margin-top:20px">
     <div class="ch"><span class="ct">📋 Recent Fund Transfer Log</span></div>
-    <div class="tw"><table><thead><tr><th>Txn ID</th><th>From</th><th>To</th><th>Amount</th><th>Date</th><th>Scheme</th><th>Status</th></tr></thead><tbody id="txn-tbody"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Txn ID</th><th>From</th><th>To</th><th>Amount</th><th>Date</th><th>Scheme</th><th>Status</th><th>Actions</th></tr></thead><tbody id="txn-tbody"></tbody></table></div>
   </div>
 </main>
 <script src="data.js"></script>
@@ -123,8 +123,11 @@ NODES.forEach((n,i)=>{
   }
 });
 
-const txns=schemes.slice(0,8).map((s,i)=>({id:'TXN-2025'+String(i+1).padStart(5,'0'),from:['Min. of Finance','State Treasury','District Office'][i%3],to:['State Treasury','District Office','Block Office'][i%3],amount:'₹'+(Math.random()*500+50).toFixed(0)+' Cr',date:String(Math.floor(Math.random()*28)+1).padStart(2,'0')+'/0'+String(Math.floor(Math.random()*3)+1)+'/2025',scheme:s.name.substring(0,28),status:['Credited','Pending','Credited','In Transit'][i%4]}));
-document.getElementById('txn-tbody').innerHTML=txns.map(t=>`<tr><td><code style="font-size:11px;background:#f0f3f8;padding:2px 5px;border-radius:3px">${t.id}</code></td><td style="font-size:12px">${t.from}</td><td style="font-size:12px">${t.to}</td><td style="color:#1a7a4a;font-weight:600">${t.amount}</td><td style="font-size:12px;color:#64748b">${t.date}</td><td style="font-size:12px">${t.scheme}…</td><td><span class="badge ${t.status==='Credited'?'bg':t.status==='Pending'?'bo':'bn'}">${t.status}</span></td></tr>`).join('');
+const txns=schemes.slice(0,8).map((s,i)=>({id:'TXN-2025'+String(i+1).padStart(5,'0'),from:['Min. of Finance','State Treasury','District Office'][i%3],to:['State Treasury','District Office','Block Office'][i%3],amount:'₹'+(Math.random()*500+50).toFixed(0)+' Cr',date:String(Math.floor(Math.random()*28)+1).padStart(2,'0')+'/0'+String(Math.floor(Math.random()*3)+1)+'/2025',scheme:s.name.substring(0,28),schemeId:s.id,schemeObj:s,status:['Credited','Pending','Credited','In Transit'][i%4]}));
+document.getElementById('txn-tbody').innerHTML=txns.map(t=>{
+  const mapsUrl=schemeMapsUrl(t.schemeObj);
+  return`<tr><td><code style="font-size:11px;background:#f0f3f8;padding:2px 5px;border-radius:3px">${t.id}</code></td><td style="font-size:12px">${t.from}</td><td style="font-size:12px">${t.to}</td><td style="color:#1a7a4a;font-weight:600">${t.amount}</td><td style="font-size:12px;color:#64748b">${t.date}</td><td style="font-size:12px">${t.scheme}…</td><td><span class="badge ${t.status==='Credited'?'bg':t.status==='Pending'?'bo':'bn'}">${t.status}</span></td><td style="white-space:nowrap"><a href="${mapsUrl}" target="_blank" class="btn btn-sm" style="padding:4px 8px;font-size:11px;background:#ddeeff;color:#002147;text-decoration:none;margin-right:4px">📍 Maps</a><button onclick="downloadSchemePdf('${t.schemeId}','${String(t.schemeObj.name).replace(/'/g,"\\'")}')" class="btn btn-sm" style="padding:4px 8px;font-size:11px;background:#fff0e6;color:#e85d00;border:1px solid #e85d00">📥 PDF</button></td></tr>`;
+}).join('');
 
 if(typeof Chart!=='undefined'){
   new Chart(document.getElementById('flowBar'),{type:'bar',data:{labels:['Allocated','Released','State Rcvd','Dist Level','Block Level','Beneficiaries'],datasets:[{data:[100,92,85,78,72,65],backgroundColor:['#002147','#003580','#e85d00','#1a7a4a','#6366f1','#14b8a6'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'K Cr'},grid:{color:'#f0f3f8'}},x:{grid:{display:false}}}}});

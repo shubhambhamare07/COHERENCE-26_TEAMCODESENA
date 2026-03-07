@@ -80,7 +80,7 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
   <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<small>National Budget Intelligence Platform</small></div></div>
   <nav class="tb-nav">
     <a href="index.html">🏠</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html">💸 Flow</a>
-    <a href="risk_score.html" class="act">🛡️ Risk</a><a href="anomaly.html">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a><a href="ai_assistant.html">🤖 AI</a>
+    <a href="risk-score.html" class="act">🛡️ Risk</a><a href="anomaly.html">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a><a href="assistant.html">🤖 AI</a>
   </nav>
   <div class="tb-right">
     <button class="notif">🔔<span class="nbadge">3</span></button>
@@ -89,21 +89,14 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
   </div>
 </header>
 <aside class="sidebar">
-  <div class="sb-sec">Analytics</div>
-  <a href="dashboard.html">📊 Dashboard</a>
-  <a href="budget-flow.html">💸 Budget Flow</a>
-  <div class="sb-sec">Intelligence</div>
-  <a href="risk_score.html" class="act">🛡️ Risk Scores</a>
-  <a href="anomaly.html">⚠️ Anomalies</a>
-  <a href="reports.html">📄 Reports</a>
-  <div class="sb-sec">Tools</div>
-  <a href="simulator.html">🔬 Simulator</a>
-  <a href="ai_assistant.html">🤖 AI Assistant</a>
+  <div class="sb-sec">Main</div><a href="index.html">🏠 Portal Home</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html">💸 Budget Flow</a>
+  <div class="sb-sec">Intelligence</div><a href="risk-score.html" class="act">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomalies</a><a href="reports.html">📄 Reports</a>
+  <div class="sb-sec">Tools</div><a href="simulator.html">🔬 Simulator</a><a href="assistant.html">🤖 AI Assistant</a>
 </aside>
 <main class="main">
   <div class="ph">
     <div><div class="bc"><a href="index.html">Home</a> › Risk Scores</div><h1>🛡️ Corruption &amp; Risk Intelligence</h1><p>AI-computed risk scores for budget misutilization and corruption probability per scheme.</p></div>
-    <a href="ai_assistant.html" class="btn bsaffron">🤖 Ask AI About Risk</a>
+    <a href="assistant.html" class="btn bsaffron">🤖 Ask AI About Risk</a>
   </div>
   <div class="sg" id="risk-stats"></div>
   <div class="cr2">
@@ -124,7 +117,7 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
         </select>
       </div>
     </div>
-    <div class="tw"><table><thead><tr><th>#</th><th>Scheme</th><th>Sector</th><th>Score</th><th>Level</th><th>Key Risk Factor</th><th>Action</th><th>Map</th></tr></thead><tbody id="risk-tbody"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>#</th><th>Scheme</th><th>Sector</th><th>Score</th><th>Level</th><th>Key Risk Factor</th><th>Action</th><th>Actions</th></tr></thead><tbody id="risk-tbody"></tbody></table></div>
   </div>
   <div class="card mt20">
     <div class="ch"><span class="ct">📖 Risk Score Methodology</span></div>
@@ -139,11 +132,9 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
   </div>
 </main>
 <script src="data.js"></script>
-<script src="api.js"></script>
 <script>
-const user=getUser();if(!user){window.location.href='login.html';throw new Error('unauth');}
+const user=getUser();if(!user)window.location.href='login.html';
 setTopbar(user);
-if(typeof AR!=="undefined") AR.renderStatusBadge("api-status");
 const schemes=getSchemes(user);
 const byLvl={low:0,medium:0,high:0,critical:0};
 schemes.forEach(s=>{const l=riskClass(s.riskScore);byLvl[l]++;});
@@ -164,9 +155,10 @@ function renderRisk(data){
   document.getElementById('risk-tbody').innerHTML=sorted.map((s,i)=>{
     const l=riskClass(s.riskScore);
     const f=FACTORS[l][Math.floor(i%3)];
+    const mapsUrl=schemeMapsUrl(s);
     return`<tr><td>${i+1}</td><td style="font-weight:600;max-width:200px">${s.name}</td><td><span class="badge bn">${s.sector}</span></td>
     <td><div style="display:flex;align-items:center;gap:7px"><div class="pb" style="width:70px"><div class="pf" style="width:${s.riskScore}%;background:${l==='low'?'#1a7a4a':l==='medium'?'#f59e0b':l==='high'?'#c0392b':'#5b21b6'}"></div></div><strong>${s.riskScore}</strong></div></td>
-    <td><span class="rb r${l}">${riskLabel(s.riskScore)}</span></td><td style="font-size:12px;color:#64748b">${f}</td><td style="font-size:12px">${ACTIONS[l]}</td><td><a href="${schemeMapsUrl(s)}" target="_blank" rel="noopener" title="View on Google Maps" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;background:#ddeeff;border-radius:5px;color:#002147;font-size:14px;text-decoration:none;border:1px solid #b8d0ee">📍</a></td></tr>`;
+    <td><span class="rb r${l}">${riskLabel(s.riskScore)}</span></td><td style="font-size:12px;color:#64748b">${f}</td><td style="font-size:12px">${ACTIONS[l]}</td><td style="white-space:nowrap"><a href="${mapsUrl}" target="_blank" class="btn btn-sm" style="padding:4px 8px;font-size:11px;background:#ddeeff;color:#002147;text-decoration:none;margin-right:4px">📍 Maps</a><button onclick="downloadSchemePdf('${s.id}','${s.name.replace(/'/g,"\\'")}')" class="btn btn-sm" style="padding:4px 8px;font-size:11px;background:#fff0e6;color:#e85d00;border:1px solid #e85d00">📥 PDF</button></td></tr>`;
   }).join('');
 }
 renderRisk(schemes);

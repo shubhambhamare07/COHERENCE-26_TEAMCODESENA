@@ -51,7 +51,7 @@ select:focus,input[type=text]:focus{border-color:#002147}
 <body>
 <header class="topbar">
   <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<span>National Budget Intelligence Platform</span></div></div>
-  <nav class="tb-nav"><a href="index.html">🏠</a><a href="dashboard.html">📊</a><a href="budget-flow.html">💸</a><a href="risk_score.html">🛡️</a><a href="anomaly.html">⚠️</a><a href="reports.html" class="active">📄 Reports</a><a href="simulator.html">🔬</a><a href="ai_assistant.html">🤖</a></nav>
+  <nav class="tb-nav"><a href="index.html">🏠</a><a href="dashboard.html">📊</a><a href="budget-flow.html">💸</a><a href="risk-score.html">🛡️</a><a href="anomaly.html">⚠️</a><a href="reports.html" class="active">📄 Reports</a><a href="simulator.html">🔬</a><a href="assistant.html">🤖</a></nav>
   <div class="tb-right">
     <button class="nb">🔔<span class="nb-badge">3</span></button>
     <div style="display:flex;align-items:center;gap:8px"><div class="uinfo"><div class="un" id="uname">—</div><div class="ud" id="udept">—</div></div><div class="uavatar" id="uavatar">?</div></div>
@@ -60,8 +60,8 @@ select:focus,input[type=text]:focus{border-color:#002147}
 </header>
 <aside class="sidebar">
   <div class="sb-sec">Main</div><a href="index.html">🏠 Home</a><a href="dashboard.html">📊 Dashboard</a><a href="budget-flow.html">💸 Flow</a>
-  <div class="sb-sec">Intelligence</div><a href="risk_score.html">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomaly Detection</a><a href="reports.html" class="active">📄 Reports</a>
-  <div class="sb-sec">Tools</div><a href="simulator.html">🔬 Simulator</a><a href="ai_assistant.html">🤖 AI Assistant</a>
+  <div class="sb-sec">Intelligence</div><a href="risk-score.html">🛡️ Risk Scores</a><a href="anomaly.html">⚠️ Anomaly Detection</a><a href="reports.html" class="active">📄 Reports</a>
+  <div class="sb-sec">Tools</div><a href="simulator.html">🔬 Simulator</a><a href="assistant.html">🤖 AI Assistant</a>
 </aside>
 <main class="main">
   <div class="ph">

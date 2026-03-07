@@ -83,14 +83,14 @@ def generate_response(message: str, user: dict, schemes: list) -> dict:
                 f"✅ No high-risk schemes detected.\n\n"
                 f"All {len(schemes)} schemes show acceptable risk levels. "
                 f"Highest score: **{max_s.get('riskScore',0)}/100** ({max_s.get('name','—')}).",
-                "risk", action={"type": "navigate", "url": "risk_score.html"}
+                "risk", action={"type": "navigate", "url": "risk-score.html"}
             )
         lines = "\n".join([f"• **{s['name']}** — Risk: {s.get('riskScore',0)}/100" for s in high_risk[:8]])
         note = f"\n\n🚨 **{len(critical)} scheme(s)** are in CRITICAL category and need immediate escalation." if critical else ""
         return _resp(
             f"⚠️ **{len(high_risk)} scheme(s)** with elevated risk:\n\n{lines}{note}\n\n"
-            f"→ [View Full Risk Register](risk_score.html)",
-            "risk", action={"type": "navigate", "url": "risk_score.html"}
+            f"→ [View Full Risk Register](risk-score.html)",
+            "risk", action={"type": "navigate", "url": "risk-score.html"}
         )
 
     # ── Utilization ───────────────────────────────────────────────────

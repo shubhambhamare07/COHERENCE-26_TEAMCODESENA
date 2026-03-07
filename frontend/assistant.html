@@ -6,77 +6,72 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#f7f9fc;color:#0f172a;font-size:14px}
-.topbar{background:#002147;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:3px solid #e85d00;box-shadow:0 2px 12px rgba(0,0,0,.3)}
-.tb-brand{display:flex;align-items:center;gap:10px}.tb-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
-.tb-title{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#fff}.tb-title span{display:block;font-size:10px;font-family:-apple-system,sans-serif;font-weight:400;opacity:.6;letter-spacing:1.2px;text-transform:uppercase}
-.tb-nav{display:flex;gap:2px}.tb-nav a{color:rgba(255,255,255,.75);text-decoration:none;font-size:12px;padding:6px 9px;border-radius:5px;transition:.15s;white-space:nowrap}.tb-nav a:hover,.tb-nav a.active{background:rgba(255,255,255,.14);color:#fff}
-.tb-right{display:flex;align-items:center;gap:10px}.uavatar{width:30px;height:30px;background:#e85d00;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.topbar{background:#002147;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:58px;position:fixed;top:0;left:0;right:0;z-index:1000;border-bottom:3px solid #e85d00}
+.tb-brand{display:flex;align-items:center;gap:10px}.tb-logo{width:34px;height:34px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px}
+.tb-title{font-family:Georgia,serif;font-size:16px;font-weight:700}.tb-title span{display:block;font-size:10px;font-family:sans-serif;font-weight:400;opacity:.6;letter-spacing:1.2px;text-transform:uppercase}
+.tb-right{display:flex;align-items:center;gap:10px}
+.uavatar{width:30px;height:30px;background:#e85d00;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
 .uinfo{text-align:right}.un{font-size:12px;font-weight:600;color:#fff}.ud{font-size:11px;opacity:.6;color:#fff}
-.nb{position:relative;background:none;border:none;color:rgba(255,255,255,.8);font-size:18px;cursor:pointer;padding:4px}.nb-badge{position:absolute;top:0;right:0;width:15px;height:15px;background:#e85d00;border-radius:50%;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:.15s}
+.btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2)}.btn-ghost:hover{background:rgba(255,255,255,.22)}
+.btn-sm{padding:5px 10px;font-size:12px}
 .sidebar{width:210px;background:#001530;position:fixed;top:58px;left:0;bottom:0;overflow-y:auto;z-index:900;padding:12px 0}
 .sb-sec{padding:10px 16px 4px;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.3)}
 .sidebar a{display:flex;align-items:center;gap:9px;padding:9px 17px;color:rgba(255,255,255,.65);text-decoration:none;font-size:13px;transition:.15s;border-left:3px solid transparent}
-.sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:rgba(232,93,0,.5)}.sidebar a.active{background:rgba(255,255,255,.1);color:#fff;border-left-color:#e85d00}
+.sidebar a:hover{background:rgba(255,255,255,.07);color:#fff;border-left-color:rgba(232,93,0,.5)}
+.sidebar a.act{background:rgba(255,255,255,.1);color:#fff;border-left-color:#e85d00}
 .main{margin-left:210px;margin-top:58px;padding:24px 28px;height:calc(100vh - 58px);display:flex;flex-direction:column}
 .ph{margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #e2e8f0;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .ph h1{font-family:Georgia,serif;font-size:20px;font-weight:700;color:#002147}.ph p{color:#64748b;font-size:13px;margin-top:3px}
-.bc{display:flex;align-items:center;gap:6px;font-size:12px;color:#64748b;margin-bottom:4px}.bc a{color:#003580;text-decoration:none}
-.ai-grid{display:grid;grid-template-columns:1fr 280px;gap:18px;flex:1;min-height:0}
+.bc{font-size:12px;color:#64748b;margin-bottom:4px}.bc a{color:#003580;text-decoration:none}
+.ai-grid{display:grid;grid-template-columns:1fr 270px;gap:18px;flex:1;min-height:0}
 .chat-card{background:#fff;border:1px solid #d0dae8;border-radius:10px;box-shadow:0 1px 4px rgba(0,33,71,.08);display:flex;flex-direction:column;overflow:hidden}
 .chat-hdr{padding:13px 17px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.ai-avatar{width:36px;height:36px;background:linear-gradient(135deg,#002147,#003580);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;margin-right:10px}
-.chat-hdr-info{font-size:12.5px;font-weight:700;color:#002147}
-.chat-hdr-sub{font-size:11px;color:#64748b}
-.online-dot{width:8px;height:8px;background:#1a7a4a;border-radius:50%;display:inline-block;margin-right:4px}
-.msgs{flex:1;overflow-y:auto;padding:14px;background:#f7f9fc;display:flex;flex-direction:column;gap:11px}
-.msg{max-width:78%;padding:10px 13px;border-radius:12px;font-size:13px;line-height:1.55;word-wrap:break-word}
+.ai-ava{width:36px;height:36px;background:linear-gradient(135deg,#002147,#e85d00);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;margin-right:10px}
+.online{display:inline-flex;align-items:center;gap:4px;font-size:11px;background:#e0f5ea;color:#1a7a4a;padding:3px 8px;border-radius:10px;font-weight:600}
+.online-dot{width:6px;height:6px;background:#1a7a4a;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.msgs{flex:1;overflow-y:auto;padding:14px;background:#f7f9fc;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:82%;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.65;word-wrap:break-word;animation:fadeup .2s ease}
+@keyframes fadeup{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
 .msg.user{background:#002147;color:#fff;margin-left:auto;border-bottom-right-radius:3px}
 .msg.bot{background:#fff;border:1px solid #e2e8f0;color:#0f172a;border-bottom-left-radius:3px}
-.msg.typing{background:#fff;border:1px solid #e2e8f0}
-.typing-dots span{display:inline-block;width:6px;height:6px;background:#94a3b8;border-radius:50%;animation:tdot 1.2s infinite ease-in-out;margin:0 2px}
+.typing-dots span{display:inline-block;width:7px;height:7px;background:#94a3b8;border-radius:50%;animation:tdot 1.2s infinite ease-in-out;margin:0 2px}
 .typing-dots span:nth-child(2){animation-delay:.2s}.typing-dots span:nth-child(3){animation-delay:.4s}
-@keyframes tdot{0%,80%,100%{transform:scale(.7);opacity:.5}40%{transform:scale(1);opacity:1}}
+@keyframes tdot{0%,80%,100%{transform:scale(.6);opacity:.5}40%{transform:scale(1);opacity:1}}
 .quick-bar{padding:10px 14px;border-top:1px solid #e2e8f0;background:#f7f9fc;flex-shrink:0}
-.quick-title{font-size:10.5px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px}
-.quick-btns{display:flex;flex-wrap:wrap;gap:5px}
-.qbtn{background:#fff;border:1px solid #d0dae8;border-radius:5px;padding:5px 9px;font-size:11.5px;font-weight:500;color:#334155;cursor:pointer;font-family:inherit;transition:.15s}
+.qtt{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:7px}
+.qbtns{display:flex;flex-wrap:wrap;gap:5px}
+.qbtn{background:#fff;border:1px solid #d0dae8;border-radius:5px;padding:5px 9px;font-size:11.5px;color:#334155;cursor:pointer;font-family:inherit;transition:.15s;font-weight:500}
 .qbtn:hover{background:#ddeeff;border-color:#002147;color:#002147}
-.input-row{padding:12px 14px;border-top:1px solid #e2e8f0;display:flex;gap:8px;flex-shrink:0}
-.input-row input{flex:1;padding:9px 15px;border:1.5px solid #d0dae8;border-radius:20px;font-family:inherit;font-size:13px;color:#0f172a;background:#fff;outline:none}
-.input-row input:focus{border-color:#002147}
-.send-btn{background:#e85d00;color:#fff;border:none;padding:9px 18px;border-radius:20px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;flex-shrink:0}
+.inp-row{padding:12px 14px;border-top:1px solid #e2e8f0;display:flex;gap:8px;flex-shrink:0}
+.inp-row input{flex:1;padding:9px 15px;border:1.5px solid #d0dae8;border-radius:20px;font-family:inherit;font-size:13px;outline:none}
+.inp-row input:focus{border-color:#002147}
+.send-btn{background:#e85d00;color:#fff;border:none;padding:9px 18px;border-radius:20px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
 .send-btn:hover{background:#c94e00}
-.enc-note{font-size:10.5px;color:#94a3b8;text-align:center;padding:4px 0 0;flex-shrink:0}
-/* RIGHT PANEL */
-.side-card{background:#fff;border:1px solid #d0dae8;border-radius:10px;box-shadow:0 1px 4px rgba(0,33,71,.08);overflow:hidden;margin-bottom:14px}
+/* Side panel */
+.side-card{background:#fff;border:1px solid #d0dae8;border-radius:10px;box-shadow:0 1px 4px rgba(0,33,71,.08);margin-bottom:14px;overflow:hidden}
 .side-hdr{padding:11px 14px;border-bottom:1px solid #e2e8f0;font-family:Georgia,serif;font-size:13px;font-weight:700;color:#002147}
 .side-body{padding:14px}
-.scope-row{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:8px}
-.scope-row:last-child{margin-bottom:0}
-.scope-lbl{color:#64748b}
-.scope-val{font-weight:700;color:#002147}
-.topic-card{cursor:pointer;padding:9px;background:#f7f9fc;border:1px solid #e2e8f0;border-radius:6px;display:flex;gap:8px;align-items:center;margin-bottom:8px;transition:.15s}
-.topic-card:hover{background:#ddeeff;border-color:#002147}
-.topic-icon{font-size:18px;flex-shrink:0}
-.topic-title{font-size:12px;font-weight:700;color:#002147}
-.topic-sub{font-size:11px;color:#64748b}
-.qa-btn{width:100%;background:#f0f3f8;color:#334155;border:1px solid #e2e8f0;padding:7px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;margin-bottom:7px;text-align:left;transition:.15s}
-.qa-btn:hover{background:#ddeeff;color:#002147}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;border:none;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:.15s;text-decoration:none;white-space:nowrap}
-.btn-ghost{background:#f0f3f8;color:#334155}.btn-ghost:hover{background:#e2e8f0}
-.btn-sm{padding:5px 10px;font-size:12px}
-@media(max-width:1100px){.tb-nav{display:none}.ai-grid{grid-template-columns:1fr}}
+.srow{display:flex;justify-content:space-between;font-size:12.5px;padding:6px 0;border-bottom:1px solid #f0f3f8}
+.srow:last-child{border-bottom:none}
+.slbl{color:#64748b}.sval{font-weight:700;color:#002147}
+.topic{cursor:pointer;padding:8px;background:#f7f9fc;border:1px solid #e2e8f0;border-radius:6px;display:flex;gap:8px;align-items:flex-start;margin-bottom:7px;transition:.15s}
+.topic:hover{background:#ddeeff;border-color:#002147}
+.topic-ico{font-size:17px;flex-shrink:0}
+.topic-t{font-size:12px;font-weight:700;color:#002147}
+.topic-s{font-size:11px;color:#64748b;margin-top:2px}
+.qa{display:flex;align-items:center;gap:6px;padding:8px 0;text-decoration:none;color:#002147;font-size:13px;font-weight:600;border-bottom:1px solid #f0f3f8}
+.qa:last-child{border-bottom:none}
+@media(max-width:1100px){.ai-grid{grid-template-columns:1fr}}
 @media(max-width:900px){.sidebar{display:none}.main{margin-left:0}}
 </style>
 </head>
 <body>
 <header class="topbar">
-  <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<span>National Budget Intelligence Platform</span></div></div>
-  <nav class="tb-nav"><a href="index.html">🏠</a><a href="dashboard.html">📊</a><a href="budget-flow.html">💸</a><a href="risk_score.html">🛡️</a><a href="anomaly.html">⚠️</a><a href="reports.html">📄</a><a href="simulator.html">🔬</a><a href="ai_assistant.html" class="active">🤖 AI</a></nav>
+  <div class="tb-brand"><div class="tb-logo">🏛️</div><div class="tb-title">ArthRakshak<span>National Budget Intelligence</span></div></div>
   <div class="tb-right">
-    <button class="nb">🔔<span class="nb-badge">3</span></button>
-    <div style="display:flex;align-items:center;gap:8px"><div class="uinfo"><div class="un" id="uname">—</div><div class="ud" id="udept">—</div></div><div class="uavatar" id="uavatar">?</div></div>
-    <span id="api-status" style="font-size:11px"></span>
+    <div style="display:flex;align-items:center;gap:8px"><div class="uinfo"><div class="un" id="u-name">—</div><div class="ud" id="u-dept">—</div></div><div class="uavatar" id="u-avatar">?</div></div>
     <button onclick="logout()" class="btn btn-ghost btn-sm">🚪 Logout</button>
   </div>
 </header>
@@ -85,120 +80,197 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ba
   <a href="dashboard.html">📊 Dashboard</a>
   <a href="budget-flow.html">💸 Budget Flow</a>
   <div class="sb-sec">Intelligence</div>
-  <a href="risk_score.html">🛡️ Risk Scores</a>
+  <a href="risk-score.html">🛡️ Risk Scores</a>
   <a href="anomaly.html">⚠️ Anomalies</a>
   <a href="reports.html">📄 Reports</a>
   <div class="sb-sec">Tools</div>
   <a href="simulator.html">🔬 Simulator</a>
-  <a href="ai_assistant.html" class="act">🤖 AI Assistant</a>
+  <a href="assistant.html" class="act">🤖 AI Assistant</a>
 </aside>
 <main class="main">
   <div class="ph">
-    <div><div class="bc"><a href="index.html">Home</a> › AI Assistant</div><h1>🤖 ArthRakshak AI Assistant</h1><p id="ai-sub">Intelligent budget intelligence — scoped to your department's schemes.</p></div>
-    <div style="display:flex;gap:8px;align-items:center"><span style="font-size:12px;background:#e0f5ea;color:#1a7a4a;padding:6px 12px;border-radius:20px;font-weight:600"><span class="online-dot"></span>Online</span><button class="btn btn-ghost btn-sm" onclick="clearChat()">🗑️ Clear</button></div>
+    <div><div class="bc"><a href="dashboard.html">Home</a> › AI Assistant</div><h1>🤖 ArthRakshak AI Assistant</h1><p id="ai-sub">Intelligent budget intelligence scoped to your department.</p></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="online"><span class="online-dot"></span>Online</span>
+      <button class="btn btn-sm" style="background:#f0f3f8;color:#334155;border:1px solid #d0dae8" onclick="clearChat()">🗑️ Clear</button>
+    </div>
   </div>
   <div class="ai-grid">
     <div class="chat-card">
       <div class="chat-hdr">
-        <div style="display:flex;align-items:center"><div class="ai-avatar">🤖</div><div><div class="chat-hdr-info">ArthRakshak AI</div><div class="chat-hdr-sub">Budget Intelligence Assistant — Govt. Mode</div></div></div>
-        <span style="font-size:11px;background:#e0f5ea;color:#1a7a4a;padding:3px 8px;border-radius:10px;font-weight:600">🔒 Secured</span>
+        <div style="display:flex;align-items:center"><div class="ai-ava">🤖</div><div><div style="font-size:13px;font-weight:700;color:#002147">ArthRakshak AI</div><div style="font-size:11px;color:#64748b">Budget Intelligence • Govt. Mode</div></div></div>
+        <span style="font-size:11px;background:#e0f5ea;color:#1a7a4a;padding:3px 9px;border-radius:10px;font-weight:600">🔒 Secured</span>
       </div>
       <div class="msgs" id="msgs"></div>
       <div class="quick-bar">
-        <div class="quick-title">Quick Questions</div>
-        <div class="quick-btns" id="qbtns"></div>
+        <div class="qtt">Quick Questions</div>
+        <div class="qbtns" id="qbtns"></div>
       </div>
-      <div class="input-row">
-        <input type="text" id="chat-inp" placeholder="Ask about schemes, budget, risk, anomalies…">
+      <div class="inp-row">
+        <input type="text" id="chat-inp" placeholder="Ask about schemes, budget, risk, maps…" autocomplete="off">
         <button class="send-btn" id="send-btn">Send ➤</button>
       </div>
-      <div class="enc-note">🔒 Encrypted • Scoped to your department's data only</div>
+      <div style="font-size:10.5px;color:#94a3b8;text-align:center;padding:5px;border-top:1px solid #f0f3f8">🔒 Encrypted • Scoped to your department data</div>
     </div>
     <div>
-      <div class="side-card"><div class="side-hdr">📋 Your Data Scope</div><div class="side-body" id="scope-panel"></div></div>
-      <div class="side-card"><div class="side-hdr">💡 Suggested Topics</div><div class="side-body" id="topics-panel"></div></div>
-      <div class="side-card"><div class="side-hdr">⚡ Quick Actions</div>
+      <div class="side-card">
+        <div class="side-hdr">📋 Your Data Scope</div>
+        <div class="side-body" id="scope-panel"></div>
+      </div>
+      <div class="side-card">
+        <div class="side-hdr">💡 Suggested Topics</div>
+        <div class="side-body" id="topics-panel"></div>
+      </div>
+      <div class="side-card">
+        <div class="side-hdr">⚡ Quick Actions</div>
         <div class="side-body">
-          <a href="risk_score.html" style="display:flex;align-items:center;gap:6px;padding:8px 0;text-decoration:none;color:#002147;font-size:13px;font-weight:600;border-bottom:1px solid #f0f3f8">🛡️ View Risk Scores</a>
-          <a href="anomaly.html" style="display:flex;align-items:center;gap:6px;padding:8px 0;text-decoration:none;color:#002147;font-size:13px;font-weight:600;border-bottom:1px solid #f0f3f8">⚠️ Check Anomalies</a>
-          <a href="reports.html" style="display:flex;align-items:center;gap:6px;padding:8px 0;text-decoration:none;color:#002147;font-size:13px;font-weight:600;border-bottom:1px solid #f0f3f8">📄 Download Reports</a>
-          <a href="simulator.html" style="display:flex;align-items:center;gap:6px;padding:8px 0;text-decoration:none;color:#002147;font-size:13px;font-weight:600">🔬 Run Simulation</a>
+          <a href="risk-score.html" class="qa">🛡️ View Risk Scores</a>
+          <a href="anomaly.html" class="qa">⚠️ Check Anomalies</a>
+          <a href="reports.html" class="qa">📄 Download Reports</a>
+          <a href="simulator.html" class="qa">🔬 Run Simulation</a>
         </div>
       </div>
     </div>
   </div>
 </main>
-<script src="script.js"></script>
-<script src="api.js"></script>
+<script src="data.js"></script>
 <script>
-const user=getUser();if(!user){window.location.href='login.html';throw new Error('unauth');}setTopbar(user);
-if(typeof AR!=="undefined") AR.renderStatusBadge("api-status");
-var schemes=getSchemes(user);
-var lvl={'Finance Ministry':'National','Chief Economic Advisory':'National','State Department':user.state,'District Administration':user.district+' District','Rural Administration':user.town}[user.dept]||'';
-document.getElementById('ai-sub').textContent='Scoped to '+schemes.length+' schemes for '+user.dept+' ('+lvl+')';
+const user = getUser();
+if (!user) { window.location.href = 'login.html'; throw new Error('unauth'); }
+setTopbar(user);
+
+const schemes = getSchemes(user);
+const lvl = {'Finance Ministry':'National','Chief Economic Advisory':'National','State Department':user.state,'District Administration':user.district+' District','Rural Administration':user.town}[user.dept] || user.dept;
+document.getElementById('ai-sub').textContent = `Scoped to ${schemes.length} schemes — ${user.dept} (${lvl})`;
+
 // Scope panel
-document.getElementById('scope-panel').innerHTML='<div class="scope-row"><span class="scope-lbl">Department</span><span class="scope-val">'+user.dept+'</span></div><div class="scope-row"><span class="scope-lbl">Access Level</span><span class="scope-val">'+lvl+'</span></div><div class="scope-row"><span class="scope-lbl">Schemes</span><span class="scope-val" style="color:#002147">'+schemes.length+'</span></div><div class="scope-row"><span class="scope-lbl">High Risk</span><span class="scope-val" style="color:#c0392b">'+schemes.filter(function(s){return s.riskScore>=55;}).length+'</span></div>';
+const hr = schemes.filter(s => s.riskScore >= 55).length;
+const avgUtil = schemes.length ? Math.round(schemes.reduce((a,s) => a+s.utilization, 0)/schemes.length) : 0;
+document.getElementById('scope-panel').innerHTML = `
+  <div class="srow"><span class="slbl">Department</span><span class="sval">${user.dept}</span></div>
+  <div class="srow"><span class="slbl">Level</span><span class="sval">${lvl}</span></div>
+  <div class="srow"><span class="slbl">Schemes</span><span class="sval">${schemes.length}</span></div>
+  <div class="srow"><span class="slbl">High Risk</span><span class="sval" style="color:#c0392b">${hr}</span></div>
+  <div class="srow"><span class="slbl">Avg Utilization</span><span class="sval" style="color:#1a7a4a">${avgUtil}%</span></div>`;
+
 // Topics
-var TOPICS=[{ico:'💰',t:'Budget Status',q:'What is the overall budget utilization?'},{ico:'⚠️',t:'Risk Overview',q:'Which schemes have high risk scores?'},{ico:'📊',t:'Performance',q:'Which schemes are performing well?'},{ico:'🗺️',t:'View on Maps',q:'Show schemes on Google Maps'},{ico:'🔍',t:'Anomalies',q:'Are there any budget anomalies?'}];
-document.getElementById('topics-panel').innerHTML=TOPICS.map(function(t){return'<div class="topic-card" onclick="ask(\''+t.q+'\')"><div class="topic-icon">'+t.ico+'</div><div><div class="topic-title">'+t.t+'</div><div class="topic-sub">'+t.q.substring(0,34)+'…</div></div></div>';}).join('');
-// Quick btns
-var QS=['How many schemes do I have access to?','Which schemes have high risk?','What is the average utilization?','Show schemes on Google Maps','List all sectors covered'];
-document.getElementById('qbtns').innerHTML=QS.map(function(q){return'<button class="qbtn" onclick="ask(\''+q+'\')">'+q+'</button>';}).join('');
-// Chat
-var msgs=document.getElementById('msgs');
-function addMsg(text,role){var d=document.createElement('div');d.className='msg '+role;if(role==='typing'){d.innerHTML='<div class="typing-dots"><span></span><span></span><span></span></div>';}else{d.innerHTML=text.replace(/\n/g,'<br>');}msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;return d;}
-function genReply(msg){
-  var m=msg.toLowerCase();
-  if(m.includes('how many')||m.includes('access to'))return'You have access to <strong>'+schemes.length+' schemes</strong> as '+user.dept+' ('+lvl+' level).';
-  if(m.includes('high risk')||m.includes('risk')){
-    var hr=schemes.filter(function(s){return s.riskScore>=55;});
-    if(hr.length)return'⚠️ <strong>'+hr.length+' schemes</strong> have elevated risk:\n\n'+hr.map(function(s){return'• '+s.name+' — Risk: '+s.riskScore+'/100';}).join('\n');
-    return'✅ All schemes show acceptable risk levels. Highest score: '+Math.max.apply(null,schemes.map(function(s){return s.riskScore;}))+'/100.';
-  }
-  if(m.includes('utilization')||m.includes('budget')){
-    var avg=Math.round(schemes.reduce(function(a,s){return a+s.utilization;},0)/schemes.length);
-    return'Average budget utilization across your '+schemes.length+' schemes is <strong>'+avg+'%</strong>. Range: '+Math.min.apply(null,schemes.map(function(s){return s.utilization;}))+'% – '+Math.max.apply(null,schemes.map(function(s){return s.utilization;}))+'%.';
-  }
-  if(m.includes('sector')||m.includes('category')){
-    var secs=[...new Set(schemes.map(function(s){return s.sector;}))];
-    return'Your '+schemes.length+' schemes span <strong>'+secs.length+' sectors</strong>:\n\n'+secs.map(function(s){return'• '+s;}).join('\n');
-  }
-  if(m.includes('performing')||m.includes('well')){
-    var good=schemes.filter(function(s){return s.utilization>=70;});
-    if(good.length)return'✅ <strong>'+good.length+' schemes</strong> with ≥70% utilization:\n\n'+good.map(function(s){return'• '+s.name+' ('+s.utilization+'%)';}).join('\n');
-    return'No schemes currently have 70%+ utilization. Consider reviewing disbursement targets.';
-  }
-  if(m.includes('anomal')||m.includes('fraud'))return'🔍 Anomaly detection has flagged irregular patterns in '+schemes.filter(function(s){return s.riskScore>45;}).length+' schemes. Visit the Anomaly Detection page for detailed analysis.';
+[
+  {ico:'💰', t:'Budget Status', q:'What is the overall budget utilization?'},
+  {ico:'⚠️', t:'Risk Overview', q:'Which schemes have high risk scores?'},
+  {ico:'📊', t:'Performance', q:'Which schemes are performing well?'},
+  {ico:'🗺️', t:'View on Map', q:'Show infrastructure projects on Google Maps'},
+  {ico:'📄', t:'PDF Report', q:'Generate a PDF report for my department'},
+].forEach(tp => {
+  document.getElementById('topics-panel').innerHTML += `
+  <div class="topic" onclick="ask('${tp.q}')">
+    <div class="topic-ico">${tp.ico}</div>
+    <div><div class="topic-t">${tp.t}</div><div class="topic-s">${tp.q.substring(0,38)}…</div></div>
+  </div>`;
+});
+
+// Quick buttons
+['How many schemes do I have?','Which schemes have high risk?','What is average utilization?','Show underperforming schemes','Open nearest scheme on Google Maps'].forEach(q => {
+  document.getElementById('qbtns').innerHTML += `<button class="qbtn" onclick="ask('${q}')">${q}</button>`;
+});
+
+// ── AI Reply Engine ───────────────────────────────────────────────────
+function genReply(msg) {
+  const m = msg.toLowerCase();
+  const highRisk = schemes.filter(s => s.riskScore >= 55);
+  const lowUtil = schemes.filter(s => s.utilization < 30);
+  const highUtil = schemes.filter(s => s.utilization >= 70);
+  const secs = [...new Set(schemes.map(s => s.sector))];
+
   // Google Maps
-  if(m.includes('map')||m.includes('location')||m.includes('google')||m.includes('where')||m.includes('infrastructure')){
-    var infra=schemes.filter(function(s){return['Roads','Infrastructure','Transport','Water'].includes(s.sector);});
-    var target=infra.length?infra[0]:schemes[0];
-    var mapUrl=schemeMapsUrl(target);
-    var btn='<a href="'+mapUrl+'" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:#ddeeff;color:#002147;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;border:1px solid #b8d0ee;margin-top:6px">📍 Open on Google Maps</a>';
-    if(!infra.length)return'🗺️ No infrastructure schemes in scope, but you can view <strong>'+target.name+'</strong> on the map:<br><br>'+btn;
-    return'🗺️ Found <strong>'+infra.length+'</strong> infrastructure project(s):<br><br>'+infra.map(function(s){return'• <strong>'+s.name+'</strong> — '+s.sector;}).join('<br>')+'<br><br>'+btn;
+  if (m.includes('map') || m.includes('location') || m.includes('google') || m.includes('infrastructure')) {
+    const infra = schemes.filter(s => ['Roads','Infrastructure','Transport','Water'].includes(s.sector));
+    if (!infra.length) {
+      const s = schemes[0];
+      const q = encodeURIComponent((s.district||s.state||'India') + ' ' + s.name);
+      return `🗺️ No infrastructure schemes in scope. <br><br><a href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" style="color:#002147;font-weight:700;background:#ddeeff;padding:5px 10px;border-radius:5px;display:inline-block;margin-top:4px">📍 Open on Google Maps</a>`;
+    }
+    const s = infra[0];
+    const q = encodeURIComponent((s.district||s.state||'India') + ' ' + s.name);
+    return `🗺️ Found <strong>${infra.length}</strong> infrastructure project(s):<br><br>${infra.map(s => `• <strong>${s.name}</strong> — ${s.sector}`).join('<br>')}<br><br><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((s.district||s.state||'India')+' '+s.name)}" target="_blank" style="color:#002147;font-weight:700;background:#ddeeff;padding:5px 10px;border-radius:5px;display:inline-block;margin-top:4px">📍 Open First Project on Google Maps</a>`;
   }
-  return'I can help with:\n\n• Budget utilization analysis\n• Risk assessments\n• Scheme performance\n• Anomaly summaries\n• Sector breakdowns\n\nTry asking: "Which schemes have high risk?" or "What is the average utilization?"';
+
+  // PDF Report
+  if (m.includes('pdf') || m.includes('report') || m.includes('download') || m.includes('generate')) {
+    return `📄 PDF reports are ready for generation!<br><br>Go to <a href="reports.html" style="color:#002147;font-weight:700">Reports page</a> and click <strong>"Generate PDF Report"</strong> — you can choose:<br>• Budget Utilization Summary<br>• Risk Assessment Report<br>• Full Department Overview<br><br>Or click here to go directly: <a href="reports.html#t4" style="color:#e85d00;font-weight:700;background:#fff0e6;padding:4px 10px;border-radius:5px;display:inline-block;margin-top:4px">📥 Generate PDF Now</a>`;
+  }
+
+  if (m.includes('how many') || m.includes('access to') || m.includes('total'))
+    return `You have access to <strong>${schemes.length} schemes</strong> as <strong>${user.dept}</strong> at <strong>${lvl}</strong> level.`;
+
+  if (m.includes('high risk') || m.includes('risk score') || m.includes('corrupt')) {
+    if (!highRisk.length) return `✅ No high-risk schemes. All ${schemes.length} schemes are within acceptable levels. Highest: ${Math.max(...schemes.map(s=>s.riskScore))}/100.`;
+    return `⚠️ <strong>${highRisk.length} scheme(s)</strong> with elevated risk:<br><br>${highRisk.map(s=>`• <strong>${s.name}</strong> — ${s.riskScore}/100 (${riskLabel(s.riskScore)})`).join('<br>')}<br><br><a href="risk-score.html" style="color:#002147;font-weight:700">→ View Full Risk Register</a>`;
+  }
+
+  if (m.includes('utilization') || m.includes('budget') || m.includes('spent')) {
+    const avg = avgUtil;
+    return `📊 Average utilization: <strong>${avg}%</strong> across ${schemes.length} schemes.<br><br>• Best: <strong>${highUtil.length>0?highUtil.reduce((a,s)=>s.utilization>a.utilization?s:a).name:'—'}</strong><br>• Worst: <strong>${schemes.reduce((a,s)=>s.utilization<a.utilization?s:a).name}</strong> (${Math.min(...schemes.map(s=>s.utilization))}%)`;
+  }
+
+  if (m.includes('underperform') || m.includes('low util') || m.includes('below')) {
+    if (!lowUtil.length) return '✅ All schemes have utilization above 30%. No underperforming schemes detected.';
+    return `📉 <strong>${lowUtil.length} scheme(s)</strong> with low utilization (<30%):<br><br>${lowUtil.map(s=>`• ${s.name}: ${s.utilization}%`).join('<br>')}`;
+  }
+
+  if (m.includes('performing well') || m.includes('best') || m.includes('top scheme')) {
+    if (!highUtil.length) return 'No schemes currently at 70%+ utilization. Consider reviewing disbursement.';
+    return `✅ <strong>${highUtil.length} scheme(s)</strong> with ≥70% utilization:<br><br>${highUtil.map(s=>`• ${s.name} (${s.utilization}%)`).join('<br>')}`;
+  }
+
+  if (m.includes('sector') || m.includes('categor'))
+    return `Your ${schemes.length} schemes span <strong>${secs.length} sectors</strong>:<br><br>${secs.map(s=>'• '+s).join('<br>')}`;
+
+  if (m.includes('anomal') || m.includes('irregular'))
+    return `🔍 Anomaly detection flagged <strong>${schemes.filter(s=>s.riskScore>45).length}</strong> schemes with irregular patterns. <a href="anomaly.html" style="color:#002147;font-weight:700">→ View Anomalies</a>`;
+
+  if (m.includes('hello') || m.includes('hi ') || m.includes('namaste'))
+    return `Namaste! 🙏 I'm ready to assist with ${schemes.length} schemes for <strong>${user.dept}</strong>. Ask me about budget, risk, maps, or reports.`;
+
+  // Scheme name match
+  const matched = schemes.find(s => m.includes(s.name.toLowerCase().split(' ').slice(0,2).join(' ')));
+  if (matched) {
+    const q = encodeURIComponent((matched.district||matched.state||'India') + ' ' + matched.name);
+    return `📋 <strong>${matched.name}</strong><br><br>• Sector: ${matched.sector}<br>• Utilization: <strong>${matched.utilization}%</strong><br>• Risk: <strong>${riskLabel(matched.riskScore)}</strong> (${matched.riskScore}/100)<br>${matched.ministry?'• Ministry: '+matched.ministry+'<br>':''}<br><a href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" style="color:#002147;font-weight:700;background:#ddeeff;padding:4px 10px;border-radius:5px;display:inline-block">📍 View on Google Maps</a>`;
+  }
+
+  return `I can help with:<br><br>• 📊 Budget utilization analysis<br>• 🛡️ Risk assessments<br>• 📈 Scheme performance<br>• 🗺️ Google Maps view<br>• 📄 PDF report generation<br><br>Try: <em>"Which schemes have high risk?"</em>`;
 }
-function ask(q){
-  var inp=document.getElementById('chat-inp');
-  inp.value=q;
-  send();
+
+// ── Chat Engine ───────────────────────────────────────────────────────
+const msgsEl = document.getElementById('msgs');
+
+function addMsg(html, role) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + role;
+  if (role === 'typing') d.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  else d.innerHTML = html;
+  msgsEl.appendChild(d);
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+  return d;
 }
-function send(){
-  var inp=document.getElementById('chat-inp');
-  var text=inp.value.trim();
-  if(!text)return;
-  addMsg(text,'user');
-  inp.value='';
-  var typing=addMsg('','typing');
-  setTimeout(function(){typing.remove();addMsg(genReply(text),'bot');},700+Math.random()*500);
+
+function ask(q) { document.getElementById('chat-inp').value = q; send(); }
+
+function send() {
+  const inp = document.getElementById('chat-inp');
+  const text = inp.value.trim();
+  if (!text) return;
+  addMsg(text, 'user');
+  inp.value = '';
+  const typing = addMsg('', 'typing');
+  setTimeout(() => { typing.remove(); addMsg(genReply(text), 'bot'); }, 500 + Math.random()*600);
 }
-document.getElementById('send-btn').addEventListener('click',send);
-document.getElementById('chat-inp').addEventListener('keydown',function(e){if(e.key==='Enter')send();});
-// Welcome message
-setTimeout(function(){addMsg('Namaste! 🙏 I\'m ArthRakshak AI. I have access to <strong>'+schemes.length+' schemes</strong> for '+user.dept+'. How may I assist you today?','bot');},200);
-function clearChat(){if(confirm('Clear chat history?')){msgs.innerHTML='';setTimeout(function(){addMsg('Chat cleared. How may I help you?','bot');},100);}}
+
+document.getElementById('send-btn').addEventListener('click', send);
+document.getElementById('chat-inp').addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+function clearChat() { if (confirm('Clear chat?')) { msgsEl.innerHTML=''; setTimeout(()=>addMsg('Chat cleared. How can I help?','bot'),100); } }
+
+setTimeout(() => addMsg(`Namaste! 🙏 I'm ArthRakshak AI with access to <strong>${schemes.length} schemes</strong> for <strong>${user.dept}</strong>.<br>Ask me about budget, risk scores, Google Maps, or generate a PDF report!`, 'bot'), 300);
 </script>
 </body>
 </html>

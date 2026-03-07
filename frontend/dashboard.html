@@ -143,11 +143,11 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
     <a href="index.html">🏠 Home</a>
     <a href="dashboard.html" class="act">📊 Dashboard</a>
     <a href="budget-flow.html">💸 Flow</a>
-    <a href="risk_score.html">🛡️ Risk</a>
+    <a href="risk-score.html">🛡️ Risk</a>
     <a href="anomaly.html">⚠️ Anomalies</a>
     <a href="reports.html">📄 Reports</a>
     <a href="simulator.html">🔬 Simulator</a>
-    <a href="ai_assistant.html">🤖 AI</a>
+    <a href="assistant.html">🤖 AI</a>
   </nav>
   <div class="tb-right">
     <button class="notif">🔔<span class="nbadge">3</span></button>
@@ -165,12 +165,12 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
   <a href="dashboard.html" class="act">📊 Dashboard</a>
   <a href="budget-flow.html">💸 Budget Flow</a>
   <div class="sb-sec">Intelligence</div>
-  <a href="risk_score.html">🛡️ Risk Scores</a>
+  <a href="risk-score.html">🛡️ Risk Scores</a>
   <a href="anomaly.html">⚠️ Anomalies</a>
   <a href="reports.html">📄 Reports</a>
   <div class="sb-sec">Tools</div>
   <a href="simulator.html">🔬 Simulator</a>
-  <a href="ai_assistant.html">🤖 AI Assistant</a>
+  <a href="assistant.html">🤖 AI Assistant</a>
 </aside>
 
 <!-- MAIN -->
@@ -182,7 +182,7 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
       <p id="dash-sub">Loading schemes...</p>
     </div>
     <div class="ph-actions">
-      <a href="ai_assistant.html" class="btn bsaffron">🤖 Ask AI</a>
+      <a href="assistant.html" class="btn bsaffron">🤖 Ask AI</a>
       <a href="reports.html" class="btn boutline">📥 Export</a>
     </div>
   </div>
@@ -222,7 +222,7 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
       </div>
     </div>
     <div class="tw"><table><thead id="tbl-head"></thead><tbody id="tbl-body"></tbody></table></div>
-    <div class="tbb"><span id="tbl-count">—</span><a href="ai_assistant.html" class="btn bsaffron" style="font-size:12px">🤖 Ask AI About Schemes</a></div>
+    <div class="tbb"><span id="tbl-count">—</span><a href="assistant.html" class="btn bsaffron" style="font-size:12px">🤖 Ask AI About Schemes</a></div>
   </div>
 </main>
 
@@ -234,20 +234,20 @@ td{padding:9px 12px;color:#334155;vertical-align:middle}
       <button class="mclose" onclick="document.getElementById('modal').classList.remove('open')">×</button>
     </div>
     <div class="mb" id="m-body"></div>
-    <div style="padding:14px 22px;border-top:1px solid #e2e8f0;display:flex;gap:8px;justify-content:flex-end">
-      <a href="risk_score.html" class="btn boutline" style="font-size:12px">🛡️ Risk Details</a>
-      <a href="ai_assistant.html" class="btn bsaffron" style="font-size:12px">🤖 Ask AI</a>
+    <div style="padding:14px 22px;border-top:1px solid #e2e8f0;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+      <a href="#" id="modal-maps" target="_blank" class="btn boutline" style="font-size:12px">📍 View on Google Maps</a>
+      <button type="button" class="btn bsaffron" style="font-size:12px" id="modal-pdf">📥 Download PDF Report</button>
+      <a href="risk-score.html" class="btn boutline" style="font-size:12px">🛡️ Risk Details</a>
+      <a href="assistant.html" class="btn bsaffron" style="font-size:12px">🤖 Ask AI</a>
       <button class="btn bghost" style="font-size:12px" onclick="document.getElementById('modal').classList.remove('open')">Close</button>
     </div>
   </div>
 </div>
 
 <script src="data.js"></script>
-<script src="api.js"></script>
 <script>
 const user=getUser();if(!user){window.location.href='login.html';throw new Error('unauth');}
 setTopbar(user);
-if(typeof AR!=="undefined") AR.renderStatusBadge("api-status");
 
 const schemes=getSchemes(user);
 const level=levelLabel(user);
@@ -264,21 +264,19 @@ const budgets={'Finance Ministry':'₹7.2 Lakh Cr+','Chief Economic Advisory':'�
 document.getElementById('s-budget').textContent=budgets[user.dept]||'—';
 document.getElementById('tbl-badge').textContent=schemes.length+' schemes';
 
-// Table header
+// Table header - unified for mixed scheme types (national + state + district + rural)
 const thead=document.getElementById('tbl-head');
-if(isNat){
-  thead.innerHTML='<tr><th>Scheme Name</th><th>Budget</th><th>Distributed</th><th>Utilization</th><th>Year</th><th>Sector</th><th>Risk</th><th>Status</th></tr>';
-}else{
-  thead.innerHTML='<tr><th>Scheme Name</th><th>Budget</th><th>Utilized</th><th>Remaining</th><th>Utilization</th><th>Sector</th><th>Risk</th></tr>';
-}
+thead.innerHTML='<tr><th>Scheme Name</th><th>Budget</th><th>Distributed/Utilized</th><th>Year/Remaining</th><th>Utilization</th><th>Sector</th><th>Risk</th><th>Status</th><th>Actions</th></tr>';
 
 function rowHtml(s){
   const rc=riskClass(s.riskScore);
   const bar=`<div style="display:flex;align-items:center;gap:7px"><div class="pb" style="width:75px"><div class="pf" style="width:${s.utilization}%;background:${progressColor(s.utilization)}"></div></div><span style="font-size:12px">${s.utilization}%</span></div>`;
+  const mapsUrl=schemeMapsUrl(s);
+  const actBtns=`<a href="${mapsUrl}" target="_blank" class="btn btn-sm" style="padding:4px 8px;font-size:11px;background:#ddeeff;color:#002147;text-decoration:none;margin-right:4px">📍 Maps</a><button onclick="event.stopPropagation();downloadSchemePdf('${s.id}','${String(s.name).replace(/'/g,"\\'")}')" class="btn btn-sm" style="padding:4px 8px;font-size:11px;background:#fff0e6;color:#e85d00;border:1px solid #e85d00">📥 PDF</button>`;
   if(s.id.startsWith('n')){
-    return`<td style="font-weight:600;color:#002147;max-width:220px">${s.name}</td><td>${s.budget}</td><td>${s.distributed}</td><td>${bar}</td><td>${s.year}</td><td><span class="badge bn">${s.sector}</span></td><td><span class="rb r${rc}">${riskLabel(s.riskScore)}</span></td><td><span class="badge bg">Active</span></td>`;
+    return`<td style="font-weight:600;color:#002147;max-width:220px">${s.name}</td><td>${s.budget}</td><td>${s.distributed||'—'}</td><td>${s.year||'—'}</td><td>${bar}</td><td><span class="badge bn">${s.sector}</span></td><td><span class="rb r${rc}">${riskLabel(s.riskScore)}</span></td><td><span class="badge bg">Active</span></td><td style="white-space:nowrap">${actBtns}</td>`;
   }
-  return`<td style="font-weight:600;color:#002147;max-width:200px">${s.name}</td><td>${s.budget}</td><td>${s.utilized}</td><td>${s.remaining}</td><td>${bar}</td><td><span class="badge bn">${s.sector}</span></td><td><span class="rb r${rc}">${riskLabel(s.riskScore)}</span></td>`;
+  return`<td style="font-weight:600;color:#002147;max-width:200px">${s.name}</td><td>${s.budget}</td><td>${s.utilized||'—'}</td><td>${s.remaining||'—'}</td><td>${bar}</td><td><span class="badge bn">${s.sector}</span></td><td><span class="rb r${rc}">${riskLabel(s.riskScore)}</span></td><td><span class="badge bg">Active</span></td><td style="white-space:nowrap">${actBtns}</td>`;
 }
 
 function renderTable(data){
@@ -318,8 +316,12 @@ document.getElementById('risk-fil').addEventListener('change',applyFilters);
 function resetFilters(){document.getElementById('srch').value='';sf.value='';document.getElementById('risk-fil').value='';renderTable(schemes);}
 
 // Modal
+var currentModalScheme=null;
 function openModal(s){
+  currentModalScheme=s;
   document.getElementById('m-name').textContent=s.name;
+  document.getElementById('modal-maps').href=schemeMapsUrl(s);
+  document.getElementById('modal-pdf').onclick=function(){downloadSchemePdf(s.id,s.name);};
   const rc=riskClass(s.riskScore);
   let html=`<div class="dg">
     <div class="di"><label>Total Budget</label><p>${s.budget}</p></div>
@@ -333,17 +335,6 @@ function openModal(s){
     html+=`</div><div class="dg"><div class="di"><label>Utilized</label><p>${s.utilized}</p></div><div class="di"><label>Remaining</label><p>${s.remaining}</p></div><div class="di"><label>Utilization %</label><p>${s.utilization}%</p></div></div><div class="divider"></div><div class="di"><label>Purpose</label><p style="margin-top:4px">${s.purpose}</p></div>`;
   }
   html+=`<div class="divider"></div><div style="margin-top:4px"><div style="display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-bottom:6px"><span>Budget Utilization</span><span>${s.utilization}%</span></div><div class="pb" style="width:100%;height:10px"><div class="pf" style="width:${s.utilization}%;background:${progressColor(s.utilization)}"></div></div></div>`;
-  // Google Maps button - uses schemeMapsUrl() from data.js (handles 'National' correctly)
-  html += `<div class="divider"></div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
-    <a href="${schemeMapsUrl(s)}" target="_blank" rel="noopener"
-       style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#ddeeff;color:#002147;border-radius:6px;font-size:12px;font-weight:700;text-decoration:none;border:1px solid #b8d0ee">
-      🗺️ View on Google Maps</a>
-    <button onclick="dlSchemePDF(currentScheme)"
-       style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;background:#e85d00;color:#fff;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit">
-      📄 Download PDF Report</button>
-  </div>`;
-  window.currentScheme = s;
   document.getElementById('m-body').innerHTML=html;
   document.getElementById('modal').classList.add('open');
 }
@@ -364,76 +355,6 @@ if(typeof Chart!=='undefined'){
 }else{
   document.getElementById('chart-util').parentElement.innerHTML='<p style="padding:20px;color:#64748b;text-align:center">Chart.js not loaded — check internet connection.</p>';
 }
-// ── PDF for single scheme (jsPDF, no backend needed) ─────────────
-function dlSchemePDF(s) {
-  if (!s) return;
-  var script = document.createElement('script');
-  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-  script.onload = function() {
-    var jsPDF = window.jspdf.jsPDF;
-    var doc = new jsPDF();
-    var W=210, m=18;
-    doc.setFillColor(0,33,71); doc.rect(0,0,W,42,'F');
-    doc.setFillColor(232,93,0); doc.rect(0,42,W,3,'F');
-    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(20);
-    doc.text('ArthRakshak',W/2,16,{align:'center'});
-    doc.setFontSize(10); doc.setFont('helvetica','normal');
-    doc.text('National Budget Intelligence Platform',W/2,27,{align:'center'});
-    var y=58;
-    doc.setTextColor(0,33,71); doc.setFont('helvetica','bold'); doc.setFontSize(15);
-    var nm=doc.splitTextToSize(s.name,W-m*2);
-    doc.text(nm,m,y); y+=nm.length*8+4;
-    doc.setFillColor(240,243,248); doc.rect(m,y,W-m*2,8,'F');
-    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(100,116,139);
-    doc.text('Sector: '+s.sector+' | Risk: '+s.riskScore+'/100 | Utilization: '+s.utilization+'%',m+3,y+5.5);
-    y+=14;
-    var rows=[
-      ['Budget',s.budget||'—'],['Utilized',s.utilized||s.distributed||'—'],
-      ['Remaining',s.remaining||'—'],['Utilization',s.utilization+'%'],
-      ['Risk Score',s.riskScore+'/100'],
-      ['Risk Level',s.riskScore<30?'Low':s.riskScore<55?'Medium':s.riskScore<75?'High':'Critical'],
-      ['Sector',s.sector],['Ministry/Dept',s.ministry||user.dept],
-      ['Beneficiaries',s.beneficiaries||'—'],['Launch Year',s.year||'—']
-    ];
-    rows.forEach(function(r,i){
-      if(i%2===0){doc.setFillColor(247,249,252); doc.rect(m,y-4,W-m*2,8,'F');}
-      doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(51,65,85);
-      doc.text(r[0],m+2,y+0.5);
-      doc.setFont('helvetica','normal'); doc.text(String(r[1]||'—'),m+55,y+0.5);
-      y+=8;
-    });
-    if(s.desc||s.purpose){
-      y+=4;
-      doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(0,33,71);
-      doc.text('About',m,y); y+=6;
-      doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(51,65,85);
-      var desc=doc.splitTextToSize(s.desc||s.purpose,W-m*2);
-      doc.text(desc,m,y); y+=desc.length*5+10;
-    }
-    // Utilization bar
-    doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(0,33,71);
-    doc.text('Budget Utilization',m,y); y+=7;
-    doc.setFillColor(226,232,240); doc.roundedRect(m,y,W-m*2,8,2,2,'F');
-    var uc=s.utilization>70?[26,122,74]:s.utilization>40?[232,93,0]:[192,57,43];
-    doc.setFillColor(uc[0],uc[1],uc[2]);
-    doc.roundedRect(m,y,(W-m*2)*s.utilization/100,8,2,2,'F');
-    doc.setTextColor(255,255,255); doc.setFontSize(8);
-    doc.text(s.utilization+'%',m+4,y+5.5);
-    // Google Maps note
-    y+=16;
-    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(0,51,128);
-    doc.text('📍 Maps: '+schemeMapsUrl(s),m,y);
-    // Footer
-    doc.setFillColor(0,33,71); doc.rect(0,287,W,10,'F');
-    doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(255,255,255);
-    doc.text('ArthRakshak — Confidential Government Document',m,293);
-    doc.text('Generated: '+user.name+' | '+user.dept,W-m,293,{align:'right'});
-    var fname='Scheme_'+s.name.replace(/[^a-zA-Z0-9]/g,'_').substring(0,30)+'.pdf';
-    doc.save(fname);
-  };
-  if(window.jspdf){script.onload();}else{document.head.appendChild(script);}
-}
-
 </script>
 </body>
 </html>

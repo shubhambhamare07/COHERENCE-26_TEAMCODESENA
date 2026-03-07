@@ -49,9 +49,9 @@ function logout(){sessionStorage.clear();window.location.href='login.html';}
 function getSchemes(user){
   if(!user)return[];
   const d=user.dept;
-  if(d==='Finance Ministry'||d==='Chief Economic Advisory')return NATIONWIDE;
-  if(d==='State Department')return STATE.filter(s=>s.state===user.state);
-  if(d==='District Administration')return DISTRICT.filter(s=>s.district===user.district);
+  if(d==='Finance Ministry'||d==='Chief Economic Advisory')return [...NATIONWIDE,...STATE,...DISTRICT,...RURAL];
+  if(d==='State Department')return [...STATE.filter(s=>s.state===user.state),...DISTRICT.filter(s=>s.district===user.district&&s.state===user.state),...RURAL.filter(s=>s.town===user.town&&s.district===user.district)];
+  if(d==='District Administration')return [...DISTRICT.filter(s=>s.district===user.district),...RURAL.filter(s=>s.town===user.town&&s.district===user.district)];
   if(d==='Rural Administration')return RURAL.filter(s=>s.town===user.town);
   return[];
 }
@@ -59,10 +59,10 @@ function getSchemes(user){
 function levelLabel(user){
   if(!user)return'';
   const d=user.dept;
-  if(d==='Finance Ministry'||d==='Chief Economic Advisory')return'National';
-  if(d==='State Department')return user.state;
-  if(d==='District Administration')return user.district+' District';
-  if(d==='Rural Administration')return user.town;
+  if(d==='Finance Ministry'||d==='Chief Economic Advisory')return'Central + State + District + Rural';
+  if(d==='State Department')return user.state+' (State + District + Rural)';
+  if(d==='District Administration')return user.district+' (District + Rural)';
+  if(d==='Rural Administration')return user.town+' (Rural only)';
   return'';
 }
 
@@ -80,18 +80,5 @@ function setTopbar(user){
 
 function progressColor(pct){return pct>=70?'#1a7a4a':pct>=40?'#e85d00':'#c0392b';}
 
-// ── Google Maps URL helper ─────────────────────────────────────────
-// Works correctly for national / state / district / rural schemes
-// Filters out 'National' since it is not a real Google Maps location
-function schemeMapsUrl(s) {
-  if (!s) return 'https://www.google.com/maps/search/?api=1&query=India';
-  var loc = [s.town, s.district, s.state]
-    .filter(function(x){ return x && x !== 'National' && x !== 'Pan India'; })
-    .join(', ');
-  var query = loc ? (s.name + ', ' + loc) : s.name;
-  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(query);
-}
-
-function openSchemeMaps(s) {
-  window.open(schemeMapsUrl(s), '_blank');
-}
+function schemeMapsUrl(s){const q=encodeURIComponent((s.district||s.state||'India')+' '+s.name);return 'https://www.google.com/maps/search/?api=1&query='+q;}
+function downloadSchemePdf(schemeId,schemeName){const u=getUser();if(!u)return;const api=(!window.location.origin||window.location.origin==='null')?'http://localhost:5050':window.location.origin;fetch(api+'/api/pdf/scheme',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scheme_id:schemeId,user:u})}).then(r=>r.blob()).then(blob=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(schemeName||'Scheme').substring(0,50).replace(/[^a-zA-Z0-9]/g,'_')+'.pdf';a.click();URL.revokeObjectURL(a.href);}).catch(()=>alert('PDF download failed. Ensure backend is running.'));}
