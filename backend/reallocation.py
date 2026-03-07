@@ -1,262 +1,241 @@
 """
-reallocation_simulator.py
-==========================
-Simulates moving budget from one city to another WITHOUT permanently
-modifying the original dataset.
-
-Expected CSV schema  (backend/data/budget_data.csv)
-----------------------------------------------------
-city               | str   – city name
-allocated_budget   | float – total budget allocated to the city
-utilized_budget    | float – amount actually spent / committed
-utilization_ratio  | float – derived: utilized_budget / allocated_budget
-risk_score         | float – derived: composite risk index (0–100)
+ArthRakshak — Budget Reallocation Engine
+Simulates budget reallocation scenarios and projects outcomes.
 """
 
-from __future__ import annotations
-
-import os
-from pathlib import Path
-from typing import Any
-
-import pandas as pd
-
-# ---------------------------------------------------------------------------
-# Path configuration
-# ---------------------------------------------------------------------------
-
-_MODULE_DIR = Path(__file__).resolve().parent
-DEFAULT_DATA_PATH: Path = _MODULE_DIR / "backend" / "data" / "budget_data.csv"
+import math
+import statistics
+from datetime import datetime
+from typing import Optional
 
 
-# ---------------------------------------------------------------------------
-# Internal helpers
-# ---------------------------------------------------------------------------
+# ── Simulation Config ─────────────────────────────────────────────────
+SECTOR_MULTIPLIERS = {
+    # sector -> (utilization_efficiency, risk_reduction_factor)
+    "Healthcare":         (1.25, 0.90),
+    "Education":          (1.20, 0.85),
+    "Agriculture":        (1.15, 0.80),
+    "Water":              (1.18, 0.82),
+    "Renewable Energy":   (1.22, 0.88),
+    "Financial Inclusion":(1.30, 0.75),
+    "Employment":         (1.10, 0.95),
+    "Roads":              (0.95, 1.05),  # higher corruption risk
+    "Infrastructure":     (0.90, 1.10),
+    "Housing":            (1.05, 0.92),
+    "Social Welfare":     (1.15, 0.88),
+    "Technology":         (1.35, 0.70),
+    "Small Business":     (1.12, 0.95),
+    "Energy":             (1.20, 0.85),
+    "Transport":          (0.95, 1.08),
+}
 
-def _load_dataframe(data_path: str | Path) -> pd.DataFrame:
-    """Load the CSV, normalise column names, and return a clean DataFrame."""
-    path = Path(data_path)
-    if not path.is_file():
-        raise FileNotFoundError(
-            f"Budget data file not found: {path}\n"
-            "Pass an explicit `data_path` argument or set the DATA_PATH "
-            "environment variable."
-        )
-    df = pd.read_csv(path)
-    df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
-    return df
 
-
-def _recalculate_utilization_ratio(df: pd.DataFrame) -> pd.DataFrame:
+def simulate_reallocation(
+    schemes: list,
+    increase_pct: float = 0.0,       # % increase in total budget
+    efficiency_target: float = 0.0,  # target utilization increase %
+    focus_sectors: list = None,       # sectors to prioritize
+    risk_reduction_target: float = 0.0,  # desired risk score reduction
+) -> dict:
     """
-    utilization_ratio = utilized_budget / allocated_budget
-
-    Result is in [0, 1].  Zero-division yields 0.
+    Run a budget reallocation simulation.
+    Returns projected outcomes vs current baseline.
     """
-    mask = df["allocated_budget"] > 0
-    df["utilization_ratio"] = 0.0
-    df.loc[mask, "utilization_ratio"] = (
-        df.loc[mask, "utilized_budget"] / df.loc[mask, "allocated_budget"]
-    ).round(6)
-    return df
+    if not schemes:
+        return {"error": "No schemes to simulate"}
 
+    focus_sectors = focus_sectors or []
+    current_utils   = [s.get("utilization", 50) for s in schemes]
+    current_risks   = [s.get("riskScore", 40) for s in schemes]
+    current_avg_u   = round(statistics.mean(current_utils), 1)
+    current_avg_r   = round(statistics.mean(current_risks), 1)
 
-def _recalculate_risk_score(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Composite risk score  (0–100, integer).
+    # Simulate per-scheme outcomes
+    projected = []
+    for s in schemes:
+        sector = s.get("sector", "")
+        curr_u = s.get("utilization", 50)
+        curr_r = s.get("riskScore", 40)
+        eff_mult, risk_mult = SECTOR_MULTIPLIERS.get(sector, (1.0, 1.0))
 
-    Formula
-    -------
-    Two normalised components are blended:
+        # Utilization improvement
+        base_improvement = efficiency_target * eff_mult
+        if focus_sectors and sector in focus_sectors:
+            base_improvement *= 1.4  # focused sectors improve more
+        budget_boost = increase_pct * 0.3  # more budget → some utilization improvement
+        new_u = min(99, round(curr_u + base_improvement + budget_boost, 1))
 
-    1. Utilization pressure  (weight 60 %)
-       Higher utilization -> less headroom -> higher risk.
-       Score = utilization_ratio * 100
+        # Risk improvement (risk reduces with better monitoring)
+        risk_improvement = risk_reduction_target * (2 - risk_mult)  # high-risk sectors harder
+        new_r = max(5, round(curr_r - risk_improvement, 1))
 
-    2. Budget adequacy       (weight 40 %)
-       A city with a very small allocated_budget relative to the rest of
-       the dataset carries higher risk.
-       Score = (1 - normalised_budget) * 100
-       where normalised_budget = (budget - min) / (max - min)
+        projected.append({
+            "id":            s.get("id"),
+            "name":          s.get("name"),
+            "sector":        sector,
+            "current_util":  curr_u,
+            "projected_util": new_u,
+            "util_delta":    round(new_u - curr_u, 1),
+            "current_risk":  curr_r,
+            "projected_risk": new_r,
+            "risk_delta":    round(new_r - curr_r, 1),
+            "focused":       sector in focus_sectors,
+        })
 
-    Both components are clipped to [0, 100] before blending.
-    """
-    util_score = (df["utilization_ratio"] * 100).clip(0, 100)
+    proj_utils = [p["projected_util"] for p in projected]
+    proj_risks  = [p["projected_risk"] for p in projected]
+    proj_avg_u  = round(statistics.mean(proj_utils), 1)
+    proj_avg_r  = round(statistics.mean(proj_risks), 1)
+    high_risk_before = len([s for s in schemes if s.get("riskScore", 0) >= 55])
+    high_risk_after  = len([p for p in projected if p["projected_risk"] >= 55])
 
-    b_min = df["allocated_budget"].min()
-    b_max = df["allocated_budget"].max()
-    b_range = b_max - b_min if b_max != b_min else 1.0
-    budget_norm = (df["allocated_budget"] - b_min) / b_range
-    adequacy_score = ((1 - budget_norm) * 100).clip(0, 100)
+    # Estimate additional beneficiaries reached
+    benef_increase = 0
+    if increase_pct > 0:
+        benef_increase = round(increase_pct * 0.8 * 1000)  # rough proxy
 
-    df["risk_score"] = (0.60 * util_score + 0.40 * adequacy_score).round(0).astype(int)
-    return df
-
-
-def _find_city_index(df: pd.DataFrame, city: str) -> int:
-    """Return the DataFrame index for *city* (case-insensitive match)."""
-    city_col_lower = df["city"].str.strip().str.lower()
-    matches = df.index[city_col_lower == city.strip().lower()]
-    if matches.empty:
-        available = df["city"].tolist()
-        raise ValueError(
-            f"City '{city}' not found in dataset.\n"
-            f"Available cities: {available}"
-        )
-    return int(matches[0])
-
-
-# ---------------------------------------------------------------------------
-# Public API
-# ---------------------------------------------------------------------------
-
-def simulate_budget_reallocation(
-    from_city: str,
-    to_city: str,
-    amount: float,
-    *,
-    data_path: str | Path | None = None,
-) -> dict[str, Any]:
-    """
-    Simulate transferring *amount* of budget from *from_city* to *to_city*.
-
-    The original CSV is **never modified**.  All operations are performed
-    on an in-memory deep copy of the loaded DataFrame.
-
-    Parameters
-    ----------
-    from_city : str
-        Name of the city to reduce budget from.
-    to_city : str
-        Name of the city to increase budget to.
-    amount : float
-        Monetary amount to transfer (must be > 0).
-    data_path : str or Path, optional
-        Path to the budget CSV.  Falls back to the DATA_PATH environment
-        variable and then to ``backend/data/budget_data.csv`` (relative
-        to this module).
-
-    Returns
-    -------
-    dict
-        {
-            "from_city":          str,
-            "to_city":            str,
-            "amount_transferred": float,
-            "new_utilization_ratios": {
-                "<from_city>": float,
-                "<to_city>":   float
-            },
-            "new_risk_scores": {
-                "<from_city>": int,
-                "<to_city>":   int
-            }
-        }
-
-    Raises
-    ------
-    FileNotFoundError
-        If the CSV cannot be found.
-    ValueError
-        If a city name is missing, amount <= 0, cities are the same, or
-        *from_city* would end up with a negative allocated_budget.
-    """
-
-    # ------------------------------------------------------------------ #
-    # 1. Validate arguments                                                #
-    # ------------------------------------------------------------------ #
-    if amount <= 0:
-        raise ValueError(f"amount must be positive; received {amount}.")
-
-    if from_city.strip().lower() == to_city.strip().lower():
-        raise ValueError("from_city and to_city must be different cities.")
-
-    # ------------------------------------------------------------------ #
-    # 2. Load data -> deep copy (original file never touched again)       #
-    # ------------------------------------------------------------------ #
-    resolved_path = (
-        Path(data_path)
-        if data_path
-        else Path(os.environ.get("DATA_PATH", str(DEFAULT_DATA_PATH)))
-    )
-
-    original_df = _load_dataframe(resolved_path)
-    df = original_df.copy(deep=True)          # simulation sandbox
-
-    # ------------------------------------------------------------------ #
-    # 3. Locate city rows                                                  #
-    # ------------------------------------------------------------------ #
-    from_idx = _find_city_index(df, from_city)
-    to_idx   = _find_city_index(df, to_city)
-
-    from_city_label = df.at[from_idx, "city"]
-    to_city_label   = df.at[to_idx,   "city"]
-
-    # ------------------------------------------------------------------ #
-    # 4. Guard: ensure from_city has enough budget                        #
-    # ------------------------------------------------------------------ #
-    current_from_budget = df.at[from_idx, "allocated_budget"]
-    if current_from_budget - amount < 0:
-        raise ValueError(
-            f"Insufficient allocated budget in '{from_city_label}': "
-            f"available {current_from_budget:,.0f}, "
-            f"requested {amount:,.0f}."
-        )
-
-    # ------------------------------------------------------------------ #
-    # 5. Apply reallocation on the COPY                                   #
-    # ------------------------------------------------------------------ #
-    df.at[from_idx, "allocated_budget"] -= amount
-    df.at[to_idx,   "allocated_budget"] += amount
-
-    # ------------------------------------------------------------------ #
-    # 6. Recalculate derived metrics across the full dataset              #
-    # ------------------------------------------------------------------ #
-    df = _recalculate_utilization_ratio(df)
-    df = _recalculate_risk_score(df)
-
-    # ------------------------------------------------------------------ #
-    # 7. Build and return result dict                                      #
-    # ------------------------------------------------------------------ #
     return {
-        "from_city": from_city_label,
-        "to_city":   to_city_label,
-        "amount_transferred": amount,
-        "new_utilization_ratios": {
-            from_city_label: round(float(df.at[from_idx, "utilization_ratio"]), 4),
-            to_city_label:   round(float(df.at[to_idx,   "utilization_ratio"]), 4),
+        "simulation_id":    f"SIM-{datetime.now().strftime('%Y%m%d%H%M%S')}",
+        "inputs": {
+            "schemes_count":         len(schemes),
+            "budget_increase_pct":   increase_pct,
+            "efficiency_target":     efficiency_target,
+            "focus_sectors":         focus_sectors,
+            "risk_reduction_target": risk_reduction_target,
         },
-        "new_risk_scores": {
-            from_city_label: int(df.at[from_idx, "risk_score"]),
-            to_city_label:   int(df.at[to_idx,   "risk_score"]),
+        "baseline": {
+            "avg_utilization":  current_avg_u,
+            "avg_risk_score":   current_avg_r,
+            "high_risk_count":  high_risk_before,
         },
+        "projected": {
+            "avg_utilization":        proj_avg_u,
+            "avg_risk_score":         proj_avg_r,
+            "high_risk_count":        high_risk_after,
+            "additional_beneficiaries": benef_increase,
+        },
+        "deltas": {
+            "utilization_gain":  round(proj_avg_u - current_avg_u, 1),
+            "risk_reduction":    round(current_avg_r - proj_avg_r, 1),
+            "high_risk_reduced": high_risk_before - high_risk_after,
+        },
+        "scheme_projections": projected,
+        "chart_data":         _build_chart_data(projected),
+        "insights":           _generate_insights(projected, increase_pct, proj_avg_u, current_avg_u),
+        "simulated_at":       datetime.now().isoformat(),
     }
 
 
-# ---------------------------------------------------------------------------
-# CLI entry-point  (quick smoke-test)
-# ---------------------------------------------------------------------------
-# Usage:
-#   python reallocation_simulator.py Mumbai Nagpur 200000000
-# ---------------------------------------------------------------------------
+def get_reallocation_recommendations(schemes: list) -> list:
+    """
+    AI-based recommendations for fund reallocation.
+    Returns list of recommendation objects.
+    """
+    recommendations = []
+    sectors = {}
+    for s in schemes:
+        sec = s.get("sector","")
+        if sec not in sectors:
+            sectors[sec] = []
+        sectors[sec].append(s)
 
+    for sec, sec_schemes in sectors.items():
+        avg_u = statistics.mean(s.get("utilization",0) for s in sec_schemes)
+        avg_r = statistics.mean(s.get("riskScore",0) for s in sec_schemes)
+        eff_mult, _ = SECTOR_MULTIPLIERS.get(sec, (1.0, 1.0))
+
+        if avg_u < 35 and avg_r > 50:
+            rec_type = "critical"
+            action = "Consider reallocating underutilized funds to performing sectors"
+        elif avg_u < 50:
+            rec_type = "warning"
+            action = "Review disbursement pipeline and remove bottlenecks"
+        elif avg_u > 75 and eff_mult > 1.1:
+            rec_type = "opportunity"
+            action = "Sector performing well — consider increased allocation"
+        else:
+            continue
+
+        recommendations.append({
+            "sector":           sec,
+            "type":             rec_type,
+            "avg_utilization":  round(avg_u, 1),
+            "avg_risk":         round(avg_r, 1),
+            "scheme_count":     len(sec_schemes),
+            "action":           action,
+            "priority":         "HIGH" if rec_type == "critical" else "MEDIUM",
+        })
+
+    recommendations.sort(key=lambda r: {"critical":0,"warning":1,"opportunity":2}.get(r["type"],3))
+    return recommendations
+
+
+def _build_chart_data(projections: list) -> dict:
+    """Build chart.js compatible data from projections."""
+    labels = [p["name"][:20] + ("…" if len(p["name"]) > 20 else "") for p in projections[:10]]
+    return {
+        "utilization": {
+            "labels":  labels,
+            "current": [p["current_util"] for p in projections[:10]],
+            "projected": [p["projected_util"] for p in projections[:10]],
+        },
+        "risk": {
+            "labels":  labels,
+            "current": [p["current_risk"] for p in projections[:10]],
+            "projected": [p["projected_risk"] for p in projections[:10]],
+        }
+    }
+
+
+def _generate_insights(projections: list, budget_increase: float,
+                        proj_avg: float, base_avg: float) -> list:
+    insights = []
+    gain = proj_avg - base_avg
+    if gain > 10:
+        insights.append(f"📈 Significant utilization improvement of {round(gain,1)}% projected across all schemes.")
+    elif gain > 5:
+        insights.append(f"📊 Moderate utilization gain of {round(gain,1)}% projected.")
+    elif gain > 0:
+        insights.append(f"📊 Marginal utilization improvement of {round(gain,1)}% projected.")
+
+    if budget_increase > 10:
+        insights.append(f"💰 Budget increase of {round(budget_increase,1)}% will reach an estimated {round(budget_increase * 0.8 * 1000):,} additional beneficiaries.")
+
+    improved = [p for p in projections if p["util_delta"] > 5]
+    if improved:
+        top = sorted(improved, key=lambda p: -p["util_delta"])[:3]
+        insights.append(f"🏆 Top gainers: {', '.join(p['name'][:20] for p in top)}.")
+
+    declined = [p for p in projections if p["util_delta"] < 0]
+    if declined:
+        insights.append(f"⚠️ {len(declined)} scheme(s) show projected utilization decline — review funding adequacy.")
+
+    return insights
+
+
+# ── Standalone test ───────────────────────────────────────────────────
 if __name__ == "__main__":
-    import json
-    import sys
-
-    if len(sys.argv) != 4:
-        print(
-            "Usage: python reallocation_simulator.py "
-            "<from_city> <to_city> <amount>",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-    _, _from, _to, _amt = sys.argv
-
-    try:
-        result = simulate_budget_reallocation(_from, _to, float(_amt))
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-    except (FileNotFoundError, ValueError) as exc:
-        print(f"Error: {exc}", file=sys.stderr)
-        sys.exit(1)
+    test_schemes = [
+        {"id":"n1","name":"PM-KISAN","utilization":91,"sector":"Agriculture","riskScore":22},
+        {"id":"n4","name":"MGNREGA","utilization":55,"sector":"Employment","riskScore":57},
+        {"id":"n5","name":"PM Ujjwala","utilization":8,"sector":"Energy","riskScore":38},
+        {"id":"n8","name":"Beti Bachao","utilization":25,"sector":"Social Welfare","riskScore":68},
+        {"id":"n9","name":"Digital India","utilization":31,"sector":"Technology","riskScore":26},
+    ]
+    result = simulate_reallocation(
+        test_schemes,
+        increase_pct=10,
+        efficiency_target=8,
+        focus_sectors=["Education","Healthcare","Technology"],
+        risk_reduction_target=10
+    )
+    print("Simulation Results:")
+    print(f"  Baseline util: {result['baseline']['avg_utilization']}%  →  Projected: {result['projected']['avg_utilization']}%")
+    print(f"  Baseline risk: {result['baseline']['avg_risk_score']}   →  Projected: {result['projected']['avg_risk_score']}")
+    print(f"  Utilization gain: +{result['deltas']['utilization_gain']}%")
+    print(f"  High-risk reduced: {result['deltas']['high_risk_reduced']} schemes")
+    print("\nInsights:")
+    for i in result["insights"]: print(f"  {i}")
+    print("\nRecommendations:")
+    for r in get_reallocation_recommendations(test_schemes):
+        print(f"  [{r['priority']}] {r['sector']}: {r['action']}")
